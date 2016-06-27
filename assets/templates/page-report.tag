@@ -1,17 +1,5 @@
 page-report
 
-  #report-uploading-modal.modal
-    .modal-content
-      .progress
-        .indeterminate
-      h4.center กำลังอัพโหลด
-
-  #report-saving-modal.modal
-    .modal-content
-      .progress
-        .indeterminate
-      h4.center กำลังพิน
-
   #report-input-modal.modal.bottom-sheet.full-sheet
     .modal-header
       nav
@@ -100,6 +88,18 @@ page-report
 
     .modal-content.no-padding
       #input-location-map.input-location-map
+
+  #report-uploading-modal.modal
+    .modal-content
+      .progress
+        .indeterminate
+      h4.center กำลังอัพโหลด
+
+  #report-saving-modal.modal
+    .modal-content
+      .progress
+        .indeterminate
+      h4.center กำลังพิน
 
   style(type='scss', scoped).
     :scope {
@@ -329,10 +329,10 @@ page-report
       $('#report-saving-modal').openModal({
         dismissible: false,
       });
-      setTimeout(submitReportSuccess, 3000);
+      setTimeout(submitReportComplete, 3000);
     }
 
-    function submitReportSuccess() {
+    function submitReportComplete() {
       $('#report-saving-modal').closeModal();
       $('#report-input-modal').closeModal();
     }
