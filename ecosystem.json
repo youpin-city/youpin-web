@@ -1,0 +1,47 @@
+{
+  "apps": [
+    {
+      "name": "youpin-web",
+      "script": "index.js",
+      "args": [],
+      "no-daemon": true,
+
+      "log_date_format" : "YYYY-MM-DD HH:mm",
+
+      "watch": true,
+      "ignore_watch": [
+        "[\\/\\\\]\\./",
+        ".git",
+        "node_modules",
+        "assets",
+        "public",
+        "data",
+        "build"
+      ],
+
+      "min_uptime": 10000,
+      "max_restarts": 2,
+
+      "env": {
+        "NODE_ENV": "local"
+      },
+      "env_development": {
+        "NODE_ENV": "development"
+      }
+    }
+  ],
+  "deploy" : {
+    "development" : {
+      "user" : "root",
+      "host" : ["128.199.87.142"],
+      "ref"  : "origin/develop",
+      "repo" : "git@github.com:youpin-city/youpin-web.git",
+      "path" : "/opt/youpin-web.development",
+      "post-deploy" : "npm install --production && pm2 startOrRestart ecosystem.development.json --env development",
+      "pre-deploy-local" : "echo '[development] deploy completed.'",
+      "env"  : {
+        "NODE_ENV": "development"
+      }
+    }
+  }
+}

@@ -1,0 +1,82 @@
+
+.card-list {
+  margin: 0;
+}
+.card {
+  .card-image {
+    .empty-image {
+      // &[data-accent='1'] { @extend .green, .lighten-1; }
+      // &[data-accent='2'] { @extend .indigo, .lighten-1; }
+      // &[data-accent='3'] { @extend .pink, .lighten-1; }
+      // &[data-accent='4'] { @extend .amber; }
+
+      @include justify-content(center);
+      position: static;
+      width: 100%;
+      height: 160px;
+      margin: 0 auto;
+      background-color: $cl-gray;
+      .icon {
+        color: $cl-white;
+        vertical-align: middle;
+      }
+    }
+  }
+  .card-content {
+    padding: 8px 16px;
+    .card-title {
+      line-height: $lh-small;
+    }
+    .card-description {
+      .card-author {
+        display: inline-block;
+      }
+      .card-text {
+        display: inline;
+      }
+      .tag-list {
+        display: inline;
+      }
+    }
+    .card-meta,
+    .card-stat {
+      @include clearfix;
+      font-size: $fs-xs;
+      margin-top: 0.5rem;
+      margin-bottom: 0;
+      .meta {
+        margin-right: 0.8rem;
+        .icon {
+          vertical-align: middle;
+        }
+      }
+      .meta-status {
+        position: relative;
+        text-transform: uppercase;
+        &:after {
+          content: '';
+          display: block;
+          position: absolute;
+          left: 0;
+          right: 0;
+          border-bottom: 2px solid $cl-primary;
+        }
+        &[data-status="pending"]:after {
+          border-color: $cl-orange;
+        }
+        &[data-status="accepted"]:after {
+          border-color: $cl-blue;
+        }
+        &[data-status="fixed"]:after {
+          border-color: $cl-green;
+        }
+        &[data-status="wontfix"]:after {
+          border-color: $cl-pink;
+        }
+      }
+      .meta-time {
+        color: $cl-gray;
+      }
+    }
+  }
+}

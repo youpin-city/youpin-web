@@ -1,0 +1,92 @@
+extends layouts/layout
+
+append content
+
+  #page-app
+    #feed.tab-bar-view
+      .fluid-container
+        h4.center พินรอบตัว
+        .card-list.row
+          for card in feeds
+            .col.s12.m6.l4
+              .card
+                .card-image
+                  if card.photo && card.photo.length > 0
+                    img(src=card.photo[0])
+                  else
+                    .empty-image.valign-wrapper(data-accent=(_.random(1,4)))
+                      .valign
+                        i.icon.material-icons directions_run
+                        i.icon.material-icons directions_bike
+                        i.icon.material-icons directions_car
+                        i.icon.material-icons directions_subway
+                        i.icon.material-icons directions_boat
+                        i.icon.material-icons directions_bus
+                        i.icon.material-icons local_shipping
+                        i.icon.material-icons directions_train
+                .card-content
+                  .card-description
+                    .card-author
+                      a(href='#!user/' + card.author) @#{card.author}
+                    .card-text #{card.name}
+                    if card.tag && card.tag.length > 0
+                      for tag in card.tag
+                        a.tag-item(href=('#!tag/' + tag)) #{tag}
+
+                  .card-meta
+                    .meta.meta-time.left= moment(card.created_at).fromNow()
+                    .meta.meta-status.right(data-status=card.status)= card.status
+                  .card-stat
+                    .meta.meta-view.left
+                      i.icon.material-icons.tiny show_chart
+                      | #{card.view_count}
+                    .meta.meta-like.left
+                      i.icon.material-icons.tiny favorite
+                      | #{card.like_count}
+                    .meta.meta-comment.left
+                      i.icon.material-icons.tiny comment
+                      | #{card.comment_count}
+
+    #search.tab-bar-view
+      .container
+        h4 ค้นหา
+    #noti.tab-bar-view
+      .container
+        h4 ข้อความ
+    #account.tab-bar-view
+      .container
+        h4 โปรไฟล์
+
+    page-report(target='#report-btn')
+
+
+prepend footer
+
+  footer.tab-bar
+    ul.tabs
+      li.tab.col.s3
+        a(href='#feed')
+          i.icon.material-icons home
+      li.tab.col.s3
+        a(href='#search')
+          i.icon.material-icons search
+      li.tab.col.s3
+        a#report-btn(href='#report')
+          img(src=site_url('/public/image/marker-s.png'))
+      li.tab.col.s3
+        a(href='#noti')
+          i.icon.material-icons notifications
+      li.tab.col.s3
+        a(href='#account')
+          i.icon.material-icons face
+
+append app_script
+  script.
+    $(document).ready(function(){
+      $('ul.tabs').tabs();
+
+      $('#report-btn').on('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+      });
+    });

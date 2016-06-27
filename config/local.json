@@ -1,0 +1,8 @@
+{
+  "env": "local",
+  "site": {
+    "protocol": "http",
+    "hostname": "local.www.youpin.city"
+  },
+  "debug": true
+}

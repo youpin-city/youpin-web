@@ -1,0 +1,14 @@
+
+header#header
+  block site-header
+    #site-logo
+
+  nav
+    .nav-wrapper
+      a.brand-logo(href=site_url('/'))
+        img(src=site_url('/public/image/logo.png'))
+      ul#nav-mobile.right.hide-on-med-and-down
+        li
+          a(href=site_url('/map')) แผนที่
+        li
+          a(href=site_url('/design')) ออกแบบ

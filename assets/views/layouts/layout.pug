@@ -1,0 +1,41 @@
+doctype html
+html(zone='front')
+  head
+    block head
+      link(rel='stylesheet', href=site_url('/public/css/main.css'))
+      link(rel='stylesheet', href='https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/leaflet.css')
+      meta(name='viewport',content='width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no')
+      meta(name='apple-mobile-web-app-capable', content='yes')
+      meta(name='apple-mobile-web-app-status-bar-style', content='black')
+
+      include ../components/seo
+
+  body
+    block body
+      #app(data-page=page.route)
+
+        block header
+          include ../components/header
+
+        main
+          block content
+
+        block footer
+          include ../components/footer
+
+      block script
+        block dep_script
+          script(src='https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/leaflet.js')
+          script(src='http://maps.googleapis.com/maps/api/js?callback=&key=' + settings.service.google.api_key)
+          script(src='http://matchingnotes.com/javascripts/leaflet-google.js')
+          script(src=asset_url('/public/js/dep.js'))
+          script(src=asset_url('/public/js/materialize.js'))
+          script(src=asset_url('/public/js/main.js'))
+          script(src=asset_url('/public/js/tag.js'))
+
+        block app_script
+          script.
+            // this application
+            app = new App();
+            app.config(_.assign(!{JSON.stringify(app_config)}), {});
+            app.start();

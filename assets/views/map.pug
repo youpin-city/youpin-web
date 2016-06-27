@@ -1,0 +1,43 @@
+extends layouts/layout
+
+append content
+
+  #page-home
+    .fluid-container
+      #mapid
+
+  style(type='text/css').
+    #mapid {
+      width: 100%;
+      height: 100vh;
+    }
+
+    .leaflet-map-pane {
+      z-index: 2 !important;
+    }
+
+    .leaflet-google-layer {
+      z-index: 1 !important;
+    }
+
+append app_script
+  script.
+    var mymap = L.map('mapid').setView([13.7302295, 100.5724075], 16);
+
+    // Add google maps
+    var googleLayer = new L.Google('ROADMAP');
+    mymap.addLayer(googleLayer);
+
+    // Define youpin-style marker
+    var YPIcon = L.icon({
+        iconUrl: util.site_url('/public/image/marker-m.png'),
+        iconSize: [32, 51],
+        iconAnchor: [16, 48],
+        popupAnchor: [0, -51]
+    });
+
+    //- var cities = new L.LayerGroup();
+    L.marker([13.7302295, 100.5724075], { icon: YPIcon })
+      .bindPopup('ที่นี่มีหลุมบ่อ น้ำท่วมขังบ่อย ส่งกลิ่นเหม็นทุกเย็นเลย')
+      .addTo(mymap);
+    //- mymap.addLayer(cities);

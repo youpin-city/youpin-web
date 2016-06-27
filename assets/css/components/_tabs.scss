@@ -1,0 +1,30 @@
+
+
+.tab-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  border-top: 1px solid $cl-lightgray;
+
+  .tabs {
+    .tab {
+      min-width: 60px;
+      a {
+        color: $cl-gray;
+        .icon {
+          line-height: 48px;
+        }
+
+        &.active {
+          color: $cl-primary;
+        }
+      }
+    }
+
+    .indicator {
+      top: 0;
+      bottom: auto;
+    }
+  }
+}

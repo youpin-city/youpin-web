@@ -1,0 +1,52 @@
+
+//- Title
+title #{(page.title ? page.title + ' - ' : '') + page.site_name}
+meta(property='og:title', content=(page.title || page.site_name))
+meta(name='twitter:title', content=(page.title || page.site_name))
+meta(itemprop='name', content=(page.title || page.site_name))
+
+//- Author
+meta(name='author', content=(page.author || page.site_name))
+
+//- Image(s)
+for image in page.images
+  if image.src
+    meta(property='og:image', content!=image.src)
+    meta(name='twitter:image:src', content!=image.src)
+    meta(itemprop='image', content!=image.src)
+
+//- Description
+meta(name='description', content=page.description)
+meta(property='og:description', content=page.description)
+meta(name='twitter:description', content=page.description)
+meta(itemprop='description', content=page.description)
+
+//- Website
+meta(property='og:site_name', content=page.site_name)
+meta(name='twitter:site', content=page.site_name)
+
+//- Keywords
+meta(name='keywords', content=page.keywords.join(','))
+
+//- Canonical URL
+link(rel='canonical', href!=(page.url || full_url))
+meta(property='og:url', content!=(page.url || full_url))
+
+//- Alternate URLs
+//- Language and Locale
+meta(name='og:locale', content='th')
+//- link(rel='alternate', hreflang='en' href=site_url(full_url, null, { hl: 'en' }))
+//- meta(name='og:locale:alternate', content='en')
+//- meta(name='og:locale:alternate', content='ja')
+
+//- Related resources
+//- og:see_also (Array<URL>)
+
+//- Time
+//- og:updated_time
+
+//- //- FACEBOOK specific
+//- meta(property='fb:app_id', content=settings.service.facebook.app_id)
+
+//- //- TWITTER specific
+//- meta(name='twitter:card', content='summary_large_image')

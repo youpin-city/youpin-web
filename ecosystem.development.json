@@ -1,0 +1,30 @@
+{
+  "apps": [
+    {
+      "name": "youpin-web-dev",
+      "script": "index.js",
+      "args": [],
+      "no-daemon": true,
+
+      "log_date_format" : "YYYY-MM-DD HH:mm",
+
+      "watch": true,
+      "ignore_watch": [
+        "[\\/\\\\]\\./",
+        ".git",
+        "node_modules",
+        "assets",
+        "public",
+        "data",
+        "build"
+      ],
+
+      "min_uptime": 10000,
+      "max_restarts": 2,
+
+      "env": {
+        "NODE_ENV": "development"
+      }
+    }
+  ]
+}

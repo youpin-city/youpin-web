@@ -1,0 +1,195 @@
+// @import "../../../node_modules/bootstrap/scss/variables";
+// @import "../../../node_modules/bootstrap/scss/mixins";
+@import 'mixins-css3';
+@import 'variables';
+
+
+$retina: "(-webkit-min-device-pixel-ratio: 1.5)";
+
+// clearfix
+@mixin clearfix {
+  *zoom: 1;
+
+  &:before,
+  &:after {
+    content: " ";
+    display: table;
+  }
+
+  &:after {
+    clear: both;
+  }
+}
+
+// make mouseover effects
+@mixin prop-hover($color, $change: -30%, $op: lightness, $prop: color) {
+  #{$prop}: $color;
+  &:hover,
+  &:active,
+  &:focus {
+    @if (type-of($change) == color) {
+      #{$prop}: $change;
+    } @elseif ($op == lightness) {
+      #{$prop}: scale-color($color, $lightness: $change);
+    } @else if($op == saturation) {
+      #{$prop}: scale-color($color, $saturation: $change);
+    }
+  }
+}
+@mixin text-hover($color, $change: -30%, $op: lightness) {
+  @include prop-hover($color, $change, $op, color);
+}
+@mixin background-hover($color, $change: -15%, $op: lightness) {
+  @include prop-hover($color, $change, $op, background-color);
+}
+@mixin border-hover($color, $change: -15%, $op: lightness) {
+  @include prop-hover($color, $change, $op, border-color);
+}
+
+// sprite mixin
+@mixin use-sprite($sprite_url_list, $sprite_width, $sprite_height:0, $w:null, $h:null, $x:0, $y:0) {
+  background-image: url(nth($sprite_url_list, 1));
+  background-repeat: no-repeat;
+  @if ($sprite_width == cover or $sprite_width == contain or $sprite_width == inherit or $sprite_width == initial) {
+    background-size: $sprite_width;
+  } @else {
+    background-size: $sprite_width $sprite_height;
+  }
+  @if ($w != null) { width: $w; }
+  // @else { width: $sprite_width; }
+  @if ($h != null) { height: $h; }
+  // @else { height: $sprite_height; }
+  background-position: $x $y;
+
+  @if (length($sprite_url_list) > 1) {
+    @media #{$retina} {
+      background-image: url(nth($sprite_url_list, 2));
+    }
+  }
+}
+
+$-common-sprite-width: 72px;//412px;
+$-common-sprite-height: 92px;//215px;
+@mixin common-sprite($w, $h, $x:0, $y:0) {
+  @include use-sprite("../../img/sprite.png" "../../img/sprite@2x.png", $-common-sprite-width, $-common-sprite-height, $w, $h, $x, $y);
+}
+
+@mixin isflex($justify-content: center, $align-items: center, $align-content: center, $flex-wrap: nowrap) {
+  display: -webkit-flex;
+  display: flex;
+  -webkit-justify-content: $justify-content;
+          justify-content: $justify-content;
+  -webkit-align-items: $align-items;
+          align-items: $align-items;
+  -webkit-align-content: $align-content;
+          align-content: $align-content;
+  -webkit-flex-wrap: $flex-wrap;
+          flex-wrap: $flex-wrap;
+}
+
+@mixin collapse-line() {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: pre;
+}
+
+/**
+ * @description
+ * Disables selection of content of a given element
+ *
+ * @author drublic
+ *
+ * @link caniuse http://caniuse.com/user-select-none
+ *
+ * @param value none|auto optional
+ * @default none
+ * @returns
+ *   -webkit-user-select: <value>;
+ *      -moz-user-select: <value>;
+ *       -ms-user-select: <value>;
+ *           user-select: <value>;
+ *
+ * @example
+ *   .selector {
+ *     @include user-select;
+ *   }
+ */
+@mixin user-select ($value: none) {
+  -webkit-user-select: $value;
+     -moz-user-select: $value;
+      -ms-user-select: $value;
+          user-select: $value;
+}
+
+/**
+ * @description
+ * Generates `placeholder` content for a given element
+ *
+ * @author romamatusevich
+ *
+ * @link MDN https://developer.mozilla.org/en-US/docs/Web/CSS/:-moz-placeholder
+ * @link css-tricks http://css-tricks.com/snippets/css/style-placeholder-text/
+ *
+ * @returns
+ *    &::-webkit-input-placeholder {
+ *        <content property 1>: <content value 1>;
+ *        ...
+ *        <content property n>: <content value n>;
+ *    }
+ *    &::-moz-placeholder {
+ *        <content property 1>: <content value 1>;
+ *        ...
+ *        <content property n>: <content value n>;
+ *    }
+ *    &:-ms-input-placeholder {
+ *        <content property 1>: <content value 1>;
+ *        ...
+ *        <content property n>: <content value n>;
+ *    }
+ *
+ * @example
+ *   .selector {
+ *     @include placeholder {
+ *         color: #bada55;
+ *         font-weight: bold;
+ *     }
+ *   }
+ */
+@mixin placeholder {
+  &::-webkit-input-placeholder {
+    @content // Chrome, Safari, Opera
+  }
+  &:-moz-placeholder {
+    @content // Firefox 18-
+  }
+  &::-moz-placeholder {
+    @content // Firefox 19+
+  }
+  &:-ms-input-placeholder {
+    @content // IE 10+
+  }
+}
+
+
+@mixin picture-frame($size: 100px) {
+  display: inline-block;
+  vertical-align: middle;
+  width: $size;
+  height: $size;
+  background-color: $cl-verylightgray;
+  .image {
+    width: 100%;
+    height: 100%;
+    // padding-top: 100%;
+    // background-color: $cl-verylightgray;
+    background-size: cover;
+    background-position: center center;
+    @include box-sizing(border-box);
+    @include box-shadow(0, 1px, 4px, rgba(0,0,0,0.1));
+  }
+}
+
+@mixin remove-gutter($gutter: $ps-default) {
+  margin-left: - $gutter;
+  margin-right: - $gutter;
+}

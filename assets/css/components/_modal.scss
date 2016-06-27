@@ -1,0 +1,78 @@
+
+.modal {
+  .modal-header {
+    position: relative;
+
+    nav {
+      @include flexbox;
+      @include flex-direction(row);
+      @include flex-wrap(nowrap);
+      @include justify-content(space-between);
+      @include align-items(stretch);
+      @include align-content(stretch);
+
+      // margin: 1rem 0;
+      background-color: transparent;
+      box-shadow: none;
+
+      .left {
+        @include flex(0, 1, 33%);
+      }
+      .right {
+        @include flex(0, 1, 33%);
+        text-align: right;
+        li {
+          float: none;
+        }
+      }
+      .center {
+        @include flex(1, 0, 33%);
+      }
+
+      a {
+        font-size: $fs-lg;
+        color: $cl-primary;
+      }
+
+      .modal-title {
+        font-size: $fs-lg;
+        color: $cl-default;
+      }
+    }
+  }
+  .modal-footer {
+  }
+  .modal-content {
+  }
+}
+
+.modal.full-sheet {
+  display: -webkit-box !important;
+  display: -webkit-flex !important;
+  display: -moz-flex !important;
+  display: -ms-flexbox !important;
+  display: flexbox !important;
+  @include flexbox;
+  @include flex-direction(column);
+  @include flex-wrap(nowrap);
+  @include justify-content(space-between);
+  @include align-items(stretch);
+  @include align-content(stretch);
+
+  max-height: initial;
+  height: 100vh;
+  // height: calc(100vh - 56px);
+
+  .modal-header {
+    @include flex(0, 0, 56px);
+    position: relative;
+  }
+  .modal-footer {
+    @include flex(0, 0, 56px);
+    position: relative;
+  }
+  .modal-content {
+    @include flex(1, 0, 200px);
+    position: relative;
+  }
+}

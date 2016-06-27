@@ -1,0 +1,44 @@
+#app[data-page='home'] {
+
+  .page-footer {
+    display: none;
+  }
+
+  .tab-bar-view {
+    margin-bottom: 56px;
+  }
+
+  #report-btn {
+    img {
+      vertical-align: middle;
+    }
+  }
+
+  .input-field {
+    .prefix {
+      color: $cl-gray;
+      &.active {
+        color: $cl-primary;
+      }
+    }
+  }
+
+}
+
+#report-input-modal {
+
+}
+
+#report-photo-modal {
+  .drop-image {
+    position: static;
+    width: 100%;
+    height: 60px;
+    margin: 0 auto;
+    background-color: $cl-primary;
+    .icon {
+      color: $cl-white;
+      vertical-align: middle;
+    }
+  }
+}

@@ -1,0 +1,156 @@
+//==============================
+//   Variables
+//==============================
+
+$cl-facebook: #6278AF;
+$cl-goodreads: #BBB596;
+
+// text color
+$cl-white: #ffffff;
+$cl-pitchblack: #000;
+$cl-ink: $cl-pitchblack;
+$cl-black: #231f20;
+$cl-verydarkgray: #4d4d4d;
+$cl-darkgray: #5d5d5d;
+$cl-gray: #818181;
+$cl-smoke: #a9a9a9;
+$cl-silver: #c0c0c0;
+$cl-lightgray: #d8d8d8;
+$cl-verylightgray: #ededed;
+$cl-veryverylightgray: #f8f8f8;
+$cl-red: #e9233b;
+$cl-pink: #e91e63;
+$cl-darkred: #c72421;
+$cl-blue: #1890b9;
+$cl-lightblue: #34cee7;
+$cl-darkblue: darken($cl-blue, 10%);
+$cl-purple: #9c27b0;
+$cl-deep-purple: #673ab7;
+$cl-indigo: #3f51b5;
+$cl-darkgreen: #599913;
+$cl-green: #67af18;
+$cl-lightgreen: #83db22;
+$cl-teal: #009688;
+$cl-palegreen: #82aa8e;
+$cl-yellow: #ffdd00;
+$cl-orange: #ffbb00;
+$cl-deep-orange: #ff5722;
+$cl-lime: #cddc39;
+
+// theme color
+$cl-primary: #009de0;// $cl-blue;
+$cl-primary-active: $cl-lightblue;
+$cl-secondary: #c0ce2e;// $cl-green;
+$cl-secondary-active: $cl-lightgreen;
+// $cl-tertiary: #bbbbbb;
+
+// component color
+$cl-default: $cl-darkgray;
+$cl-header: #666;
+$cl-link: $cl-primary;
+$cl-error: $cl-red;
+$cl-border: $cl-verylightgray;
+$cl-darkborder: $cl-gray;
+$cl-printblack: $cl-pitchblack;
+$cl-product-values: $cl-palegreen;
+
+// status color
+$cl-info: $cl-white;
+$cl-success: $cl-green;
+$cl-warning: $cl-orange;
+$cl-danger: $cl-red;
+$cl-error: $cl-red;
+$cl-disabled: $cl-lightgray;
+
+$cl-status-new: $cl-blue;
+
+// status shop color
+$cl-status-inactivated: $cl-orange;
+$cl-status-offline: $cl-disabled;
+$cl-status-online: $cl-green;
+$cl-status-deleted: $cl-red;
+
+// status order color
+$cl-status-pending: $cl-orange;
+$cl-status-declined: $cl-red;
+$cl-status-confirmed: $cl-blue;
+$cl-status-paid: $cl-green;
+$cl-status-shipped: $cl-blue;
+$cl-status-delivered: $cl-green;
+$cl-status-reviewed: $cl-green;
+$cl-status-cancelled: lighten($cl-red, 10%);
+$cl-status-disputed: $cl-red;
+
+
+// background color
+$bgc-default: #f7f7f4;
+$bgc-tap: #ebebeb;
+
+
+// border color
+$bdc-default: $cl-lightgray;
+
+// border radius
+$br-default: 0.3rem;
+$br-large: 0.8rem;
+$br-small: 0.2rem;
+
+// font size
+$fs-xxxl: 4.0rem;
+$fs-xxl: 3.2rem;
+$fs-xl: 2.8rem;
+$fs-lg: 2.0rem;
+$fs-md: 1.7rem;
+$fs-sm: 1.5rem;
+$fs-xs: 1.2rem;
+$fs-xxs: 1.0rem;
+
+// font size
+$fs-h1: $fs-xxxl;
+$fs-h2: $fs-xxl;
+$fs-h3: $fs-xl;
+$fs-h4: $fs-lg;
+$fs-h5: $fs-md;
+$fs-h6: $fs-sm;
+$fs-p : $fs-sm;
+
+// icon = Ionicons
+$fs-icon-h1: 5.6rem;
+$fs-icon-h2: 4.8rem;
+$fs-icon-h3: 3.6rem;
+$fs-icon-h4: 2.4rem;
+$fs-icon-h5: 2.0rem;
+$fs-icon-h6: 1.6rem;
+$fs-icon-p : 1.6rem;
+
+// line height
+$lh-normal: 1.6;
+$lh-small: 1.4;
+$lh-large: 1.8;
+$lh-mobile-normal: 2.6;
+$lh-mobile-small: 2.2;
+$lh-mobile-large: 2.8;
+
+// font weight
+$fw-normal: normal; // 300;
+$fw-light: normal; // 300;
+$fw-bold: bold; // 700;
+$fw-black: 900; // 900;
+
+// font-family
+// $ff-default: 'Lato', 'Athiti', 'Thonburi', 'Tahoma', sans-serif !important;
+// $ff-header: 'Lato', 'Athiti', 'RSU', 'Thonburi', 'Tahoma', sans-serif !important;
+$ff-default: 'Helvetica Neue', 'Helvetica', 'Arial', 'Athiti', 'Pridi', 'Thonburi', 'Tahoma', sans-serif !important;
+$ff-header: 'Athiti', 'Prompt', 'Helvetica', 'Arial', 'Thonburi', 'Tahoma', sans-serif !important;
+$ff-icon: 'Ionicons';
+
+// gutter size
+$gs-default: 3rem;
+
+// padding-size
+$ps-default: $gs-default / 2;
+$ps-large: $ps-default * 2;
+$ps-small: $gs-default / 3;
+$ps-xs: $gs-default / 4;
+$ps-xxs: $gs-default / 8;
+
