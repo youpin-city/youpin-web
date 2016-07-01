@@ -1,0 +1,8 @@
+{
+  "env": "production",
+  "port": 7000,
+  "site": {
+    "protocol": "https",
+    "hostname": "youpin.city"
+  }
+}

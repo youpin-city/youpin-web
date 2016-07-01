@@ -1,5 +1,6 @@
 {
   "env": "development",
+  "port": 7100,
   "site": {
     "protocol": "http",
     "hostname": "dev.www.youpin.city"
