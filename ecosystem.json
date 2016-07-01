@@ -37,7 +37,7 @@
       "ref"  : "origin/develop",
       "repo" : "git@github.com:youpin-city/youpin-web.git",
       "path" : "/opt/youpin-web.development",
-      "post-deploy" : "npm install --production && pm2 startOrRestart ecosystem.development.json --env development",
+      "post-deploy" : "cp ../shared/.env . && npm install --production && pm2 startOrRestart ecosystem.development.json --env development",
       "pre-deploy-local" : "echo '[development] deploy completed.'",
       "env"  : {
         "NODE_ENV": "development"
