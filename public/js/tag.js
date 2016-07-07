@@ -4,13 +4,23 @@ riot.tag2('map-box', '<div class="map-box-container" id="{id}-container"> <div c
   var self = this;
   self.id = 'map-box-' + util.uniqueId();
 
+  var regex_options = /^options/i;
   self.map = null;
   self.map_options = {
-    zoomControl: opts.zoom !== 'false'
+    zoom: 16
   };
-  self.location = null;
+  _.forEach(opts, function (value, key) {
+    if (regex_options.test(key)) {
+      var opt_key = _.camelCase(key.replace(regex_options, ''));
+      if (!opt_key) return;
+      if (value === 'false') self.map_options[opt_key] = false;else if (value === 'true') self.map_options[opt_key] = true;else self.map_options[opt_key] = value;
+    }
+  });
 
-  self.DEFAULT_LOCATION = { lat: 13.7302295, lng: 100.5724075 };
+  self.center = { lat: 13.7304311, lng: 100.5696901 };
+  self.markers = [];
+  self.markers_center = [{ lat: 13.729518, lng: 100.571857 }, { lat: 13.731152, lng: 100.568566 }, { lat: 13.7284191, lng: 100.5704483 }, { lat: 13.7297639, lng: 100.570291 }, { lat: 13.7302163, lng: 100.5702538 }, { lat: 13.7300000, lng: 100.566672 }, { lat: 13.730206, lng: 100.569767 }, { lat: 13.7314005, lng: 100.570862 }, { lat: 13.728786, lng: 100.568968 }, { lat: 13.7297649, lng: 100.5709659 }];
+
   self.YPIcon = L.icon({
     iconUrl: util.site_url('/public/image/marker-m.png'),
     iconSize: [32, 51],
@@ -20,6 +30,7 @@ riot.tag2('map-box', '<div class="map-box-container" id="{id}-container"> <div c
 
   self.on('mount', function () {
     createMap();
+    createMarker();
   });
   self.on('unmount', function () {});
   self.on('update', function () {});
@@ -29,25 +40,16 @@ riot.tag2('map-box', '<div class="map-box-container" id="{id}-container"> <div c
     if (self.map) destroyMap();
 
     self.map = L.map(self.id, self.map_options);
-    self.map.locate({ setView: true, maxZoom: 16 });
-    self.map.on('locationfound', function (e) {
-      updateMarkerLocation(self.map.getCenter());
-    });
-    self.map.on('locationerror', function (err) {
-      console.error(err.message);
-      self.map.setView(_.values(self.DEFAULT_LOCATION), 16);
-    });
+    self.map.setView(self.center);
+    self.map.setZoom(17);
 
     var googleLayer = new L.Google('ROADMAP');
     self.map.addLayer(googleLayer);
+  }
 
-    self.map_marker = L.marker([self.DEFAULT_LOCATION.lat, self.DEFAULT_LOCATION.lng], { icon: self.YPIcon }).bindPopup('ที่นี่มีหลุมบ่อ น้ำท่วมขังบ่อย ส่งกลิ่นเหม็นทุกเย็นเลย').addTo(self.map);
-
-    self.map.on('drag', _.throttle(function () {
-      updateMarkerLocation(self.map.getCenter());
-    }, 100));
-    self.map.on('dragend', function (e) {
-      updateMarkerLocation(self.map.getCenter());
+  function createMarker() {
+    self.markers = _.map(self.markers_center, function (center) {
+      return L.marker(center, { icon: self.YPIcon }).addTo(self.map);
     });
   }
 

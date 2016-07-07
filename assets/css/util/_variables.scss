@@ -132,16 +132,14 @@ $lh-mobile-small: 2.2;
 $lh-mobile-large: 2.8;
 
 // font weight
-$fw-normal: normal; // 300;
-$fw-light: normal; // 300;
+$fw-normal: 400; // normal; // 300;
+$fw-light: 300; // 300;
 $fw-bold: bold; // 700;
 $fw-black: 900; // 900;
 
 // font-family
-// $ff-default: 'Lato', 'Athiti', 'Thonburi', 'Tahoma', sans-serif !important;
-// $ff-header: 'Lato', 'Athiti', 'RSU', 'Thonburi', 'Tahoma', sans-serif !important;
-$ff-default: 'Helvetica Neue', 'Helvetica', 'Arial', 'Athiti', 'Pridi', 'Thonburi', 'Tahoma', sans-serif !important;
-$ff-header: 'Athiti', 'Prompt', 'Helvetica', 'Arial', 'Thonburi', 'Tahoma', sans-serif !important;
+$ff-default: 'Raleway', 'Helvetica Neue', 'Helvetica', 'Arial', 'Prompt', 'Thonburi', 'Tahoma', sans-serif !important;
+$ff-header: 'Raleway', 'Helvetica Neue', 'Helvetica', 'Arial', 'Prompt', 'Thonburi', 'Tahoma', sans-serif !important;
 $ff-icon: 'Ionicons';
 
 // gutter size

@@ -50,7 +50,8 @@
     }
     #hero-slogan {
       color: $cl-primary;
-      font-size: $fs-md;
+      font-size: $fs-lg;
+      font-weight: $fw-light;
       margin-bottom: 2rem;
     }
   }
@@ -103,7 +104,7 @@
     font-family: $ff-header;
     font-size: $fs-h4;
     color: $cl-darkgray;
-    font-weight: $fw-black;
+    font-weight: $fw-bold;
     text-align: center;
   }
   #award-description {

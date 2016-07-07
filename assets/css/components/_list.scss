@@ -1,6 +1,16 @@
+ol.list {
+  list-style: decimal;
+  margin-left: 2rem;
+  padding: 0;
+  > li {
+    list-style: decimal;
+  }
+}
+
 ul.list {
   list-style: disc;
   margin-left: 2rem;
+  padding: 0;
   > li {
     list-style: disc;
   }

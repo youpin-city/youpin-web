@@ -1,6 +1,6 @@
 {
   "name": "youpin-web",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "YouPin on the web",
   "main": "index.js",
   "scripts": {
@@ -15,10 +15,8 @@
     "watch:js": "parallelshell \"watchify assets/js/main.js --debug --verbose -t [ babelify ] -o 'exorcist public/js/main.js.map > public/js/main.js'\" \"watchify assets/js/dep.js --debug --verbose -t [ babelify ] -o 'exorcist public/js/dep.js.map > public/js/dep.js'\"",
     "build:tag": "echo '=> build:tag' && riot --template pug --style scss assets/templates/ public/js/tag.build.js && babel public/js/tag.build.js --compact false -o public/js/tag.js && uglifyjs public/js/tag.js -c -m -o public/js/tag.min.js && rm -f public/js/tag.build.js",
     "watch:tag": "touch public/js/tag.build.js && parallelshell \"riot --template pug --style scss --watch assets/templates/ public/js/tag.build.js\" \"babel public/js/tag.build.js --compact false --watch -o public/js/tag.js\"",
-    "prebuild": "npm run clean -s && npm run test -s",
     "build": "echo '=> building...' && npm run build:tag -s && npm run build:css -s && npm run build:js -s",
-    "watch": "parallelshell 'npm run watch:tag -s' 'npm run watch:css -s' 'npm run watch:js -s'",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "watch": "parallelshell 'npm run watch:tag -s' 'npm run watch:css -s' 'npm run watch:js -s'"
   },
   "repository": {
     "type": "git",
@@ -61,6 +59,7 @@
     "eslint-config-airbnb": "^9.0.1",
     "exorcist": "^0.4.0",
     "jquery": "^2.2.1",
+    "leaflet": "^0.7.7",
     "materialize-css": "^0.97.6",
     "node-sass": "^3.7.0",
     "parallelshell": "^2.0.0",

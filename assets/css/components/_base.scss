@@ -7,6 +7,7 @@ html {
   // Font size with rem unit
   // @see http://snook.ca/archives/html_and_css/font-size-with-rem
   font-size: 62.5%;
+  font-family: $ff-default;
   margin: 0;
   padding: 0;
 }
@@ -63,10 +64,11 @@ strong {
 
 footer.page-footer {
   color: $cl-white;
-  // font-size: $fs-xs;
+  font-size: $fs-xs;
   padding: 20px 0;
   a {
     color: $cl-white;
+    text-decoration: underline;
   }
   .colophon {
     text-align: center;

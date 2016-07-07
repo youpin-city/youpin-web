@@ -3,7 +3,7 @@ extends layouts/layout
 append content
 
   #page-home
-    map-box(zoom='false')
+    map-box(options-zoom-control='false', options-scroll-wheel-zoom='false', options-double-click-zoom='false', options-touch-zoom='false', options-tap='false', options-keyboard='false')
 
     #floating-logo
       .logo
@@ -15,15 +15,15 @@ append content
         #hero-slogan Transforming Passive to Active Citizen
 
         .row
-          .col.s12.m6.offset-m3.l4.offset-l4
-            a.btn.btn-large.btn-block.waves-effect.waves-light(href='https://www.facebook.com/youpin.city/') Follow Us on Facebook
+          .col.s12.m6.offset-m3.l6.offset-l3
+            a.btn.btn-large.btn-block.waves-effect.waves-light(href='https://www.facebook.com/youpin.city/', target='_blank') Follow Us on Facebook
             .spacing-small
-            .btn.btn-flat.btn-large.btn-block.disabled เริ่มพิน *
+            .btn.btn-flat.btn-large.btn-block.disabled เริ่มพิน ＊
             .spacing-small
-            .btn.btn-flat.btn-large.btn-plain.btn-block.disabled For Developers *
+            .btn.btn-flat.btn-large.btn-plain.btn-block.disabled For Developers ＊
 
         .row
-          .col.s12.center * พบกันเร็วๆ นี้
+          .col.s12.center ＊ พบกันเร็ว ๆ นี้
 
     #trending-pin.clearfix
       .card-carousel
@@ -39,64 +39,88 @@ append content
                   for tag in pin.tag
                     a.tag-item(href=('#!tag/' + tag)) #{tag}
 
-              .card-meta
-                .meta.meta-time.left= moment(pin.created_at).fromNow()
-                .meta.meta-status.right(data-status=pin.status)= pin.status_text
               .card-stat
-                .meta.meta-view.left
-                  i.icon.material-icons.tiny show_chart
-                  | #{pin.view_count}
                 .meta.meta-like.left
                   i.icon.material-icons.tiny favorite
-                  | #{pin.like_count}
-                .meta.meta-comment.left
-                  i.icon.material-icons.tiny comment
-                  | #{pin.comment_count}
+                  | เห็นด้วย #{pin.like_count} คน
+                //- .meta.meta-view.left
+                //-   i.icon.material-icons.tiny show_chart
+                //-   | #{pin.view_count}
+                //- .meta.meta-like.left
+                //-   i.icon.material-icons.tiny favorite
+                //-   | #{pin.like_count}
+                //- .meta.meta-comment.left
+                //-   i.icon.material-icons.tiny comment
+                //-   | #{pin.comment_count}
+              .card-meta
+                .meta.meta-time.right= moment(pin.created_at).fromNow()
+                .meta.meta-status.left(data-status=pin.status)= pin.status_text
 
     #story.container.clearfix
       .row
-        .col.s12.m6
+        .col.s12.m5
           img.responsive-img(src='https://d4z6dx8qrln4r.cloudfront.net/image-577cda44aa379-default.jpeg')
-        .col.s12.m6
-          h2.section-name Bangkok Urban Hack Day
+        .col.s12.m6.offset-m1
+          h2.section-name Bangkok Urban Hack (แหก) Day
           h3.subsection-name มาร่วม Hack เมืองให้น่าอยู่กัน
 
-          p Bangkok Urban Hack Day คือวันที่เหล่า Active Citizen ที่ ต้องการเปลี่ยนแปลงเมืองให้น่าอยู่ มาช่วยกันลงความคิด ออกแบบ พัฒนาเครื่องมือทางเทคโนโลยีที้ช่วยแก้ปัญหาของเมือง ไม่ว่าจะอยู่ บน Web หรือ Mobile ทั้งปัญหาจราจรสิ่งแวดล้อมขยะ สวนสาธารณะ เมืองที่ไม่เอื้อต่อคนพิการ และ คนแก่ โดยจะใช้เวลา 30 ชั่วโมงในสุดสัปดาห์สร้างต้นแบบที่จะนําไปแก้ปัญหาได้จริง
-          p Bangkok Urban Hack Day ต้องการนักพัฒนาซอฟแวร์ นัก ออกแบบ นักการตลาด มาช่วยกันทํางานกับทีมที่ได้รับรางวัลจาก สํานักงานโครงการพัฒนาแห่งสหประชาชาติ (UNDP) อย่าง Youpin Open Platform (youpin.city) ระบบที่สนับสนุนให้ทุกคนเป็น Active Citizen ผ่านเครือข่าย Big Data งานจะเริม่ จากเย็นวันศุกร์ที่ ทุกคนมาร่วมกันออกความคิดที่จะใช้แก้ปัญหาเมืองต่อจากนั้นก็ตั้งต้นทําโครงการ Tech สนุกๆ โดยมีผู้เชี่ยวชาญคอยให้ข้อมูลเชิงลึก เกี่ยวกับปัญหาเมืองด้านต่าง ๆ และคําปรึกษาในการทําโครงการ และ ช่องทางการเข้าถึง Data กรุงเทพมหาครในด้านต่าง ๆ จนกระทั่ง สร้างต้นแบบ และ นําเสนอผลงานกับกรรมการจากหน่วยงานต่าง ๆ เพื่อรับรางวัลที่จะเป็นทุนในการพัฒนาผลงานให้สมบูรณ์
-          p Bangkok Urban Hack Day จัดร่วมกับ โครงการพัฒนาแห่ง สหประชาชาติ (UNDP), ศูนย์สร้างสรรค์งานออกแบบ TCDC, บุญมี แล็บ, Social Technology Institute และ สํานักงานรัฐบาล อิเล็กทรอนิกส์ (องค์การมหาชน)
+          p งานเดียวที่นำเอา Designer, Developer, Thinker, Media และ Marketer ที่เก่งกาจในการแก้ปัญหา  มาเจอกับคนที่รู้ปัญหา เพื่อร่วมระดมสมองและลงมือสร้างนวัตกรรมต้นแบบ ในรูปแบบ Hackathon โดยใช้เทคโนโลยีและพลังของ Big Data ตลอด 30 ชั่วโมง!
+
+          h4 เวลางาน
+          table.highlight.striped
+            tbody
+              tr
+                td(style='width: 160px;') ศุกร์ 29 กรกฎาคม :
+                td เริ่มงาน 18.00 น.
+              tr
+                td เสาร์ 30 กรกฎาคม :
+                td 10.00 - 21.00 น.
+              tr
+                td อาทิตย์ 31 กรกฎาคม :
+                td 10.00 - 19.00 น.
+
+      .row
+        .col.s12.m5
+          h4 การสมัคร
+          ul.list
+            li หมดเขตการลงทะเบียน 20 กรกฎาคม 2559
+            li รับจำนวนจำกัดทั้งหมดไม่เกิน 30 คน (ขอเฉพาะที่ตั้งใจจริง ๆ)
+            li มาเป็นทีม 2-4 คน หรือ มาเดี่ยว ๆ (เราจะจัดกลุ่มให้) พร้อมตอบคำถามในใบสมัคร
+            li ไอเดียที่เรามองหา คือ
+              ol.list
+                li ด้านการเดินทาง ระบบขนส่ง ถนน ทางเท้า
+                li ด้านการออกแบบเพื่อมวลชน (Universal Design) เช่น ผู้สูงอายุ คนพิการ
+                li มลภาวะและสิ่งแวดล้อม เช่น ต้นไม้ พื้นที่สีเขียว
+                li ชุมชนและการมีส่วนร่วม เช่น การอนุรักษ์อาคารเก่าในชุมชน
+                li ผังเมืองและการจัดสรรพื้นที่
+          p โดยเราได้เชิญกลุ่มผู้เชี่ยวชาญตามสาขาดังกล่าวมาให้คำปรึกษาในงาน และเป็นโอกาสที่ดีในการพบปะแลกเปลี่ยนมุมมองกับผู้มีประสบการณ์ในการเปลี่ยนเมืองด้านต่าง ๆ เพื่อต่อยอดและเรียนรู้จากคนที่เคยผ่านมาแล้ว
+          p ＊ สำหรับผู้ที่ต้องการสังเกตการณ์หรือสื่อมวลชน สามารถลงทะเบียนได้ที่ช่องทางเดียวกัน (เลือกหัวข้อ "มาสังเกตการณ์")
+
+        .col.s12.m6.offset-m1
+          h4 การประกาศผล
+          p วันที่ 22 กรกฎาคม 2559 ทาง <a href='https://www.facebook.com/youpin.city/', target='_blank'>เพจยุพิน YouPin</a> และ <a href='http://www.tcdcconnect.com/' target='_blank'>TCDC CONNECT</a>
 
           h4 การคัดเลือกและรางวัล
-
-          p คัดเลือกทีมที่ผลงานดีที่สุด 2 ทีม โดยคัดเลือกจากกรรมการและผู้ร่วมงาน
+          h5: strong คัดเลือกทีมที่ผลงานดีที่สุด 2 ทีม
+          p โดยคัดเลือกจากกรรมการและผู้ร่วมงาน
 
           ul.list
             li ให้รางวัลทีมละ 10,000 บาท
             li ให้เวลาทำงานต่อ 1 เดือน โดยมีทีมที่ปรึกษาจากทีม YouPin, TCDC และทีมที่ปรึกษา ทำเสร็จมารับอีก 20,000
-            li ใช้สถานที่ (ห้องประชุม ทำงาน)  Ma:D ฟรี ระหว่างการพัฒนา
+            li ใช้สถานที่ (ห้องประชุม ทำงาน) Ma:D ฟรี ระหว่างการพัฒนา
             li บัตรสมาชิก TCDC (สาขาเจริญกรุง แห่งใหม่) ฟรี
             li ผลงานถูกนำไปเผยแพร่บน Waymagazine.org และ TCDC CONNECT
 
-
-          h4 รางวัลสำหรับทุกท่านที่ร่วมแหก (Hack)
-
+          h5: strong ของรางวัลสำหรับทุกท่านที่ร่วม Hack (แหก)
           ul.list
             li ชุดหนังสือพิเศษจาก TCDC และ ของชำร่วยจาก UNDP
             li จัดแสดงผลงานที่ TCDC (8-21 สิงหาคม 2559)
             li จัดแสดงในงาน Sleep Over ที่ The Reading Room (ตลอดเดือนกันยายน)
             li มีเครดิตเป็นผู้ร่วมพัฒนา YouPin
 
-          h4 ผู้เชี่ยวชาญในงาน (Hack Mentor)
-
-          ul.list
-            li ด้านการเดินทาง ระบบขนส่ง ถนน ทางเท้า
-            li ด้านการออกแบบเพื่อมวลชน(Universal Design) เช่น ผู้สูงอายุ คนพิการ
-            li มลภาวะและสิ่งแวดล้อม เช่น ต้นไม้ พื้นที่สีเขียว
-            li ชุมชนและการมีส่วนร่วม เช่น การอนุรักษ์อาคารเก่าในชุมชน
-            li ผังเมืองและการจัดสรรพื้นที่
-
-          .row
-            .col.s12.m6.offset-m3
-              a.btn.btn-large.btn-block.waves-effect.waves-light(href='https://bkkurbanhackday.typeform.com/to/kp2FIU', target='_blank') สมัคร
+      .row
+        .col.s12.m6.offset-m3
+          a.btn.btn-large.btn-block.waves-effect.waves-light(href='https://bkkurbanhackday.typeform.com/to/kp2FIU', target='_blank') สมัครเพื่อร่วม Hack เมือง
 
     .fluid-container.alt-container
       .container

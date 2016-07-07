@@ -37,11 +37,9 @@ App.prototype.set = function (key, value) {
 };
 App.prototype.start = function (should_start_route) {
   var self = this;
-
   // start riot tags
   riot.mount('*');
-
-  console.log('App started');
+  // console.log('App started');
 };
 
 module.exports = App;
