@@ -15,10 +15,15 @@ append content
         #hero-slogan Transforming Passive to Active Citizen
 
         .row
-          .col.m6.offset-m3.l4.offset-l4
-            .btn.btn-flat.btn-large.btn-block.disabled เริ่มพิน (Coming Soon)
+          .col.s12.m6.offset-m3.l4.offset-l4
+            a.btn.btn-large.btn-block.waves-effect.waves-light(href='https://www.facebook.com/youpin.city/') Follow Us on Facebook
             .spacing-small
-            .btn.btn-flat.btn-large.btn-plain.btn-block.disabled สำหรับนักพัฒนา (Coming Soon)
+            .btn.btn-flat.btn-large.btn-block.disabled เริ่มพิน *
+            .spacing-small
+            .btn.btn-flat.btn-large.btn-plain.btn-block.disabled For Developers *
+
+        .row
+          .col.s12.center * พบกันเร็วๆ นี้
 
     #trending-pin.clearfix
       .card-carousel
@@ -50,9 +55,9 @@ append content
 
     #story.container.clearfix
       .row
-        .col.s6
+        .col.s12.m6
           img.responsive-img(src='https://d4z6dx8qrln4r.cloudfront.net/image-577cda44aa379-default.jpeg')
-        .col.s6
+        .col.s12.m6
           h2.section-name Bangkok Urban Hack Day
           h3.subsection-name มาร่วม Hack เมืองให้น่าอยู่กัน
 
@@ -72,15 +77,15 @@ append content
             li ผลงานถูกนำไปเผยแพร่บน Waymagazine.org และ TCDC CONNECT
 
 
-          p รางวัลสำหรับทุกท่านที่ร่วมแหก
+          h4 รางวัลสำหรับทุกท่านที่ร่วมแหก (Hack)
 
-          ul
+          ul.list
             li ชุดหนังสือพิเศษจาก TCDC และ ของชำร่วยจาก UNDP
             li จัดแสดงผลงานที่ TCDC (8-21 สิงหาคม 2559)
             li จัดแสดงในงาน Sleep Over ที่ The Reading Room (ตลอดเดือนกันยายน)
             li มีเครดิตเป็นผู้ร่วมพัฒนา YouPin
 
-          p ผู้เชี่ยวชาญในงาน (Hack Mentor)
+          h4 ผู้เชี่ยวชาญในงาน (Hack Mentor)
 
           ul.list
             li ด้านการเดินทาง ระบบขนส่ง ถนน ทางเท้า
@@ -90,13 +95,13 @@ append content
             li ผังเมืองและการจัดสรรพื้นที่
 
           .row
-            .col.m6.offset-m3
-              a.btn.btn-large.btn-block.waves-effect.eaves-light(href='https://bkkurbanhackday.typeform.com/to/kp2FIU', target='_blank') สมัคร
+            .col.s12.m6.offset-m3
+              a.btn.btn-large.btn-block.waves-effect.waves-light(href='https://bkkurbanhackday.typeform.com/to/kp2FIU', target='_blank') สมัคร
 
     .fluid-container.alt-container
       .container
         .row
-          .col.m6.offset-m3
+          .col.s12.m6.offset-m3
             img#award-image(src=site_url('/public/image/winner@2x.png'))
             #award-name Winner
             #award-subtitle Country Prize
@@ -104,7 +109,8 @@ append content
             .spacing
 
     .container
-      .center ร่วมกันจัดทำโดย
+      .center
+        strong ร่วมกันจัดทำโดย
 
       //- tcdc, connect, undp, bml, social, thianet, hhs, way, urbanwhy, volunteer, mad, readingroom, changefusion
       ul.partner-list.clearfix
@@ -125,7 +131,7 @@ append content
             img.responsive-img(src=site_url('/public/image/partner/BML@2x.png'))
 
         li
-          a(href='http://changefusion.org/')
+          a(href='http://socialtech.or.th/')
             img.responsive-img(src=site_url('/public/image/partner/STI@2x.png'))
 
         li

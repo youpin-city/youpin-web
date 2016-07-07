@@ -24,4 +24,8 @@ else root = {};
 
   // slick
   require('slick-carousel');
+
+  // leaflet plugins
+  window.L = require('leaflet');
+  window.L.Google = require('./dep/leaflet-google');
 }(root));

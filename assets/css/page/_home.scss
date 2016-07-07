@@ -72,6 +72,12 @@
         overflow: hidden;
       }
     }
+    @media #{$small-and-down} {
+      .card {
+        width: 100%;
+        max-width: 100%;
+      }
+    }
   }
 
   #story {
@@ -86,6 +92,7 @@
     text-align: center;
   }
   #award-name {
+    font-family: $ff-header;
     font-size: $fs-h1;
     color: $cl-primary;
     text-transform: uppercase;
@@ -93,6 +100,7 @@
     line-height: 1;
   }
   #award-subtitle {
+    font-family: $ff-header;
     font-size: $fs-h4;
     color: $cl-darkgray;
     font-weight: $fw-black;
@@ -111,6 +119,12 @@
       a {
         display: inline-block;
         width: 100%;
+      }
+    }
+
+    @media #{$small-and-down} {
+      > li {
+        width: 50%;
       }
     }
   }

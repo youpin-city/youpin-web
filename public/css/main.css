@@ -10486,6 +10486,10 @@ i.tiny {
   font-size: 1.3rem;
 }
 
+strong {
+  font-weight: 900;
+}
+
 footer.page-footer {
   color: #ffffff;
   padding: 20px 0;
@@ -10504,8 +10508,17 @@ footer.page-footer .colophon .item {
   margin-right: 5px;
 }
 
+.section-name {
+  font-family: "Athiti", "Prompt", "Helvetica", "Arial", "Thonburi", "Tahoma", sans-serif !important;
+  color: #009de0;
+}
+
 .btn-block {
   width: 100%;
+}
+
+.btn-large {
+  font-size: 1.7rem;
 }
 
 .btn-plain {
@@ -11194,6 +11207,13 @@ a.slick-slide {
   overflow: hidden;
 }
 
+@media only screen and (max-width: 600px) {
+  #app[data-page='home'] .card-carousel .card {
+    width: 100%;
+    max-width: 100%;
+  }
+}
+
 #app[data-page='home'] #story {
   padding: 4rem 0;
 }
@@ -11207,6 +11227,7 @@ a.slick-slide {
 }
 
 #app[data-page='home'] #award-name {
+  font-family: "Athiti", "Prompt", "Helvetica", "Arial", "Thonburi", "Tahoma", sans-serif !important;
   font-size: 4rem;
   color: #009de0;
   text-transform: uppercase;
@@ -11215,6 +11236,7 @@ a.slick-slide {
 }
 
 #app[data-page='home'] #award-subtitle {
+  font-family: "Athiti", "Prompt", "Helvetica", "Arial", "Thonburi", "Tahoma", sans-serif !important;
   font-size: 2rem;
   color: #5d5d5d;
   font-weight: 900;
@@ -11234,6 +11256,12 @@ a.slick-slide {
 #app[data-page='home'] ul.partner-list > li a {
   display: inline-block;
   width: 100%;
+}
+
+@media only screen and (max-width: 600px) {
+  #app[data-page='home'] ul.partner-list > li {
+    width: 50%;
+  }
 }
 
 #app[data-page='app'] .page-footer {

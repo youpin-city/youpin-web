@@ -56,6 +56,10 @@ i {
   }
 }
 
+strong {
+  font-weight: $fw-black;
+}
+
 
 footer.page-footer {
   color: $cl-white;
@@ -71,4 +75,10 @@ footer.page-footer {
       margin-right: 5px;
     }
   }
+}
+
+
+.section-name {
+  font-family: $ff-header;
+  color: $cl-primary;
 }
