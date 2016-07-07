@@ -1,0 +1,9 @@
+.btn-block {
+  width: 100%;
+}
+
+
+.btn-plain {
+  color: $cl-darkgray;
+  @include background-hover($cl-lightgray, lighten($cl-lightgray, 4%));
+}

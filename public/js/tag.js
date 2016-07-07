@@ -1,5 +1,64 @@
 'use strict';
 
+riot.tag2('map-box', '<div class="map-box-container" id="{id}-container"> <div class="map-box-widget" id="{id}"></div> </div>', 'map-box .map-box-container,[riot-tag="map-box"] .map-box-container,[data-is="map-box"] .map-box-container{ position: relative; width: 100%; height: 400px; } map-box .map-box-container .map-box-widget,[riot-tag="map-box"] .map-box-container .map-box-widget,[data-is="map-box"] .map-box-container .map-box-widget{ position: absolute; top: 0; bottom: 0; left: 0; right: 0; } map-box .leaflet-map-pane,[riot-tag="map-box"] .leaflet-map-pane,[data-is="map-box"] .leaflet-map-pane{ z-index: 2 !important; } map-box .leaflet-google-layer,[riot-tag="map-box"] .leaflet-google-layer,[data-is="map-box"] .leaflet-google-layer{ z-index: 1 !important; }', '', function (opts) {
+  var self = this;
+  self.id = 'map-box-' + util.uniqueId();
+
+  self.map = null;
+  self.map_options = {
+    zoomControl: opts.zoom !== 'false'
+  };
+  self.location = null;
+
+  self.DEFAULT_LOCATION = { lat: 13.7302295, lng: 100.5724075 };
+  self.YPIcon = L.icon({
+    iconUrl: util.site_url('/public/image/marker-m.png'),
+    iconSize: [32, 51],
+    iconAnchor: [16, 48],
+    popupAnchor: [0, -51]
+  });
+
+  self.on('mount', function () {
+    createMap();
+  });
+  self.on('unmount', function () {});
+  self.on('update', function () {});
+  self.on('updated', function () {});
+
+  function createMap() {
+    if (self.map) destroyMap();
+
+    self.map = L.map(self.id, self.map_options);
+    self.map.locate({ setView: true, maxZoom: 16 });
+    self.map.on('locationfound', function (e) {
+      updateMarkerLocation(self.map.getCenter());
+    });
+    self.map.on('locationerror', function (err) {
+      console.error(err.message);
+      self.map.setView(_.values(self.DEFAULT_LOCATION), 16);
+    });
+
+    var googleLayer = new L.Google('ROADMAP');
+    self.map.addLayer(googleLayer);
+
+    self.map_marker = L.marker([self.DEFAULT_LOCATION.lat, self.DEFAULT_LOCATION.lng], { icon: self.YPIcon }).bindPopup('ที่นี่มีหลุมบ่อ น้ำท่วมขังบ่อย ส่งกลิ่นเหม็นทุกเย็นเลย').addTo(self.map);
+
+    self.map.on('drag', _.throttle(function () {
+      updateMarkerLocation(self.map.getCenter());
+    }, 100));
+    self.map.on('dragend', function (e) {
+      updateMarkerLocation(self.map.getCenter());
+    });
+  }
+
+  function destroyMap() {
+    if (self.map) {
+      self.map.remove();
+      delete self.map;
+    }
+  }
+});
+
 riot.tag2('page-report', '<div class="modal bottom-sheet full-sheet" id="report-input-modal"> <div class="modal-header"> <nav> <ul class="left"> <li><a class="modal-action modal-close" href="#!">ยกเลิก</a></li> </ul> <div class="center"><a class="brand-logo" href="#"></a> <div class="modal-title">ใส่ข้อมูล</div> </div> <ul class="right"> <li><a href="#!" onclick="{clickSubmitReport}">ปักพิน</a></li> </ul> </nav> </div> <div class="modal-content no-padding"> <form> <div class="card"> <div class="card-image"> <div class="slider-container"> <div class="image-slider" id="photo-slider"> <div class="slider-item" each="{photo, i in photos}" data-i="{i}"><a class="image-item" data-i="{i}" href="#!" onclick="{clickPhoto}"> <div class="image" riot-style="background-image: url(&quot;{util.site_url(photo.url)}&quot;)"></div></a></div> </div> </div> </div> <div class="card-content"> <div class="input-field"><i class="icon material-icons prefix">chat_bubble_outline</i> <input class="validate" type="text" name="name" placeholder="ตั้งชื่อพิน"> </div> <div class="input-field"><i class="icon material-icons prefix">place</i> <input class="validate" type="text" name="location" placeholder="ใส่ตำแหน่ง" value="{location_text}" readonly onfocus="{clickLocation}"> </div> <div class="input-field"><i class="icon material-icons prefix">style</i> <input class="validate" type="text" name="category" placeholder="หมวด"> </div> <div class="input-field"><i class="icon material-icons prefix">local_offer</i> <input class="validate" type="text" name="tag" placeholder="แท็ก"> </div> </div> </div> </form> </div> </div> <div class="modal bottom-sheet full-sheet" id="report-photo-modal"> <div class="modal-header"> <nav> <ul class="left"> <li><a class="modal-action modal-close" href="#!"><i class="icon material-icons">arrow_back</i></a></li> </ul> <div class="center"><a class="brand-logo" href="#"></a> <div class="modal-title">ใส่ภาพถ่าย</div> </div> </nav> </div> <div class="modal-content no-padding"> <div class="row card-list"> <div class="col s12 m6 l4" each="{photo, i in photos}"> <div class="card" data-i="{i}"> <div class="card-image"><img riot-src="{util.site_url(photo.url)}"></div> <div class="card-content"> <div class="input-field"> <input class="validate" type="text" name="photo[{i}][text]" value="{photo.text}" placeholder="ใส่คำอธิบาย" data-i="{i}" onchange="{changePhotoText}"> </div> </div> </div> </div> <div class="col s12 m6 l4"> <div class="card"> <div class="card-image"> <div class="drop-image-preview hide"></div> <div class="card-title center drop-image valign-wrapper" name="dropzone-el"><i class="icon material-icons">photo_camera</i>เพิ่มรูป</div> </div> </div> </div> </div> </div> </div> <div class="modal bottom-sheet full-sheet" id="report-map-modal"> <div class="modal-header"> <nav> <ul class="left"> <li><a class="modal-action modal-close" href="#!"><i class="icon material-icons">check</i></a></li> </ul> <div class="center"><a class="brand-logo" href="#"></a> <div class="modal-title">ใส่ตำแหน่ง</div> </div> <ul class="right"> <li><a href="#!" onclick="{setMapLocationByGeolocation}"><i class="icon material-icons">gps_fixed</i></a></li> </ul> </nav> </div> <div class="modal-content no-padding"> <div class="input-location-map" id="input-location-map"></div> </div> </div> <div class="modal" id="report-uploading-modal"> <div class="modal-content"> <div class="progress"> <div class="indeterminate"></div> </div> <h4 class="center">กำลังอัพโหลด</h4> </div> </div> <div class="modal" id="report-saving-modal"> <div class="modal-content"> <div class="progress"> <div class="indeterminate"></div> </div> <h4 class="center">กำลังพิน</h4> </div> </div>', 'page-report .input-location-map,[riot-tag="page-report"] .input-location-map,[data-is="page-report"] .input-location-map{ position: absolute; top: 0; bottom: 0; left: 0; right: 0; } page-report .leaflet-map-pane,[riot-tag="page-report"] .leaflet-map-pane,[data-is="page-report"] .leaflet-map-pane{ z-index: 2 !important; } page-report .leaflet-google-layer,[riot-tag="page-report"] .leaflet-google-layer,[data-is="page-report"] .leaflet-google-layer{ z-index: 1 !important; }', '', function (opts) {
   var self = this;
 

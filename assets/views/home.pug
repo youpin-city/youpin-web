@@ -2,83 +2,164 @@ extends layouts/layout
 
 append content
 
-  #page-app
-    #feed.tab-bar-view
-      .fluid-container
-        h4.center พินรอบตัว
-        .card-list.row
-          for card in feeds
-            .col.s12.m6.l4
-              .card
-                .card-image
-                  if card.photo && card.photo.length > 0
-                    img(src=card.photo[0])
-                  else
-                    .empty-image.valign-wrapper(data-accent=(_.random(1,4)))
-                      .valign
-                        i.icon.material-icons directions_run
-                        i.icon.material-icons directions_bike
-                        i.icon.material-icons directions_car
-                        i.icon.material-icons directions_subway
-                        i.icon.material-icons directions_boat
-                        i.icon.material-icons directions_bus
-                        i.icon.material-icons local_shipping
-                        i.icon.material-icons directions_train
-                .card-content
-                  .card-description
-                    .card-author
-                      a(href='#!user/' + card.author) @#{card.author}
-                    .card-text #{card.name}
-                    if card.tag && card.tag.length > 0
-                      for tag in card.tag
-                        a.tag-item(href=('#!tag/' + tag)) #{tag}
+  #page-home
+    map-box(zoom='false')
 
-                  .card-meta
-                    .meta.meta-time.left= moment(card.created_at).fromNow()
-                    .meta.meta-status.right(data-status=card.status)= card.status
-                  .card-stat
-                    .meta.meta-view.left
-                      i.icon.material-icons.tiny show_chart
-                      | #{card.view_count}
-                    .meta.meta-like.left
-                      i.icon.material-icons.tiny favorite
-                      | #{card.like_count}
-                    .meta.meta-comment.left
-                      i.icon.material-icons.tiny comment
-                      | #{card.comment_count}
+    #floating-logo
+      .logo
 
-    #search.tab-bar-view
+    .container
+      #hero
+        #hero-logo
+        #hero-subtitle พินปัญหา พินความเห็น พินตำแหน่ง พินที่ "ยุพิน"
+        #hero-slogan Transforming Passive to Active Citizen
+
+        .row
+          .col.m6.offset-m3.l4.offset-l4
+            .btn.btn-flat.btn-large.btn-block.disabled เริ่มพิน (Coming Soon)
+            .spacing-small
+            .btn.btn-flat.btn-large.btn-plain.btn-block.disabled สำหรับนักพัฒนา (Coming Soon)
+
+    #trending-pin.clearfix
+      .card-carousel
+        for pin in trending_pins
+          .card
+            .card-image(style='background-image: url(' + pin.photo[0] + ');')
+            .card-content
+              .card-description
+                .card-author
+                  a(href='#!user/' + pin.author) @#{pin.author}
+                .card-text #{pin.name}
+                if pin.tag && pin.tag.length > 0
+                  for tag in pin.tag
+                    a.tag-item(href=('#!tag/' + tag)) #{tag}
+
+              .card-meta
+                .meta.meta-time.left= moment(pin.created_at).fromNow()
+                .meta.meta-status.right(data-status=pin.status)= pin.status_text
+              .card-stat
+                .meta.meta-view.left
+                  i.icon.material-icons.tiny show_chart
+                  | #{pin.view_count}
+                .meta.meta-like.left
+                  i.icon.material-icons.tiny favorite
+                  | #{pin.like_count}
+                .meta.meta-comment.left
+                  i.icon.material-icons.tiny comment
+                  | #{pin.comment_count}
+
+    #story.container.clearfix
+      .row
+        .col.s6
+          img.responsive-img(src='https://d4z6dx8qrln4r.cloudfront.net/image-577cda44aa379-default.jpeg')
+        .col.s6
+          h2.section-name Bangkok Urban Hack Day
+          h3.subsection-name มาร่วม Hack เมืองให้น่าอยู่กัน
+
+          p Bangkok Urban Hack Day คือวันที่เหล่า Active Citizen ที่ ต้องการเปลี่ยนแปลงเมืองให้น่าอยู่ มาช่วยกันลงความคิด ออกแบบ พัฒนาเครื่องมือทางเทคโนโลยีที้ช่วยแก้ปัญหาของเมือง ไม่ว่าจะอยู่ บน Web หรือ Mobile ทั้งปัญหาจราจรสิ่งแวดล้อมขยะ สวนสาธารณะ เมืองที่ไม่เอื้อต่อคนพิการ และ คนแก่ โดยจะใช้เวลา 30 ชั่วโมงในสุดสัปดาห์สร้างต้นแบบที่จะนําไปแก้ปัญหาได้จริง
+          p Bangkok Urban Hack Day ต้องการนักพัฒนาซอฟแวร์ นัก ออกแบบ นักการตลาด มาช่วยกันทํางานกับทีมที่ได้รับรางวัลจาก สํานักงานโครงการพัฒนาแห่งสหประชาชาติ (UNDP) อย่าง Youpin Open Platform (youpin.city) ระบบที่สนับสนุนให้ทุกคนเป็น Active Citizen ผ่านเครือข่าย Big Data งานจะเริม่ จากเย็นวันศุกร์ที่ ทุกคนมาร่วมกันออกความคิดที่จะใช้แก้ปัญหาเมืองต่อจากนั้นก็ตั้งต้นทําโครงการ Tech สนุกๆ โดยมีผู้เชี่ยวชาญคอยให้ข้อมูลเชิงลึก เกี่ยวกับปัญหาเมืองด้านต่าง ๆ และคําปรึกษาในการทําโครงการ และ ช่องทางการเข้าถึง Data กรุงเทพมหาครในด้านต่าง ๆ จนกระทั่ง สร้างต้นแบบ และ นําเสนอผลงานกับกรรมการจากหน่วยงานต่าง ๆ เพื่อรับรางวัลที่จะเป็นทุนในการพัฒนาผลงานให้สมบูรณ์
+          p Bangkok Urban Hack Day จัดร่วมกับ โครงการพัฒนาแห่ง สหประชาชาติ (UNDP), ศูนย์สร้างสรรค์งานออกแบบ TCDC, บุญมี แล็บ, Social Technology Institute และ สํานักงานรัฐบาล อิเล็กทรอนิกส์ (องค์การมหาชน)
+
+          h4 การคัดเลือกและรางวัล
+
+          p คัดเลือกทีมที่ผลงานดีที่สุด 2 ทีม โดยคัดเลือกจากกรรมการและผู้ร่วมงาน
+
+          ul.list
+            li ให้รางวัลทีมละ 10,000 บาท
+            li ให้เวลาทำงานต่อ 1 เดือน โดยมีทีมที่ปรึกษาจากทีม YouPin, TCDC และทีมที่ปรึกษา ทำเสร็จมารับอีก 20,000
+            li ใช้สถานที่ (ห้องประชุม ทำงาน)  Ma:D ฟรี ระหว่างการพัฒนา
+            li บัตรสมาชิก TCDC (สาขาเจริญกรุง แห่งใหม่) ฟรี
+            li ผลงานถูกนำไปเผยแพร่บน Waymagazine.org และ TCDC CONNECT
+
+
+          p รางวัลสำหรับทุกท่านที่ร่วมแหก
+
+          ul
+            li ชุดหนังสือพิเศษจาก TCDC และ ของชำร่วยจาก UNDP
+            li จัดแสดงผลงานที่ TCDC (8-21 สิงหาคม 2559)
+            li จัดแสดงในงาน Sleep Over ที่ The Reading Room (ตลอดเดือนกันยายน)
+            li มีเครดิตเป็นผู้ร่วมพัฒนา YouPin
+
+          p ผู้เชี่ยวชาญในงาน (Hack Mentor)
+
+          ul.list
+            li ด้านการเดินทาง ระบบขนส่ง ถนน ทางเท้า
+            li ด้านการออกแบบเพื่อมวลชน(Universal Design) เช่น ผู้สูงอายุ คนพิการ
+            li มลภาวะและสิ่งแวดล้อม เช่น ต้นไม้ พื้นที่สีเขียว
+            li ชุมชนและการมีส่วนร่วม เช่น การอนุรักษ์อาคารเก่าในชุมชน
+            li ผังเมืองและการจัดสรรพื้นที่
+
+          .row
+            .col.m6.offset-m3
+              a.btn.btn-large.btn-block.waves-effect.eaves-light(href='https://bkkurbanhackday.typeform.com/to/kp2FIU', target='_blank') สมัคร
+
+    .fluid-container.alt-container
       .container
-        h4 ค้นหา
-    #noti.tab-bar-view
-      .container
-        h4 ข้อความ
-    #account.tab-bar-view
-      .container
-        h4 โปรไฟล์
+        .row
+          .col.m6.offset-m3
+            img#award-image(src=site_url('/public/image/winner@2x.png'))
+            #award-name Winner
+            #award-subtitle Country Prize
+            #award-description Big Ideas Competition<br> for Sustainable Cities and Urban Communities 2016
+            .spacing
 
-    page-report(target='#report-btn')
+    .container
+      .center ร่วมกันจัดทำโดย
 
+      //- tcdc, connect, undp, bml, social, thianet, hhs, way, urbanwhy, volunteer, mad, readingroom, changefusion
+      ul.partner-list.clearfix
+        li
+          a(href='http://www.tcdc.or.th')
+            img.responsive-img(src=site_url('/public/image/partner/TCDC@2x.png'))
 
-prepend footer
+        li
+          a(href='http://www.tcdcconnect.com')
+            img.responsive-img(src=site_url('/public/image/partner/TCDCCN@2x.png'))
 
-  footer.tab-bar
-    ul.tabs
-      li.tab.col.s3
-        a(href='#feed')
-          i.icon.material-icons home
-      li.tab.col.s3
-        a(href='#search')
-          i.icon.material-icons search
-      li.tab.col.s3
-        a#report-btn(href='#report')
-          img(src=site_url('/public/image/marker-s.png'))
-      li.tab.col.s3
-        a(href='#noti')
-          i.icon.material-icons notifications
-      li.tab.col.s3
-        a(href='#account')
-          i.icon.material-icons face
+        li
+          a(href='http://www.th.undp.org/')
+            img.responsive-img(src=site_url('/public/image/partner/UNDP@2x.png'))
+
+        li
+          a(href='http://www.boonmeelab.com')
+            img.responsive-img(src=site_url('/public/image/partner/BML@2x.png'))
+
+        li
+          a(href='http://changefusion.org/')
+            img.responsive-img(src=site_url('/public/image/partner/STI@2x.png'))
+
+        li
+          a(href='https://thainetizen.org/')
+            img.responsive-img(src=site_url('/public/image/partner/ThaiNetizen@2x.png'))
+
+        li
+          a(href='https://hhs2558.com/')
+            img.responsive-img(src=site_url('/public/image/partner/HHS@2x.png'))
+
+        li
+          a(href='http://waymagazine.org/')
+            img.responsive-img(src=site_url('/public/image/partner/Way@2x.png'))
+
+        li
+          a(href='http://urbanwhy.com/')
+            img.responsive-img(src=site_url('/public/image/partner/UrbanWhy@2x.png'))
+
+        li
+          a(href='http://www.volunteerspirit.org/')
+            img.responsive-img(src=site_url('/public/image/partner/VSN@2x.png'))
+
+        li
+          a(href='http://madeehub.com/')
+            img.responsive-img(src=site_url('/public/image/partner/Madee@2x.png'))
+
+        li
+          a(href='http://readingroombkk.org/')
+            img.responsive-img(src=site_url('/public/image/partner/TheReadingRoom@2x.png'))
+
+        li
+          a(href='http://changefusion.org/')
+            img.responsive-img(src=site_url('/public/image/partner/ChangeFusion@2x.png'))
+
 
 append app_script
   script.

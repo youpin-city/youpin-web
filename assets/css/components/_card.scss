@@ -62,7 +62,7 @@
           border-bottom: 2px solid $cl-primary;
         }
         &[data-status="pending"]:after {
-          border-color: $cl-orange;
+          border-color: $cl-gray;
         }
         &[data-status="accepted"]:after {
           border-color: $cl-blue;

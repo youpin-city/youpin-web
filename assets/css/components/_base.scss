@@ -55,3 +55,20 @@ i {
     font-size: 1.3rem;
   }
 }
+
+
+footer.page-footer {
+  color: $cl-white;
+  // font-size: $fs-xs;
+  padding: 20px 0;
+  a {
+    color: $cl-white;
+  }
+  .colophon {
+    text-align: center;
+    .item {
+      display: inline-block;
+      margin-right: 5px;
+    }
+  }
+}

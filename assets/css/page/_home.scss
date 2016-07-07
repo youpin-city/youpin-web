@@ -1,44 +1,117 @@
 #app[data-page='home'] {
 
-  .page-footer {
+  header#header {
     display: none;
   }
 
-  .tab-bar-view {
-    margin-bottom: 56px;
+  .alt-container {
+    background-color: $cl-verylightgray;
   }
 
-  #report-btn {
-    img {
-      vertical-align: middle;
+  #floating-logo {
+    display: block;
+    position: absolute;
+    z-index: 1000;
+    top: 1rem;
+    left: 1rem;
+    width: 80px;
+    height: 80px;
+    padding: 24px 0;
+    border-radius: 40px;
+    background-color: rgba($cl-white, .8);
+
+    .logo {
+      width: 50px;
+      height: 30px;
+      margin: 0 auto;
+      background-image: url('../image/logo-l.png');
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: center center;
     }
   }
 
-  .input-field {
-    .prefix {
-      color: $cl-gray;
-      &.active {
-        color: $cl-primary;
+  #hero {
+    padding: 40px 0;
+    text-align: center;
+
+    #hero-logo {
+      width: 200px;
+      height: 120px;
+      margin: 0 auto;
+      background-image: url('../image/logo-l.png');
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: center center;
+    }
+    #hero-subtitle {
+      font-size: $fs-lg;
+      margin-top: 1rem;
+    }
+    #hero-slogan {
+      color: $cl-primary;
+      font-size: $fs-md;
+      margin-bottom: 2rem;
+    }
+  }
+
+  .card-carousel {
+    .card {
+      float: left;
+      max-width: 25%;
+      .card-image {
+        width: 100%;
+        padding-top: 100%; //66.67%;
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: center center;
+      }
+      .card-description {
+        line-height: $lh-small;
+        height: $lh-small * $fs-p * 3;
+        overflow: hidden;
       }
     }
   }
 
-}
+  #story {
+    padding: 4rem 0;
+  }
 
-#report-input-modal {
-
-}
-
-#report-photo-modal {
-  .drop-image {
-    position: static;
-    width: 100%;
-    height: 60px;
+  #award-image {
+    display: block;
+    width: 240px;
     margin: 0 auto;
-    background-color: $cl-primary;
-    .icon {
-      color: $cl-white;
-      vertical-align: middle;
+    padding: 2rem 0 0;
+    text-align: center;
+  }
+  #award-name {
+    font-size: $fs-h1;
+    color: $cl-primary;
+    text-transform: uppercase;
+    text-align: center;
+    line-height: 1;
+  }
+  #award-subtitle {
+    font-size: $fs-h4;
+    color: $cl-darkgray;
+    font-weight: $fw-black;
+    text-align: center;
+  }
+  #award-description {
+    text-align: center;
+  }
+
+
+  ul.partner-list {
+    > li {
+      display: inline-block;
+      width: 20%;
+      float: left;
+      a {
+        display: inline-block;
+        width: 100%;
+      }
     }
   }
 }

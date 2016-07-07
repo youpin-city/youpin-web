@@ -12,11 +12,8 @@ rdr pass inet proto tcp from any to any port 443 -> 127.0.0.1 port 7443
 
 # Start app
 npm install
-pm2 startOrRestart ecosystem.json --no-color --env ${NODE_ENV}
+pm2 startOrRestart ecosystem.json --no-daemon --no-color --env ${NODE_ENV}
 
 # Open browser
 sleep 4
 open `node -e "console.log(require('./lib/config').get('site.host'));"`
-
-# Log the app
-pm2 logs youpin-web

@@ -13,7 +13,9 @@
 @import 'util/flexbox';
 
 /* Components */
+@import 'components/helper';
 @import 'components/base';
+@import 'components/button';
 @import 'components/list';
 @import 'components/tag';
 @import 'components/tabs';
@@ -23,3 +25,4 @@
 
 /* Page */
 @import 'page/home';
+@import 'page/app';

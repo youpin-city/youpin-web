@@ -1,0 +1,18 @@
+.clearfix {
+  &:before,
+  &:after {
+    content: '';
+    clear: both;
+    display: block;
+  }
+}
+
+.spacing {
+  margin-top: 3rem;
+}
+.spacing-small {
+  margin-top: 1rem;
+}
+.spacing-large {
+  margin-top: 6rem;
+}

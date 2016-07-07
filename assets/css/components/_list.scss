@@ -1,0 +1,7 @@
+ul.list {
+  list-style: disc;
+  margin-left: 2rem;
+  > li {
+    list-style: disc;
+  }
+}
