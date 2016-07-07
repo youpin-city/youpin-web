@@ -26,7 +26,8 @@ html(zone='front')
       block script
         block dep_script
           script(src='https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/leaflet.js')
-          script(src='http://maps.googleapis.com/maps/api/js?callback=&key=' + settings.service.google.api_key)
+          script(src='https://maps-api-ssl.google.com/maps/api/js?callback=&key=' + settings.service.google.api_key)
+          //- script(src='http://maps.googleapis.com/maps/api/js?callback=&key=' + settings.service.google.api_key)
           script(src='http://matchingnotes.com/javascripts/leaflet-google.js')
           script(src=asset_url('/public/js/dep.js'))
           script(src=asset_url('/public/js/materialize.js'))
