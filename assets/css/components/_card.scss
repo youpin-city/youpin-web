@@ -3,6 +3,7 @@
   margin: 0;
 }
 .card {
+  position: relative;
   .card-image {
     .empty-image {
       // &[data-accent='1'] { @extend .green, .lighten-1; }
@@ -30,6 +31,7 @@
     .card-description {
       .card-author {
         display: inline-block;
+        margin-right: 0.3rem;
       }
       .card-text {
         display: inline;
@@ -77,6 +79,18 @@
       .meta-time {
         color: $cl-gray;
       }
+    }
+  }
+
+  &.disabled {
+    &:after {
+      content: '';
+      display: block;
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
     }
   }
 }

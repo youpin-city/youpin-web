@@ -100,7 +100,12 @@ map-box
 
     function createMarker() {
       self.markers = _.map(self.markers_center, center => {
-        return L.marker(center, { icon: self.YPIcon })
+        return L.marker(center, {
+            icon: self.YPIcon,
+            interactive: false,
+            keyboard: false,
+            riseOnHover: true
+          })
           .addTo(self.map);
       });
     }

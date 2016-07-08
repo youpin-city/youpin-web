@@ -59,10 +59,10 @@
   .card-carousel {
     .card {
       float: left;
-      max-width: 25%;
+      width: 25%;
       .card-image {
         width: 100%;
-        padding-top: 100%; //66.67%;
+        padding-top: 100%;
         background-size: cover;
         background-repeat: no-repeat;
         background-position: center center;

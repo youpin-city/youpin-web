@@ -3,7 +3,7 @@
   margin: 0 0.3rem;
   &:before {
     content: '#';
-    color: $cl-darkblue;
+    display: inline-block;
   }
 }
 

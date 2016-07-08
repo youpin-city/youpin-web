@@ -49,7 +49,12 @@ riot.tag2('map-box', '<div class="map-box-container" id="{id}-container"> <div c
 
   function createMarker() {
     self.markers = _.map(self.markers_center, function (center) {
-      return L.marker(center, { icon: self.YPIcon }).addTo(self.map);
+      return L.marker(center, {
+        icon: self.YPIcon,
+        interactive: false,
+        keyboard: false,
+        riseOnHover: true
+      }).addTo(self.map);
     });
   }
 

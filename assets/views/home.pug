@@ -28,7 +28,7 @@ append content
     #trending-pin.clearfix
       .card-carousel
         for pin in trending_pins
-          .card
+          .card.disabled
             .card-image(style='background-image: url(' + pin.photo[0] + ');')
             .card-content
               .card-description
@@ -40,9 +40,7 @@ append content
                     a.tag-item(href=('#!tag/' + tag)) #{tag}
 
               .card-stat
-                .meta.meta-like.left
-                  i.icon.material-icons.tiny favorite
-                  | เห็นด้วย #{pin.like_count} คน
+                .meta.meta-like.left เห็นด้วย #{pin.like_count} คน
                 //- .meta.meta-view.left
                 //-   i.icon.material-icons.tiny show_chart
                 //-   | #{pin.view_count}
@@ -187,8 +185,8 @@ append content
             img.responsive-img(src=site_url('/public/image/partner/TheReadingRoom@2x.png'))
 
         li
-          a(href='http://changefusion.org/')
-            img.responsive-img(src=site_url('/public/image/partner/ChangeFusion@2x.png'))
+          a(href='https://www.ega.or.th')
+            img.responsive-img(src=site_url('/public/image/partner/EGA@2x.png'))
 
 
 append app_script
