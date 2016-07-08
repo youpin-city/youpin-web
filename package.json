@@ -45,6 +45,7 @@
     "multer-s3": "^2.3.2",
     "pug": "^2.0.0-beta3",
     "riot": "^2.4.1",
+    "serve-favicon": "^2.3.0",
     "superagent": "^2.0.0",
     "superagent-bluebird-promise": "^3.0.0",
     "winston": "^2.2.0"

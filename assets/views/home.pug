@@ -20,7 +20,7 @@ append content
             .spacing-small
             .btn.btn-flat.btn-large.btn-block.disabled เริ่มพิน ＊
             .spacing-small
-            .btn.btn-flat.btn-large.btn-plain.btn-block.disabled For Developers ＊
+            .btn.btn-flat.btn-large.btn-plain.btn-block.disabled API For Developers ＊
 
         .row
           .col.s12.center ＊ พบกันเร็ว ๆ นี้
@@ -41,15 +41,6 @@ append content
 
               .card-stat
                 .meta.meta-like.left เห็นด้วย #{pin.like_count} คน
-                //- .meta.meta-view.left
-                //-   i.icon.material-icons.tiny show_chart
-                //-   | #{pin.view_count}
-                //- .meta.meta-like.left
-                //-   i.icon.material-icons.tiny favorite
-                //-   | #{pin.like_count}
-                //- .meta.meta-comment.left
-                //-   i.icon.material-icons.tiny comment
-                //-   | #{pin.comment_count}
               .card-meta
                 .meta.meta-time.right= moment(pin.created_at).fromNow()
                 .meta.meta-status.left(data-status=pin.status)= pin.status_text
