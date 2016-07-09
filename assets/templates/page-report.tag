@@ -15,31 +15,39 @@ page-report
             a(href='#!', onclick='{ clickSubmitReport }')
               | ปักพิน
 
-    .modal-content.no-padding
-      form
-        .card
-          .card-image
-            .slider-container
-              #photo-slider.image-slider
-                .slider-item(each='{ photo, i in photos }', data-i='{ i }')
-                  a.image-item(data-i='{ i }', href='#!', onclick='{ clickPhoto }')
-                    .image(style='background-image: url("{ util.site_url(photo.url) }");')
-          .card-content
-            .input-field
-              i.icon.material-icons.prefix chat_bubble_outline
-              input.validate(type='text', name='name', placeholder='ตั้งชื่อพิน')
+    .modal-content
+      .container.no-padding-s
+        .row
+          .col.s12.m6.offset-m3.l4.offset-l4
+            form#report-form
+              input(type='hidden', name='location[]:number', value='{ location.lat }')
+              input(type='hidden', name='location[]:number', value='{ location.lng }')
+              input(each='{ photo in photos }', type='hidden', name='photos[]', value='{ photo.url }')
+              input(type='hidden', name='status', value='open')
+              input(type='hidden', name='owner', value='youpin')
+              input(type='hidden', name='level', value='normal')
+              input(type='hidden', name='neighborhood', value='{ neighborhood }')
 
-            .input-field
-              i.icon.material-icons.prefix place
-              input.validate(type='text', name='location', placeholder='ใส่ตำแหน่ง', value='{ location_text }', readonly, onfocus='{ clickLocation }')
+              .card
+                .card-image.responsive
+                  .slider-container
+                    #photo-slider.image-slider
+                      .slider-item(each='{ photo, i in photos }', data-i='{ i }')
+                        a.image-item(data-i='{ i }', href='#!', onclick='{ clickPhoto }')
+                          .image(style='background-image: url("{ util.site_url(photo.url) }");')
+                .card-content
+                  .input-field
+                    i.icon.material-icons.prefix chat_bubble_outline
+                    input.validate(type='text', name='detail', placeholder='ตั้งชื่อพิน', value='{ detail }')
 
-            .input-field
-              i.icon.material-icons.prefix style
-              input.validate(type='text', name='category', placeholder='หมวด')
+                  .input-field
+                    i.icon.material-icons.prefix(class='{ location.lat ? "active" : "" }') place
+                    a.location-input.input(href='#', onclick='{ clickLocation }') { location_text }
+                    //- input.validate(type='text', name='location', placeholder='ใส่ตำแหน่ง', value='{ location_text }', readonly, onfocus='{ clickLocation }')
 
-            .input-field
-              i.icon.material-icons.prefix local_offer
-              input.validate(type='text', name='tag', placeholder='แท็ก')
+                  .input-field
+                    i.icon.material-icons.prefix inbox
+                    input.validate(type='text', name='categories', placeholder='หมวด', value='{ categories }')
 
   #report-photo-modal.modal.bottom-sheet.full-sheet
     .modal-header
@@ -51,25 +59,26 @@ page-report
         .center
           a.brand-logo(href='#')
           .modal-title ใส่ภาพถ่าย
+        ul.right
 
-    .modal-content.no-padding
+    .modal-content
+      .container.no-padding-s
+        .row.card-list
+          .col.s12.m6.offset-m3.l4.offset-l4(each='{ photo, i in photos }')
+            .card(data-i='{ i }')
+              .card-image.responsive
+                img(src='{ util.site_url(photo.url) }')
+              .card-content
+                .input-field
+                  input.validate(type='text', name='photo[{ i }][text]', value='{ photo.text }', placeholder='ใส่คำอธิบาย', data-i='{ i }', onchange='{ changePhotoText }')
 
-      .row.card-list
-        .col.s12.m6.l4(each='{ photo, i in photos }')
-          .card(data-i='{ i }')
-            .card-image
-              img(src='{ util.site_url(photo.url) }')
-            .card-content
-              .input-field
-                input.validate(type='text', name='photo[{ i }][text]', value='{ photo.text }', placeholder='ใส่คำอธิบาย', data-i='{ i }', onchange='{ changePhotoText }')
-
-        .col.s12.m6.l4
-          .card
-            .card-image
-              .drop-image-preview.hide
-              .card-title.center.drop-image.valign-wrapper(name='dropzone-el')
-                i.icon.material-icons photo_camera
-                | เพิ่มรูป
+          .col.s12.m6.offset-m3.l4.offset-l4
+            .card
+              .card-image.responsive
+                .drop-image-preview.hide
+                .card-title.center.drop-image.valign-wrapper(name='dropzone-el')
+                  i.icon.material-icons photo_camera
+                  | เพิ่มรูป
 
   #report-map-modal.modal.bottom-sheet.full-sheet
     .modal-header
@@ -127,11 +136,15 @@ page-report
      ***************/
     self.dropzone = null;
     self.slider = false;
+
+    self.detail = '';
+    self.categories = '';
     self.photos = [];
     self.target = opts.target;
     self.map = null;
     self.map_id = 'input-location-map';
-    self.location = null;
+    self.location = { lat: '', lng: '' };
+    self.neighborhood = 'สีลม';
     // Define
     self.DEFAULT_LOCATION = { lat: 13.7302295, lng: 100.5724075 };
     self.YPIcon = L.icon({
@@ -149,9 +162,9 @@ page-report
      * RENDER
      ***************/
     self.on('update', () => {
-      self.location_text = self.location
-        ? `${self.location.lat},${self.location.lng}`
-        : '';
+      self.location_text = self.location && typeof self.location.lat === 'number'
+        ? 'ปักพินแล้ว'
+        : 'เลือกตำแหน่ง';
     });
     self.on('mount', () => {
       // console.log('page report mounted.');
@@ -171,10 +184,15 @@ page-report
       destroyPhotoSlider();
 
       // self.dropzone = null;
-      self.photos = [];
       self.target = opts.target;
+
+      self.detail = '';
+      self.categories = '';
+      self.photos = [];
       self.map = null;
       self.location = null;
+      $(self.root).find('input[name="detail"]').val('');
+      $(self.root).find('input[name="categories"]').val('');
       self.update();
     }
 
@@ -329,10 +347,40 @@ page-report
       $('#report-saving-modal').openModal({
         dismissible: false,
       });
-      setTimeout(submitReportComplete, 3000);
+
+      const form_data = $('#report-form').serializeJSON();
+      form_data.categories = _.map(
+        form_data.categories && typeof form_data.categories === 'string' ? form_data.categories.split(',') : [],
+        cat => _.trim(cat)
+      );
+      form_data.tags = util.extract_tags(form_data.detail);
+      form_data.created_time = Date.now();
+      form_data.updated_time = form_data.created_time;
+
+      $.ajax({
+        url: util.site_url('/pins', app.get('service.api.url')),
+        method: 'post',
+        headers: {
+          'Authorization': 'Basic ' + app.get('service.api.hash_key')
+        },
+        beforeSend: function(xhrObj){
+          xhrObj.setRequestHeader('Content-Type', 'application/json');
+          xhrObj.setRequestHeader('Accept', 'application/json');
+        },
+        dataType: 'json',
+        data: JSON.stringify(form_data)
+      })
+      .done(data => {
+        submitReportComplete();
+        app.goto('pins/' + data.name);
+      })
+      .fail(error => {
+        console.error('error:', err);
+      });
     }
 
     function submitReportComplete() {
+      resetReportModal();
       $('#report-saving-modal').closeModal();
       $('#report-input-modal').closeModal();
     }

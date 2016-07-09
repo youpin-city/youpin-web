@@ -1,0 +1,41 @@
+extends ../layouts/layout
+
+append content
+
+  #page-pin
+    .container
+      .row
+        .col.s12.m6.offset-m3.l4.offset-l4
+
+          .spacing-large
+
+          .center
+            - var num = _.random(0, 4)
+
+            case num
+              when 0
+                i.icon.material-icons.large local_cafe
+              when 1
+                i.icon.material-icons.large local_bar
+              when 2
+                i.icon.material-icons.large local_drink
+              when 3
+                i.icon.material-icons.large local_dining
+              when 4
+                i.icon.material-icons.large traffic
+
+            h4.center เหนื่อยมั้ยที่หาหน้านั้นไม่เจอ?
+
+            case num
+              when 0
+                h5 แวะพักกินกาแฟให้ตื่น ๆ ก่อนมั้ย?
+              when 1
+                h5 งั้นแวะสักจิบก่อนดีกว่า
+              when 2
+                h5 แวะกินอะไรเย็น ๆ หวานน้อยก่อนมั้ย?
+              when 3
+                h5 หาอะไรรองท้องให้อิ่ม ๆ แล้วลองใหม่นะฮ้า
+              when 4
+                h5 รอชมสิ่งที่น่าสนใจสักครู่ ค่อยเดินต่อนะ
+
+          .spacing-large

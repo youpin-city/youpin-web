@@ -60,6 +60,7 @@
     "eslint-config-airbnb": "^9.0.1",
     "exorcist": "^0.4.0",
     "jquery": "^2.2.1",
+    "jquery-serializejson": "^2.6.2",
     "leaflet": "^0.7.7",
     "materialize-css": "^0.97.6",
     "node-sass": "^3.7.0",

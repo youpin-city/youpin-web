@@ -8,6 +8,7 @@ else root = {};
 
   // jQuery
   window.$ = window.jQuery = require('jquery');
+  require('jquery-serializejson');
   // require('materialize-css/dist/js/materialize.js');
 
   // moment

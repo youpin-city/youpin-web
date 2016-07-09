@@ -49,19 +49,7 @@ map-box
 
     self.center = { lat: 13.7304311, lng: 100.5696901 };
     self.markers = [];
-    self.markers_center = [
-      { lat: 13.729518, lng: 100.571857 },
-      { lat: 13.731152, lng: 100.568566 },
-      { lat: 13.7284191, lng: 100.5704483 },
-      { lat: 13.7297639, lng: 100.570291 },
-      { lat: 13.7302163, lng: 100.5702538 },
-      { lat: 13.7300000, lng: 100.566672 },
-      { lat: 13.730206, lng: 100.569767 },
-      { lat: 13.7314005, lng: 100.570862 },
-      { lat: 13.728786, lng: 100.568968 },
-      { lat: 13.7297649, lng: 100.5709659 }
-    ];
-
+    self.markers_center = opts.markers_center || [];
     // Define
     self.YPIcon = L.icon({
         iconUrl: util.site_url('/public/image/marker-m.png'),
@@ -108,6 +96,9 @@ map-box
           })
           .addTo(self.map);
       });
+
+      const bounds = new L.LatLngBounds(self.markers_center);
+      self.map.fitBounds(bounds);
     }
 
     function destroyMap() {

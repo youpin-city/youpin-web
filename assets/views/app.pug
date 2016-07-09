@@ -4,52 +4,9 @@ append content
 
   #page-app
     #feed.tab-bar-view
-      .fluid-container
-        h4.center พินรอบตัว
-        .card-list.row
-          for card in feeds
-            .col.s12.m6.l4
-              .card
-                .card-image
-                  if card.photo && card.photo.length > 0
-                    img(src=card.photo[0])
-                  else
-                    .empty-image.valign-wrapper(data-accent=(_.random(1,4)))
-                      .valign
-                        i.icon.material-icons directions_run
-                        i.icon.material-icons directions_bike
-                        i.icon.material-icons directions_car
-                        i.icon.material-icons directions_subway
-                        i.icon.material-icons directions_boat
-                        i.icon.material-icons directions_bus
-                        i.icon.material-icons local_shipping
-                        i.icon.material-icons directions_train
-                .card-content
-                  .card-description
-                    .card-author
-                      a(href='#!user/' + card.author) @#{card.author}
-                    .card-text #{card.name}
-                    if card.tag && card.tag.length > 0
-                      for tag in card.tag
-                        a.tag-item(href=('#!tag/' + tag)) #{tag}
-
-                  .card-meta
-                    .meta.meta-time.left= moment(card.created_at).fromNow()
-                    .meta.meta-status.right(data-status=card.status)= card.status
-                  .card-stat
-                    .meta.meta-view.left
-                      i.icon.material-icons.tiny show_chart
-                      | #{card.view_count}
-                    .meta.meta-like.left
-                      i.icon.material-icons.tiny favorite
-                      | #{card.like_count}
-                    .meta.meta-comment.left
-                      i.icon.material-icons.tiny comment
-                      | #{card.comment_count}
-
+      page-feed
     #search.tab-bar-view
-      .container
-        h4 ค้นหา
+      page-feed
     #noti.tab-bar-view
       .container
         h4 ข้อความ
@@ -59,6 +16,7 @@ append content
 
     page-report(target='#report-btn')
 
+    page-pin
 
 prepend footer
 
@@ -82,11 +40,68 @@ prepend footer
 
 append app_script
   script.
+    // Route: #feed
+    app.route('feed', function(id, action, qs, hash) {
+      $.ajax({
+        url: util.site_url('/pins?limit=100', app.get('service.api.url'))
+      })
+      .done(data => {
+        const pins = _.map(data.pin_info, (pin, key) => parser.pin(pin, null, key));
+        pins.reverse();
+        app.open('page-feed', '#feed', { title: 'พินล่าสุด', pins: pins });
+      });
+    });
+
+    // Route: #search
+    app.route('search', function(id, action, qs, hash) {
+      $.ajax({
+        url: util.site_url('/api/feed')
+      })
+      .done(data => {
+        const pins = data;
+        app.open('page-feed', '#search', { title: 'ค้นหาพิน', pins: pins });
+      });
+    });
+
+    // Route: #pins/:id
+    app.route('pins', function(id, action, qs, hash) {
+      if (!id) {
+        app.goto('feed', true);
+        return;
+      }
+
+      $.ajax({
+        url: qs.mock ? util.site_url('/api/pin/' + id) : util.site_url('/pins/' + id, app.get('service.api.url'))
+      })
+      .done(data => {
+        let pin;
+        if (qs.mock) {
+          pin = data;
+        } else {
+          pin = parser.pin(_.get(data, 'pin_info'), _.get(data, 'location.l'));
+        }
+        app.open('page-pin', pin);
+      });
+    });
+
+    app.start();
+
+    riot.mount('page-report');
+
+  script.
     $(document).ready(function(){
-      $('ul.tabs').tabs();
+      $('ul.tabs')
+      .tabs()
+      .on('click', 'a', e => {
+        location.href = e.currentTarget.href;
+      });
 
       $('#report-btn').on('click', function(e) {
         e.preventDefault();
         e.stopPropagation();
       });
     });
+
+    if (!location.hash) {
+      app.goto('feed', true);
+    }

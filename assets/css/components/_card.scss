@@ -5,21 +5,50 @@
 .card {
   position: relative;
   .card-image {
-    .empty-image {
+    display: block;
+    width: 100%;
+    padding-top: 100%;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center center;
+    vertical-align: top;
+
+    &.responsive {
+      padding-top: 0;
+    }
+
+    &.empty-image {
       // &[data-accent='1'] { @extend .green, .lighten-1; }
       // &[data-accent='2'] { @extend .indigo, .lighten-1; }
       // &[data-accent='3'] { @extend .pink, .lighten-1; }
       // &[data-accent='4'] { @extend .amber; }
-
       @include justify-content(center);
-      position: static;
+      display: inline-block;
+      // position: static;
       width: 100%;
-      height: 160px;
+      padding-top: 0;
+      // padding-top: 100%;
       margin: 0 auto;
       background-color: $cl-gray;
       .icon {
         color: $cl-white;
         vertical-align: middle;
+      }
+      &:before {
+        content:'';
+        padding-top:100%; /* vertical value as  100% equals width */
+        float:left;
+      }
+
+      .valign-wrapper {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        .valign {
+          flex: 1 0 auto;
+        }
       }
     }
   }
@@ -35,9 +64,20 @@
       }
       .card-text {
         display: inline;
+        word-break: break-all;
       }
       .tag-list {
         display: inline;
+        // word-break: break-all;
+        // white-space: nowrap;
+        .tag-item {
+          display: inline-block;
+          white-space: nowrap;
+        }
+      }
+      .card-area {
+        display: inline;
+        word-break: break-all;
       }
     }
     .card-meta,
@@ -82,6 +122,14 @@
     }
   }
 
+  .divider {
+    border-top: 1px solid $cl-verylightgray;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    margin-left: -16px;
+    margin-right: -16px;
+  }
+
   &.disabled {
     &:after {
       content: '';
@@ -91,6 +139,35 @@
       bottom: 0;
       left: 0;
       right: 0;
+    }
+  }
+
+  &.hover-card {
+    @media #{$medium-and-up} {
+      overflow: hidden;
+      background: $cl-black;
+      .card-content {
+        position: absolute;
+        bottom: 0;
+        color: white;
+        // background: rgba(0,0,0,0.7);
+        // transform: translate(0, 100%);
+        opacity: 0;
+      }
+      &:hover {
+        .card-image {
+          transition: opacity 0.2s ease-out;
+          opacity: 0.3;
+        }
+        .card-content {
+          transition: transform 0.2s ease-out, opacity 0.2s ease-out;
+          // transform: translate(0, 0%);
+          opacity: 1;
+          a {
+            color: $cl-primary-active;
+          }
+        }
+      }
     }
   }
 }

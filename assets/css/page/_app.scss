@@ -5,7 +5,7 @@
   }
 
   .tab-bar-view {
-    margin-bottom: 56px;
+    // margin-bottom: 56px;
   }
 
   #report-btn {
@@ -27,6 +27,12 @@
 
 #report-input-modal {
 
+  .input {
+    margin-left: 3rem;
+  }
+
+  .location-input {
+  }
 }
 
 #report-photo-modal {
@@ -39,6 +45,17 @@
     .icon {
       color: $cl-white;
       vertical-align: middle;
+    }
+  }
+}
+
+
+#page-pin {
+  @media #{$small-and-down} {
+    map-box {
+      .map-box-container {
+        height: 50vh;
+      }
     }
   }
 }

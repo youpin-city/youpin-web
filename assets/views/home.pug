@@ -190,3 +190,8 @@ append app_script
         e.stopPropagation();
       });
     });
+
+  script.
+    riot.mount('map-box', {
+      markers_center: !{JSON.stringify(sample_pin_locations)}
+    });

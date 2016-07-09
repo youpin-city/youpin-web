@@ -1,0 +1,8 @@
+.container {
+  &.no-padding-s {
+    @media #{$small-and-down} {
+      width: 100%;
+      max-width: 100%;
+    }
+  }
+}

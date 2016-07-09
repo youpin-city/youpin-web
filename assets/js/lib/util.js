@@ -214,6 +214,12 @@ function uniqueId() {
   return Math.random().toString(36).substr(2, 9);
 }
 
+// Get tag array from string with hashtags
+function extract_tags(str) {
+  const hash_regex = /\S*#(?:\[[^\]]+\]|\S+)/gi;
+  return _.map(((str || '').match(hash_regex) || []).slice(0), tag => tag.slice(1));
+}
+
 extend(utility, {
   url: site_url,
   parseUrl: urllib.parse,
@@ -228,5 +234,6 @@ extend(utility, {
   is_touch_device,
   device_pixel_ratio,
   cssSizeInPixel,
-  uniqueId
+  uniqueId,
+  extract_tags
 });
