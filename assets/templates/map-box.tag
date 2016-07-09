@@ -101,9 +101,9 @@ map-box
       });
 
       const bounds = new L.LatLngBounds(self.markers_center);
-      // offset bounds to show pin card on right half
-      const ne = bounds.getNorthEast();
-      bounds.extend([ne.lat, ne.lng + 0.002]);
+      // // offset bounds to show pin card on right half
+      // const ne = bounds.getNorthEast();
+      // bounds.extend([ne.lat, ne.lng + 0.002]);
       self.map.fitBounds(bounds);
     }
 

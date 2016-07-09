@@ -62,8 +62,6 @@ riot.tag2('map-box', '<div class="map-box-container" id="{id}-container"> <div c
 
     var bounds = new L.LatLngBounds(self.markers_center);
 
-    var ne = bounds.getNorthEast();
-    bounds.extend([ne.lat, ne.lng + 0.002]);
     self.map.fitBounds(bounds);
   }
 
