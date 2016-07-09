@@ -45,8 +45,8 @@ append app_script
       $.ajax({
         url: util.site_url('/pins?limit=100', app.get('service.api.url'))
       })
-      .done(data => {
-        const pins = _.map(data.pin_info, (pin, key) => parser.pin(pin, null, key));
+      .done(function(data) {
+        var pins = _.map(data.pin_info, function(pin, key) { return parser.pin(pin, null, key); });
         pins.reverse();
         app.open('page-feed', '#feed', { title: 'พินล่าสุด', pins: pins });
       });
@@ -57,8 +57,8 @@ append app_script
       $.ajax({
         url: util.site_url('/api/feed')
       })
-      .done(data => {
-        const pins = data;
+      .done(function(data) {
+        var pins = data;
         app.open('page-feed', '#search', { title: 'ค้นหาพิน', pins: pins });
       });
     });
@@ -73,8 +73,8 @@ append app_script
       $.ajax({
         url: qs.mock ? util.site_url('/api/pin/' + id) : util.site_url('/pins/' + id, app.get('service.api.url'))
       })
-      .done(data => {
-        let pin;
+      .done(function(data) {
+        var pin;
         if (qs.mock) {
           pin = data;
         } else {
@@ -92,7 +92,7 @@ append app_script
     $(document).ready(function(){
       $('ul.tabs')
       .tabs()
-      .on('click', 'a', e => {
+      .on('click', 'a', function(e) {
         location.href = e.currentTarget.href;
       });
 

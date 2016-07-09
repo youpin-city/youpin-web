@@ -7,7 +7,10 @@ riot.tag2('map-box', '<div class="map-box-container" id="{id}-container"> <div c
   var regex_options = /^options/i;
   self.map = null;
   self.map_options = {
-    zoom: 16
+    zoom: 16,
+    fadeAnimation: false,
+    zoomAnimation: false,
+    markerZoomAnimation: false
   };
   _.forEach(opts, function (value, key) {
     if (regex_options.test(key)) {
@@ -41,7 +44,7 @@ riot.tag2('map-box', '<div class="map-box-container" id="{id}-container"> <div c
 
     self.map = L.map(self.id, self.map_options);
     self.map.setView(self.center);
-    self.map.setZoom(17);
+    self.map.setZoom(+self.map_options.zoom || 17);
 
     var googleLayer = new L.Google('ROADMAP');
     self.map.addLayer(googleLayer);
@@ -58,6 +61,9 @@ riot.tag2('map-box', '<div class="map-box-container" id="{id}-container"> <div c
     });
 
     var bounds = new L.LatLngBounds(self.markers_center);
+
+    var ne = bounds.getNorthEast();
+    bounds.extend([ne.lat, ne.lng + 0.002]);
     self.map.fitBounds(bounds);
   }
 
@@ -78,7 +84,7 @@ riot.tag2('page-feed', '<div id="page-feed"> <div class="container no-padding-s"
   self.on('mount', function () {});
 });
 
-riot.tag2('page-pin', '<div id="page-pin"> <div class="map-container"> <map-box></map-box> </div> <div class="container no-padding-s"> <div class="row"> <div class="col s12 m6"> <div class="card"> <div class="card-image responsive"> <div class="slider-container"> <div class="image-slider" id="photo-slider"> <div class="slider-item" each="{photo in pin.photos}"> <div class="image-item"> <div class="image" riot-style="background-image: url(&quot;{util.site_url(photo)}&quot;)"></div> </div> </div> </div> </div> </div> </div> </div> <div class="col s12 m6 l5 offset-l1"> <div class="card"> <div class="card-content"> <div class="pin-content"> <div class="card-description"> <div class="card-author"><a href="#user/{pin.owner}">@{pin.owner}</a></div> <div class="card-text">{pin.detail}</div> <div class="tag-list" if="{pin.tags &amp;&amp; pin.tags.length &gt; 0}"><a class="tag-item" each="{tag in pin.tags}" href="#tag/{tag}">{tag}</a></div> <div class="card-area" if="{pin.neighborhood}">ย่าน{pin.neighborhood}</div> </div> <div class="card-stat"> <div class="meta meta-like left">เห็นด้วย {pin.voters.length} คน</div> <div class="meta meta-comment left"><i class="icon material-icons tiny">chat_bubble_outline</i>ความเห็น {pin.comments.length}</div> </div> <div class="card-meta"> <div class="meta meta-time right">{moment(pin.created_time, [\'x\', \'M/D/YYYY, h:mm A\']).fromNow()}</div> <div class="meta meta-status left" data-status="{pin.status}">{pin.status}</div> </div> </div> <div if="{pin.comments &amp;&amp; pin.comments.length &gt; 0}"> <div class="divider"></div> <h5 class="section-name">ความคิดเห็น</h5> <div class="comment-list"> <div class="comment-item" each="{comment in pin.comments}"> <div class="card-description"> <div class="card-author"><a href="#user/{comment.commented_by}">@{comment.commented_by}</a></div> <div class="card-text">{comment.detail}</div> <div class="tag-list" if="{comment.tags &amp;&amp; comment.tags.length &gt; 0}"><a class="tag-item" each="{tag in comment.tags}" href="#tag/{tag}">{tag}</a></div> </div> <div class="card-stat"> <div class="meta meta-like left"><i class="icon material-icons tiny">person</i>{comment.voter.length} คน</div> </div> </div> </div> </div> </div> </div> </div> </div> </div> <div class="spacing-large"></div> </div>', '', '', function (opts) {
+riot.tag2('page-pin', '<div id="page-pin"> <div class="map-container"> <map-box options-scroll-wheel-zoom="false" options-tap="false" options-keyboard="false"></map-box> </div> <div class="fluid-container no-padding-s"> <div class="row"> <div class="col s12 m6 offset-m6"> <div class="spacing"></div> <div class="card"> <div class="card-image responsive"> <div class="slider-container"> <div class="image-slider" id="photo-slider"> <div class="slider-item" each="{photo in pin.photos}"> <div class="image-item"> <div class="image" riot-style="background-image: url(&quot;{util.site_url(photo)}&quot;)"></div> </div> </div> </div> </div> </div> <div class="card-content"> <div class="pin-content"> <div class="card-description"> <div class="card-author"><a href="#user/{pin.owner}">@{pin.owner}</a></div> <div class="card-text">{pin.detail}</div> <div class="tag-list" if="{pin.tags &amp;&amp; pin.tags.length &gt; 0}"><a class="tag-item" each="{tag in pin.tags}" href="#tag/{tag}">{tag}</a></div> <div class="card-area" if="{pin.neighborhood}">ย่าน{pin.neighborhood}</div> </div> <div class="card-stat"> <div class="meta meta-like left">เห็นด้วย {pin.voters.length} คน</div> <div class="meta meta-comment left"><i class="icon material-icons tiny">chat_bubble_outline</i>ความเห็น {pin.comments.length}</div> </div> <div class="card-meta"> <div class="meta meta-time right">{moment(pin.created_time, [\'x\', \'M/D/YYYY, h:mm A\']).fromNow()}</div> <div class="meta meta-status left" data-status="{pin.status}">{pin.status}</div> </div> </div> <div if="{pin.comments &amp;&amp; pin.comments.length &gt; 0}"> <div class="divider"></div> <h5 class="section-name">ความคิดเห็น</h5> <div class="comment-list"> <div class="comment-item" each="{comment in pin.comments}"> <div class="card-description"> <div class="card-author"><a href="#user/{comment.commented_by}">@{comment.commented_by}</a></div> <div class="card-text">{comment.detail}</div> <div class="tag-list" if="{comment.tags &amp;&amp; comment.tags.length &gt; 0}"><a class="tag-item" each="{tag in comment.tags}" href="#tag/{tag}">{tag}</a></div> </div> <div class="card-stat"> <div class="meta meta-like left"><i class="icon material-icons tiny">person</i>{comment.voter.length} คน</div> </div> </div> </div> </div> </div> </div> </div> </div> </div> <div class="spacing-large"></div> </div>', '', '', function (opts) {
   var self = this;
 
   self.pin = opts;

@@ -35,7 +35,10 @@ map-box
     const regex_options = /^options/i;
     self.map = null;
     self.map_options = {
-      zoom: 16
+      zoom: 16,
+      fadeAnimation: false,
+      zoomAnimation: false,
+      markerZoomAnimation: false
     };
     _.forEach(opts, (value, key) => {
       if (regex_options.test(key)) {
@@ -80,7 +83,7 @@ map-box
 
       self.map = L.map(self.id, self.map_options);
       self.map.setView(self.center);
-      self.map.setZoom(17);
+      self.map.setZoom(+self.map_options.zoom || 17);
       // Add google maps
       var googleLayer = new L.Google('ROADMAP');
       self.map.addLayer(googleLayer);
@@ -98,6 +101,9 @@ map-box
       });
 
       const bounds = new L.LatLngBounds(self.markers_center);
+      // offset bounds to show pin card on right half
+      const ne = bounds.getNorthEast();
+      bounds.extend([ne.lat, ne.lng + 0.002]);
       self.map.fitBounds(bounds);
     }
 

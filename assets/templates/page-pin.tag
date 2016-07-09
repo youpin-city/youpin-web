@@ -2,10 +2,11 @@ page-pin
 
   #page-pin
     .map-container
-      map-box
-    .container.no-padding-s
+      map-box(options-scroll-wheel-zoom='false', options-tap='false', options-keyboard='false')
+    .fluid-container.no-padding-s
       .row
-        .col.s12.m6
+        .col.s12.m6.offset-m6
+          .spacing
           .card
             .card-image.responsive
               .slider-container
@@ -14,8 +15,6 @@ page-pin
                     .image-item
                       .image(style='background-image: url("{ util.site_url(photo) }");')
 
-        .col.s12.m6.l5.offset-l1
-          .card
             .card-content
 
               .pin-content
