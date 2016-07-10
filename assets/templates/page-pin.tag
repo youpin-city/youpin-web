@@ -1,14 +1,13 @@
 page-pin
 
   #page-pin
-    .map-container
-      map-box(options-scroll-wheel-zoom='false', options-tap='false', options-keyboard='false')
     .fluid-container.no-padding-s
       .row
         .col.s12.m6.offset-m6
           .spacing
           .card
-            .card-image.responsive
+            .card-image(if='{ pin.photos.length === 0 }', href='#pins/{ pin.id }', style='background-image: url({ util.site_url("/public/image/pin_photo.png") });')
+            .card-image.responsive(if='{ pin.photos.length > 0 }')
               .slider-container
                 #photo-slider.image-slider
                   .slider-item(each='{ photo in pin.photos }')
@@ -55,6 +54,9 @@ page-pin
                       .meta.meta-like.left
                         i.icon.material-icons.tiny person
                         | { comment.voter.length } คน
+
+    .map-container
+      map-box(options-zoom='17', options-scroll-wheel-zoom='false', options-tap='false', options-keyboard='false')
 
     .spacing-large
   script.

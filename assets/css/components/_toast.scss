@@ -1,0 +1,30 @@
+#toast-container {
+  top: 3%;
+  bottom: auto;
+  left: auto;
+  right: 7%;
+  width: 50%;
+  @media #{$small-and-down} {
+    left: auto;
+    right: auto;
+    width: 100%;
+  }
+}
+
+.toast {
+  font-size: $fs-md;
+  width: 100%;
+  background-color: $cl-primary;
+  &.dialog-error {
+    background-color: $cl-error;
+  }
+  &.dialog-warning {
+    background-color: $cl-warning;
+  }
+
+  @media #{$small-and-down} {
+    width: 90%;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}

@@ -29,4 +29,5 @@ else root = {};
   // leaflet plugins
   window.L = require('leaflet');
   window.L.Google = require('./dep/leaflet-google');
+  window.L.BingLayer = require('./dep/leaflet-bing');
 }(root));

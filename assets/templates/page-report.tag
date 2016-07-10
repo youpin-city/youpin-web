@@ -5,17 +5,17 @@ page-report
       nav
         ul.left
           li
-            a.modal-action.modal-close(href='#!')
+            a.modal-action.modal-close(href='#', onclick='{ clickCloseReport }')
               | ยกเลิก
         .center
           a.brand-logo(href='#')
           .modal-title ใส่ข้อมูล
         ul.right
-          li
-            a(href='#!', onclick='{ clickSubmitReport }')
-              | ปักพิน
+          //- li
+          //-   a(href='#!', onclick='{ clickSubmitReport }')
+          //-    | ปักพิน
 
-    .modal-content
+    .modal-content.no-padding-s
       .container.no-padding-s
         .row
           .col.s12.m6.offset-m3.l4.offset-l4
@@ -29,39 +29,54 @@ page-report
               input(type='hidden', name='neighborhood', value='{ neighborhood }')
 
               .card
-                .card-image.responsive
+                .card-image(if='{ photos.length === 0 }', href='#report', style='background-image: url({ util.site_url("/public/image/pin_photo.png") });')
+                  a#add-image-btn.btn-floating.btn-large.waves-effect.waves-light.white(href='#report', onclick='{ clickPhoto }')
+                    i.icon.material-icons.large.blue-text add
+
+                .card-image.responsive(if='{ photos.length > 0 }')
                   .slider-container
                     #photo-slider.image-slider
                       .slider-item(each='{ photo, i in photos }', data-i='{ i }')
-                        a.image-item(data-i='{ i }', href='#!', onclick='{ clickPhoto }')
+                        .image-item(data-i='{ i }', href='#!')
                           .image(style='background-image: url("{ util.site_url(photo.url) }");')
-                .card-content
-                  .input-field
-                    i.icon.material-icons.prefix chat_bubble_outline
-                    input.validate(type='text', name='detail', placeholder='ตั้งชื่อพิน', value='{ detail }')
+                  a#add-image-btn.btn-floating.btn-large.waves-effect.waves-light(href='#report', onclick='{ clickPhoto }')
+                    i.icon.material-icons add
+                #input-detail.input-field
+                  //- i.icon.material-icons.prefix chat_bubble_outline
+                  textarea.validate.materialize-textarea(name='detail', placeholder='ตั้งชื่อพิน') { detail }
+                  //- input.validate(type='text', name='detail', placeholder='ตั้งชื่อพิน', value='{ detail }')
 
-                  .input-field
+                .card-content
+                  #input-categories.input-field
+                    i.icon.material-icons.prefix inbox
+                    select#select-categories(name='categories')
+                      option(each='{ cat in choice_categories }', value='{ cat.value }', selected='{ cat.selected }') { cat.text }
+                    //- input.validate(type='text', name='categories', placeholder='หมวด', value='{ categories }')
+
+                  #input-location.input-field
                     i.icon.material-icons.prefix(class='{ location.lat ? "active" : "" }') place
                     a.location-input.input(href='#', onclick='{ clickLocation }') { location_text }
                     //- input.validate(type='text', name='location', placeholder='ใส่ตำแหน่ง', value='{ location_text }', readonly, onfocus='{ clickLocation }')
 
-                  .input-field
-                    i.icon.material-icons.prefix inbox
-                    input.validate(type='text', name='categories', placeholder='หมวด', value='{ categories }')
+                  .spacing
+
+      .fluid-container
+        a#submit-pin-btn.btn.btn-large.btn-block(href='#report', onclick='{ clickSubmitReport }') โพสต์พิน
 
   #report-photo-modal.modal.bottom-sheet.full-sheet
     .modal-header
       nav
         ul.left
           li
-            a.modal-action.modal-close(href='#!')
-              i.icon.material-icons arrow_back
+            a.modal-action.modal-close(href='#report', onclick='{ clickClosePhoto }')
+              //- i.icon.material-icons arrow_back
+              | กลับ
         .center
           a.brand-logo(href='#')
           .modal-title ใส่ภาพถ่าย
         ul.right
 
-    .modal-content
+    .modal-content.no-padding-s
       .container.no-padding-s
         .row.card-list
           .col.s12.m6.offset-m3.l4.offset-l4(each='{ photo, i in photos }')
@@ -85,18 +100,20 @@ page-report
       nav
         ul.left
           li
-            a.modal-action.modal-close(href='#!')
-              i.icon.material-icons check
+            a.modal-action.modal-close(href='#report', onclick='{ clickCloseMap }')
+              //- i.icon.material-icons check
+              | กลับ
         .center
           a.brand-logo(href='#')
-          .modal-title ใส่ตำแหน่ง
+          .modal-title เลือกตำแหน่ง
         ul.right
           li
             a(href='#!', onclick='{ setMapLocationByGeolocation }')
               i.icon.material-icons gps_fixed
 
-    .modal-content.no-padding
+    .modal-content.no-padding-s
       #input-location-map.input-location-map
+      a#submit-location-btn.btn.btn-large.btn-block.modal-close ใช้ตำแหน่งนี้
 
   #report-uploading-modal.modal
     .modal-content
@@ -154,6 +171,18 @@ page-report
         popupAnchor: [0, -51]
     });
 
+    self.choice_categories = [
+      { value: 'footpath', text: 'ทางเท้า', selected: false },
+      { value: 'pollution', text: 'มลภาวะ', selected: false },
+      { value: 'roads', text: 'ถนน', selected: false },
+      { value: 'publictransport', text: 'ขนส่งสาธารณะ', selected: false },
+      { value: 'garbage', text: 'ขยะ', selected: false },
+      { value: 'drainage', text: 'ระบายน้ำ', selected: false },
+      { value: 'trees', text: 'ต้นไม้', selected: false },
+      { value: 'safety', text: 'ความปลอดภัย', selected: false },
+      { value: 'violation', text: 'ละเมิดสิทธิ', selected: false }
+    ];
+
     /***************
      * CHANGE
      ***************/
@@ -174,6 +203,8 @@ page-report
     });
     self.on('updated', () => {
       initDropzone();
+      $('#select-categories').material_select('destroy');
+      $('#select-categories').material_select();
     });
 
     /***************
@@ -191,8 +222,8 @@ page-report
       self.photos = [];
       self.map = null;
       self.location = null;
-      $(self.root).find('input[name="detail"]').val('');
-      $(self.root).find('input[name="categories"]').val('');
+      $(self.root).find('textarea[name="detail"]').val('');
+      $(self.root).find('select[name="categories"]').val('');
       self.update();
     }
 
@@ -230,11 +261,15 @@ page-report
               });
               self.photos.push(photo);
             };
+            $('#report-uploading-modal').closeModal();
+            showReportView();
           })
-          .on('errormultiple', function(files) { console.error('error:', arguments); })
-          .on('completemultiple', function(files) {
-            uploadPhotoListComplete();
-          });
+          .on('errormultiple', function(files, reason) {
+            console.error('error:', arguments);
+            Materialize.toast('ไม่สามารถอัพโหลดรูปได้ (' + reason + ')', 5000, 'dialog-error');
+            $('#report-uploading-modal').closeModal();
+          })
+          .on('completemultiple', function(files) {});
       }
     }
 
@@ -244,8 +279,8 @@ page-report
       });
     }
 
-    function uploadPhotoListComplete() {
-      $('#report-uploading-modal').closeModal();
+    function showReportView() {
+      app.goto('report');
       const $input_modal = $(self['report-input-modal']);
       const $photo_modal = $(self['report-photo-modal']);
       if ($input_modal.hasClass('open')) {
@@ -257,12 +292,15 @@ page-report
           },
           complete: function() { // when modal close
             resetReportModal();
+            closeReportView();
+            app.goto('feed');
           }
         });
       }
       self.update();
       createPhotoSlider();
     }
+    self.showReportView = showReportView;
 
     function createPhotoSlider() {
       // make slider
@@ -309,9 +347,29 @@ page-report
         self.map.setView([13.7302295, 100.5724075], 16);
       });
 
-      // Add google maps
-      var googleLayer = new L.Google('ROADMAP');
-      self.map.addLayer(googleLayer);
+      // // Add google maps
+      // var googleLayer = new L.Google('ROADMAP');
+      // self.map.addLayer(googleLayer);
+      //
+      // HERE Maps
+      // @see https://developer.here.com/rest-apis/documentation/enterprise-map-tile/topics/resource-base-maptile.html
+      // https: also suppported.
+      var HERE_normalDay = L.tileLayer('http://{s}.{base}.maps.cit.api.here.com/maptile/2.1/{type}/{mapID}/{scheme}/{z}/{x}/{y}/{size}/{format}?app_id={app_id}&app_code={app_code}&lg={language}&style={style}', {
+        attribution: 'Map &copy; 1987-2014 <a href="http://developer.here.com">HERE</a>',
+        subdomains: '1234',
+        mapID: 'newest',
+        app_id: app.get('service.here.app_id'),
+        app_code: app.get('service.here.app_code'),
+        base: 'base',
+        maxZoom: 20,
+        type: 'maptile',
+        scheme: 'ontouchstart' in window ? 'normal.day.mobile' : 'normal.day',
+        language: 'tha',// 'eng',
+        style: 'default',
+        format: 'png8',
+        size: '256'
+      });
+      self.map.addLayer(HERE_normalDay);
 
       self.map_marker = L.marker([self.DEFAULT_LOCATION.lat, self.DEFAULT_LOCATION.lng], { icon: self.YPIcon })
         .bindPopup('ที่นี่มีหลุมบ่อ น้ำท่วมขังบ่อย ส่งกลิ่นเหม็นทุกเย็นเลย')
@@ -340,6 +398,7 @@ page-report
     }
 
     function openPhoto(e) {
+      $('#report-input-modal').addClass('inactive');
       $('#report-photo-modal').openModal();
     }
 
@@ -371,18 +430,19 @@ page-report
         data: JSON.stringify(form_data)
       })
       .done(data => {
-        submitReportComplete();
+        resetReportModal();
+        closeReportView();
         app.goto('pins/' + data.name);
       })
       .fail(error => {
-        console.error('error:', err);
+        console.error('error:', error);
       });
     }
 
-    function submitReportComplete() {
-      resetReportModal();
+    function closeReportView() {
       $('#report-saving-modal').closeModal();
       $('#report-input-modal').closeModal();
+      $('#report-input-modal').removeClass('inactive');
     }
 
     self.clickPhoto = function(e) {
@@ -399,11 +459,15 @@ page-report
     self.clickLocation = function(e) {
       e.preventDefault();
       e.stopPropagation();
+      $('#report-input-modal').addClass('inactive');
       $('#report-map-modal').openModal({
         ready: function() { // when modal open
           if (!self.map) {
             createMap();
           }
+        },
+        complete: function() { // when modal close
+          updateMarkerLocation(self.map.getCenter());
         }
       });
     };
@@ -421,3 +485,18 @@ page-report
       e.stopPropagation();
       submitReport();
     };
+
+    self.clickClosePhoto = function(e) {
+      $('#report-input-modal').removeClass('inactive');
+    }
+
+    self.clickCloseMap = function(e) {
+      $('#report-input-modal').removeClass('inactive');
+    }
+
+    self.clickCloseReport = function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      closeReportView();
+      app.goto('feed');
+    }

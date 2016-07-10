@@ -7,12 +7,12 @@ append content
       page-feed
     #search.tab-bar-view
       page-feed
-    #noti.tab-bar-view
-      .container
-        h4 ข้อความ
-    #account.tab-bar-view
-      .container
-        h4 โปรไฟล์
+    //- #noti.tab-bar-view
+    //-   .container
+    //-     h4 ข้อความ
+    //- #account.tab-bar-view
+    //-   .container
+    //-     h4 โปรไฟล์
 
     page-report(target='#report-btn')
 
@@ -26,22 +26,33 @@ prepend footer
         a(href='#feed')
           i.icon.material-icons home
       li.tab.col.s3
-        a(href='#search')
-          i.icon.material-icons search
-      li.tab.col.s3
         a#report-btn(href='#report')
           img(src=site_url('/public/image/marker-s.png'))
       li.tab.col.s3
-        a(href='#noti')
-          i.icon.material-icons notifications
-      li.tab.col.s3
-        a(href='#account')
-          i.icon.material-icons face
+        a(href='#search')
+          i.icon.material-icons search
+      //- li.tab.col.s3
+      //-   a(href='#noti')
+      //-     i.icon.material-icons notifications
+      //- li.tab.col.s3
+      //-   a(href='#account')
+      //-     i.icon.material-icons face
 
 append app_script
   script.
+    // Route: #report
+    app.route('report', function(id, action, qs, hash) {
+      // hide all tab views
+      $('#page-app .tab-bar-view').hide();
+      $('.tabs > .tab > a').removeClass('active');
+
+      app.get('page-report').showReportView();
+    });
+
     // Route: #feed
     app.route('feed', function(id, action, qs, hash) {
+      $('.tab-bar-view').hide();
+      $('#feed').show();
       $.ajax({
         url: util.site_url('/pins?limit=100', app.get('service.api.url'))
       })
@@ -54,6 +65,8 @@ append app_script
 
     // Route: #search
     app.route('search', function(id, action, qs, hash) {
+      $('.tab-bar-view').hide();
+      $('#search').show();
       $.ajax({
         url: util.site_url('/api/feed')
       })
@@ -86,7 +99,8 @@ append app_script
 
     app.start();
 
-    riot.mount('page-report');
+    var pageReport = riot.mount('page-report')[0];
+    app.set('page-report', pageReport);
 
   script.
     $(document).ready(function(){

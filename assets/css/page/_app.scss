@@ -25,30 +25,104 @@
 
 }
 
-#report-input-modal {
 
-  .input {
-    margin-left: 3rem;
-  }
 
-  .location-input {
-  }
-}
+#page-app {
+  page-report {
+    .modal.full-sheet {
+      &.open {
+        position: relative;
+        z-index: 1100 !important;
+        bottom: 64px !important;
+      }
 
-#report-photo-modal {
-  .drop-image {
-    position: static;
-    width: 100%;
-    height: 60px;
-    margin: 0 auto;
-    background-color: $cl-primary;
-    .icon {
-      color: $cl-white;
-      vertical-align: middle;
+      &.inactive {
+        position: absolute;
+        bottom: 0 !important;
+      }
+    }
+
+    #report-uploading-modal,
+    #report-saving-modal {
+      &.open {
+        display: block !important;
+        opacity: 1 !important;
+        z-index: 1200 !important;
+      }
     }
   }
-}
 
+  #report-input-modal {
+    #add-image-btn {
+      position: absolute;
+      bottom: 2rem;
+      right: 2rem;
+      .icon {
+        font-size: $fs-xxl;
+      }
+    }
+    #input-detail {
+      margin-top: 0;
+      padding: 0 2rem;
+      border: 1px solid $cl-lightgray;
+      border-left-width: 0;
+      border-right-width: 0;
+      > .icon {
+        margin-top: 1rem;
+      }
+      textarea {
+        height: 4rem;
+        padding: 1rem 0;
+        // padding: 0.8rem 2rem;
+        margin-bottom: 0;
+        vertical-align: top;
+        // box-sizing: border-box;
+        border-bottom: none;
+        box-shadow: none;
+      }
+    }
+    #input-categories {
+      > .icon {
+        margin-top: 0.6rem;
+      }
+      .select-wrapper {
+        .caret {
+          top: 0.8rem;
+        }
+      }
+    }
+    #input-location {
+      .input {
+        display: block;
+        margin-left: 3rem;
+        border-bottom: 1px solid $cl-lightgray;
+      }
+    }
+  }
+
+  #report-photo-modal {
+    .drop-image {
+      position: static;
+      width: 100%;
+      height: 60px;
+      margin: 0 auto;
+      background-color: $cl-primary;
+      .icon {
+        color: $cl-white;
+        vertical-align: middle;
+      }
+    }
+  }
+
+  #report-map-modal {
+    #submit-location-btn {
+      position: absolute;
+      bottom: 0;
+      z-index: 2;
+    }
+  }
+
+}
 
 #page-pin {
   @media #{$medium-and-up} {
@@ -57,12 +131,15 @@
       height: 1px;
       .map-box-container {
         position: fixed;
+        top: 64px + 1px;
         width: 100%;
         height: 100vh;
         height: calc(100vh - 64px - 48px);
       }
     }
     .card {
+      position: relative;
+      z-index: 1;
       width: 400px;
       max-width: 90%;
       margin: 0 auto;
@@ -74,7 +151,7 @@
       .map-box-container {
         position: relative;
         width: 100%;
-        height: 30vh;
+        height: 100vw;
       }
     }
   }

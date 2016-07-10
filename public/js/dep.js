@@ -62,7 +62,7 @@ moment.locale('th', {
 });
 moment.locale('th');
 
-},{"moment":10}],3:[function(require,module,exports){
+},{"moment":11}],3:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -96,11 +96,154 @@ if (typeof global !== 'undefined') root = global;else if (typeof window !== 'und
   // leaflet plugins
   window.L = require('leaflet');
   window.L.Google = require('./dep/leaflet-google');
+  window.L.BingLayer = require('./dep/leaflet-bing');
 })(root);
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{"../etc/moment":1,"./dep/leaflet-google":4,"dropzone":5,"jquery":7,"jquery-serializejson":6,"leaflet":8,"lodash":9,"moment":10,"riot":11,"slick-carousel":12}],4:[function(require,module,exports){
+},{"../etc/moment":1,"./dep/leaflet-bing":4,"./dep/leaflet-google":5,"dropzone":6,"jquery":8,"jquery-serializejson":7,"leaflet":9,"lodash":10,"moment":11,"riot":12,"slick-carousel":13}],4:[function(require,module,exports){
+'use strict';
+
+(function (factory) {
+  if (typeof define === 'function' && define.amd) {
+    // AMD
+    define(['leaflet'], factory);
+  } else if (typeof module !== 'undefined') {
+    // Node/CommonJS
+    module.exports = factory(require('leaflet'));
+  } else {
+    // Browser globals
+    if (typeof this.L === 'undefined') throw 'Leaflet must be loaded first!';
+    factory(this.L);
+  }
+})(function (L) {
+
+  L.BingLayer = L.TileLayer.extend({
+    options: {
+      subdomains: [0, 1, 2, 3],
+      type: 'Aerial',
+      attribution: 'Bing',
+      culture: ''
+    },
+
+    initialize: function initialize(key, options) {
+      L.Util.setOptions(this, options);
+
+      this._key = key;
+      this._url = null;
+      this._providers = [];
+      this.metaRequested = false;
+    },
+
+    tile2quad: function tile2quad(x, y, z) {
+      var quad = '';
+      for (var i = z; i > 0; i--) {
+        var digit = 0;
+        var mask = 1 << i - 1;
+        if ((x & mask) !== 0) digit += 1;
+        if ((y & mask) !== 0) digit += 2;
+        quad = quad + digit;
+      }
+      return quad;
+    },
+
+    getTileUrl: function getTileUrl(tilePoint) {
+      var zoom = this._getZoomForUrl();
+      var subdomains = this.options.subdomains,
+          s = this.options.subdomains[Math.abs((tilePoint.x + tilePoint.y) % subdomains.length)];
+      return this._url.replace('{subdomain}', s).replace('{quadkey}', this.tile2quad(tilePoint.x, tilePoint.y, zoom)).replace('{culture}', this.options.culture);
+    },
+
+    loadMetadata: function loadMetadata() {
+      if (this.metaRequested) return;
+      this.metaRequested = true;
+      var _this = this;
+      var cbid = '_bing_metadata_' + L.Util.stamp(this);
+      window[cbid] = function (meta) {
+        window[cbid] = undefined;
+        var e = document.getElementById(cbid);
+        e.parentNode.removeChild(e);
+        if (meta.errorDetails) {
+          throw new Error(meta.errorDetails);
+          return;
+        }
+        _this.initMetadata(meta);
+      };
+      var urlScheme = document.location.protocol === 'file:' ? 'http' : document.location.protocol.slice(0, -1);
+      var url = urlScheme + '://dev.virtualearth.net/REST/v1/Imagery/Metadata/' + this.options.type + '?include=ImageryProviders&jsonp=' + cbid + '&key=' + this._key + '&UriScheme=' + urlScheme;
+      var script = document.createElement('script');
+      script.type = 'text/javascript';
+      script.src = url;
+      script.id = cbid;
+      document.getElementsByTagName('head')[0].appendChild(script);
+    },
+
+    initMetadata: function initMetadata(meta) {
+      var r = meta.resourceSets[0].resources[0];
+      this.options.subdomains = r.imageUrlSubdomains;
+      this._url = r.imageUrl;
+      if (r.imageryProviders) {
+        for (var i = 0; i < r.imageryProviders.length; i++) {
+          var p = r.imageryProviders[i];
+          for (var j = 0; j < p.coverageAreas.length; j++) {
+            var c = p.coverageAreas[j];
+            var coverage = { zoomMin: c.zoomMin, zoomMax: c.zoomMax, active: false };
+            var bounds = new L.LatLngBounds(new L.LatLng(c.bbox[0] + 0.01, c.bbox[1] + 0.01), new L.LatLng(c.bbox[2] - 0.01, c.bbox[3] - 0.01));
+            coverage.bounds = bounds;
+            coverage.attrib = p.attribution;
+            this._providers.push(coverage);
+          }
+        }
+      }
+      this._update();
+    },
+
+    _update: function _update() {
+      if (this._url === null || !this._map) return;
+      this._update_attribution();
+      L.TileLayer.prototype._update.apply(this, []);
+    },
+
+    _update_attribution: function _update_attribution() {
+      var bounds = L.latLngBounds(this._map.getBounds().getSouthWest().wrap(), this._map.getBounds().getNorthEast().wrap());
+      var zoom = this._map.getZoom();
+      for (var i = 0; i < this._providers.length; i++) {
+        var p = this._providers[i];
+        if (zoom <= p.zoomMax && zoom >= p.zoomMin && bounds.intersects(p.bounds)) {
+          if (!p.active && this._map.attributionControl) this._map.attributionControl.addAttribution(p.attrib);
+          p.active = true;
+        } else {
+          if (p.active && this._map.attributionControl) this._map.attributionControl.removeAttribution(p.attrib);
+          p.active = false;
+        }
+      }
+    },
+
+    onAdd: function onAdd(map) {
+      this.loadMetadata();
+      L.TileLayer.prototype.onAdd.apply(this, [map]);
+    },
+
+    onRemove: function onRemove(map) {
+      for (var i = 0; i < this._providers.length; i++) {
+        var p = this._providers[i];
+        if (p.active && this._map.attributionControl) {
+          this._map.attributionControl.removeAttribution(p.attrib);
+          p.active = false;
+        }
+      }
+      L.TileLayer.prototype.onRemove.apply(this, [map]);
+    }
+  });
+
+  L.bingLayer = function (key, options) {
+    return new L.BingLayer(key, options);
+  };
+
+  return L.BingLayer;
+});
+
+},{"leaflet":9}],5:[function(require,module,exports){
 'use strict';
 
 (function (factory) {
@@ -264,7 +407,7 @@ if (typeof global !== 'undefined') root = global;else if (typeof window !== 'und
   return L.Google;
 });
 
-},{"leaflet":8}],5:[function(require,module,exports){
+},{"leaflet":9}],6:[function(require,module,exports){
 
 /*
  *
@@ -2033,7 +2176,7 @@ if (typeof global !== 'undefined') root = global;else if (typeof window !== 'und
 
 }).call(this);
 
-},{}],6:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 /*!
   SerializeJSON jQuery plugin.
   https://github.com/marioizquierdo/jquery.serializeJSON
@@ -2312,7 +2455,7 @@ if (typeof global !== 'undefined') root = global;else if (typeof window !== 'und
 
 }));
 
-},{"jquery":7}],7:[function(require,module,exports){
+},{"jquery":8}],8:[function(require,module,exports){
 /*!
  * jQuery JavaScript Library v2.2.4
  * http://jquery.com/
@@ -12128,7 +12271,7 @@ if ( !noGlobal ) {
 return jQuery;
 }));
 
-},{}],8:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 /*
  Leaflet, a JavaScript library for mobile-friendly interactive maps. http://leafletjs.com
  (c) 2010-2013, Vladimir Agafonkin
@@ -21297,7 +21440,7 @@ L.Map.include({
 
 
 }(window, document));
-},{}],9:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 (function (global){
 /**
  * @license
@@ -37706,7 +37849,7 @@ L.Map.include({
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{}],10:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 //! moment.js
 //! version : 2.13.0
 //! authors : Tim Wood, Iskren Chernev, Moment.js contributors
@@ -41747,7 +41890,7 @@ L.Map.include({
     return _moment;
 
 }));
-},{}],11:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 /* Riot v2.4.1, @license MIT */
 
 ;(function(window, undefined) {
@@ -44390,7 +44533,7 @@ riot.Tag = Tag
 
 })(typeof window != 'undefined' ? window : void 0);
 
-},{}],12:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 /*
      _ _      _       _
  ___| (_) ___| | __  (_)___
@@ -47284,5 +47427,5 @@ riot.Tag = Tag
 
 }));
 
-},{"jquery":7}]},{},[3])
+},{"jquery":8}]},{},[3])
 //# sourceMappingURL=dep.js.map

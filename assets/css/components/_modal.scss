@@ -43,6 +43,9 @@
   .modal-footer {
   }
   .modal-content {
+    &.no-padding-s {
+      padding: 0;
+    }
   }
 }
 
