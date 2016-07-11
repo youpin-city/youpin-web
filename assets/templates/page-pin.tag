@@ -56,7 +56,7 @@ page-pin
                         | { comment.voter.length } คน
 
     .map-container
-      map-box(options-zoom='17', options-scroll-wheel-zoom='false', options-tap='false', options-keyboard='false')
+      map-box(pin-clickable='false', options-zoom='17', options-scroll-wheel-zoom='false', options-tap='false', options-keyboard='false')
 
     .spacing-large
   script.
@@ -76,7 +76,7 @@ page-pin
      ***************/
     self.on('mount', () => {
       // console.log('mount:', self.opts);
-      riot.mount('#page-pin map-box', 'map-box', { markers_center: [ self.pin.location ] })
+      riot.mount('#page-pin map-box', 'map-box', { pins: [ self.pin ] })
     });
 
     self.on('updated', () => {

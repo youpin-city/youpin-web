@@ -3,7 +3,7 @@ extends layouts/layout
 append content
 
   #page-home
-    map-box(options-zoom-control='false', options-scroll-wheel-zoom='false', options-double-click-zoom='false', options-touch-zoom='false', options-tap='false', options-keyboard='false')
+    map-box(pin-clickable='false', options-zoom-control='false', options-scroll-wheel-zoom='false', options-double-click-zoom='false', options-touch-zoom='false', options-tap='false', options-keyboard='false')
 
     #floating-logo
       .logo
@@ -193,5 +193,5 @@ append app_script
 
   script.
     riot.mount('map-box', {
-      markers_center: !{JSON.stringify(sample_pin_locations)}
+      pins: !{JSON.stringify(sample_pins)}
     });

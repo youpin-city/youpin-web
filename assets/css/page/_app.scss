@@ -124,6 +124,50 @@
 
 }
 
+
+#page-map {
+  position: relative;
+
+  .page-name {
+    position: absolute;
+    left: 50%;
+    transform: translate(-50%, 0);
+    margin: 0;
+    padding: 1rem;
+    background: $cl-white;
+    border-radius: 10rem;
+    box-shadow: 0 1px 1px rgba(0,0,0,.2);
+    opacity: 0.8;
+  }
+
+  #overlay-layer {
+    position: absolute;
+    z-index: 2;
+    top: 10px;
+    left: 0;
+    right: 0;
+  }
+
+  map-box {
+    .map-box-container {
+      height: 100vh;
+      height: calc(100vh - 64px - 48px);
+
+      .leaflet-popup-content {
+        max-width: 300px;
+        .pin-image {
+          padding-top: 100%;
+          width: 100%;
+          background-size: cover;
+          background-repeat: no-repeat;
+          background-position: center center;
+        }
+      }
+    }
+  }
+}
+
+
 #page-pin {
   @media #{$medium-and-up} {
     map-box {

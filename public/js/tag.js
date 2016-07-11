@@ -7,10 +7,8 @@ riot.tag2('map-box', '<div class="map-box-container" id="{id}-container"> <div c
   var regex_options = /^options/i;
   self.map = null;
   self.map_options = {
-    zoom: 17,
-    fadeAnimation: false,
-    zoomAnimation: false,
-    markerZoomAnimation: false
+    zoom: 17
+
   };
   _.forEach(opts, function (value, key) {
     if (regex_options.test(key)) {
@@ -22,12 +20,16 @@ riot.tag2('map-box', '<div class="map-box-container" id="{id}-container"> <div c
 
   self.center = { lat: 13.7304311, lng: 100.5696901 };
   self.markers = [];
-  self.markers_center = opts.markers_center || [];
+  self.pin_clickable = opts.pinClickable !== 'false';
+  self.pins = _.filter(opts.pins || [], function (pin) {
+    if (!pin.location) return false;
+    return true;
+  });
 
   self.YPIcon = L.icon({
-    iconUrl: util.site_url('/public/image/marker-m.png'),
-    iconSize: [32, 51],
-    iconAnchor: [16, 48],
+    iconUrl: util.site_url('/public/image/marker-m-3d.png'),
+    iconSize: [36, 54],
+    iconAnchor: [16, 51],
     popupAnchor: [0, -51]
   });
 
@@ -65,16 +67,23 @@ riot.tag2('map-box', '<div class="map-box-container" id="{id}-container"> <div c
   }
 
   function createMarker() {
-    self.markers = _.map(self.markers_center, function (center) {
-      return L.marker(center, {
+    self.markers = _.map(self.pins, function (pin) {
+      var marker = L.marker(pin.location, {
         icon: self.YPIcon,
         interactive: false,
         keyboard: false,
         riseOnHover: true
-      }).addTo(self.map);
+      });
+      if (self.pin_clickable) {
+        marker.bindPopup('<a href="#pins/' + pin.id + '" target="_blank">' + '<div class="pin-image" style="background-image: url(' + (_.get(pin, 'photos.0') || util.site_url("/public/image/pin_photo.png")) + ');"></div>' + '</a>' + '<div>' + pin.detail + '</div>' + '<div><a href="#pins/' + pin.id + '" target="_blank">View Pin</a></div>');
+      }
+      marker.addTo(self.map);
+      return marker;
     });
 
-    var bounds = new L.LatLngBounds(self.markers_center);
+    var bounds = new L.LatLngBounds(_.map(self.pins, function (pin) {
+      return pin.location;
+    }));
 
     self.map.fitBounds(bounds);
     self.map.setZoom(+self.map_options.zoom || 17);
@@ -97,7 +106,19 @@ riot.tag2('page-feed', '<div id="page-feed"> <div class="container no-padding-s"
   self.on('mount', function () {});
 });
 
-riot.tag2('page-pin', '<div id="page-pin"> <div class="fluid-container no-padding-s"> <div class="row"> <div class="col s12 m6 offset-m6"> <div class="spacing"></div> <div class="card"> <div class="card-image" if="{pin.photos.length === 0}" href="#pins/{pin.id}" riot-style="background-image: url({util.site_url(&quot;/public/image/pin_photo.png&quot;)})"></div> <div class="card-image responsive" if="{pin.photos.length &gt; 0}"> <div class="slider-container"> <div class="image-slider" id="photo-slider"> <div class="slider-item" each="{photo in pin.photos}"> <div class="image-item"> <div class="image" riot-style="background-image: url(&quot;{util.site_url(photo)}&quot;)"></div> </div> </div> </div> </div> </div> <div class="card-content"> <div class="pin-content"> <div class="card-description"> <div class="card-author"><a href="#user/{pin.owner}">@{pin.owner}</a></div> <div class="card-text">{pin.detail}</div> <div class="tag-list" if="{pin.tags &amp;&amp; pin.tags.length &gt; 0}"><a class="tag-item" each="{tag in pin.tags}" href="#tag/{tag}">{tag}</a></div> <div class="card-area" if="{pin.neighborhood}">ย่าน{pin.neighborhood}</div> </div> <div class="card-stat"> <div class="meta meta-like left">เห็นด้วย {pin.voters.length} คน</div> <div class="meta meta-comment left"><i class="icon material-icons tiny">chat_bubble_outline</i>ความเห็น {pin.comments.length}</div> </div> <div class="card-meta"> <div class="meta meta-time right">{moment(pin.created_time, [\'x\', \'M/D/YYYY, h:mm A\']).fromNow()}</div> <div class="meta meta-status left" data-status="{pin.status}">{pin.status}</div> </div> </div> <div if="{pin.comments &amp;&amp; pin.comments.length &gt; 0}"> <div class="divider"></div> <h5 class="section-name">ความคิดเห็น</h5> <div class="comment-list"> <div class="comment-item" each="{comment in pin.comments}"> <div class="card-description"> <div class="card-author"><a href="#user/{comment.commented_by}">@{comment.commented_by}</a></div> <div class="card-text">{comment.detail}</div> <div class="tag-list" if="{comment.tags &amp;&amp; comment.tags.length &gt; 0}"><a class="tag-item" each="{tag in comment.tags}" href="#tag/{tag}">{tag}</a></div> </div> <div class="card-stat"> <div class="meta meta-like left"><i class="icon material-icons tiny">person</i>{comment.voter.length} คน</div> </div> </div> </div> </div> </div> </div> </div> </div> </div> <div class="map-container"> <map-box options-zoom="17" options-scroll-wheel-zoom="false" options-tap="false" options-keyboard="false"></map-box> </div> <div class="spacing-large"></div> </div>', '', '', function (opts) {
+riot.tag2('page-map', '<div id="page-map"> <map-box options-zoom="15" options-scroll-wheel-zoom="false"></map-box> <div class="container no-padding-s" id="overlay-layer"> <h5 class="page-name" if="{title}">{title}</h5> </div> </div>', '', '', function (opts) {
+  var self = this;
+
+  self.title = opts.title;
+  self.pins = opts.pins || [];
+
+  self.on('mount', function () {
+
+    riot.mount('map-box', { pins: self.pins });
+  });
+});
+
+riot.tag2('page-pin', '<div id="page-pin"> <div class="fluid-container no-padding-s"> <div class="row"> <div class="col s12 m6 offset-m6"> <div class="spacing"></div> <div class="card"> <div class="card-image" if="{pin.photos.length === 0}" href="#pins/{pin.id}" riot-style="background-image: url({util.site_url(&quot;/public/image/pin_photo.png&quot;)})"></div> <div class="card-image responsive" if="{pin.photos.length &gt; 0}"> <div class="slider-container"> <div class="image-slider" id="photo-slider"> <div class="slider-item" each="{photo in pin.photos}"> <div class="image-item"> <div class="image" riot-style="background-image: url(&quot;{util.site_url(photo)}&quot;)"></div> </div> </div> </div> </div> </div> <div class="card-content"> <div class="pin-content"> <div class="card-description"> <div class="card-author"><a href="#user/{pin.owner}">@{pin.owner}</a></div> <div class="card-text">{pin.detail}</div> <div class="tag-list" if="{pin.tags &amp;&amp; pin.tags.length &gt; 0}"><a class="tag-item" each="{tag in pin.tags}" href="#tag/{tag}">{tag}</a></div> <div class="card-area" if="{pin.neighborhood}">ย่าน{pin.neighborhood}</div> </div> <div class="card-stat"> <div class="meta meta-like left">เห็นด้วย {pin.voters.length} คน</div> <div class="meta meta-comment left"><i class="icon material-icons tiny">chat_bubble_outline</i>ความเห็น {pin.comments.length}</div> </div> <div class="card-meta"> <div class="meta meta-time right">{moment(pin.created_time, [\'x\', \'M/D/YYYY, h:mm A\']).fromNow()}</div> <div class="meta meta-status left" data-status="{pin.status}">{pin.status}</div> </div> </div> <div if="{pin.comments &amp;&amp; pin.comments.length &gt; 0}"> <div class="divider"></div> <h5 class="section-name">ความคิดเห็น</h5> <div class="comment-list"> <div class="comment-item" each="{comment in pin.comments}"> <div class="card-description"> <div class="card-author"><a href="#user/{comment.commented_by}">@{comment.commented_by}</a></div> <div class="card-text">{comment.detail}</div> <div class="tag-list" if="{comment.tags &amp;&amp; comment.tags.length &gt; 0}"><a class="tag-item" each="{tag in comment.tags}" href="#tag/{tag}">{tag}</a></div> </div> <div class="card-stat"> <div class="meta meta-like left"><i class="icon material-icons tiny">person</i>{comment.voter.length} คน</div> </div> </div> </div> </div> </div> </div> </div> </div> </div> <div class="map-container"> <map-box pin-clickable="false" options-zoom="17" options-scroll-wheel-zoom="false" options-tap="false" options-keyboard="false"></map-box> </div> <div class="spacing-large"></div> </div>', '', '', function (opts) {
   var self = this;
 
   self.pin = opts;
@@ -105,7 +126,7 @@ riot.tag2('page-pin', '<div id="page-pin"> <div class="fluid-container no-paddin
 
   self.on('mount', function () {
 
-    riot.mount('#page-pin map-box', 'map-box', { markers_center: [self.pin.location] });
+    riot.mount('#page-pin map-box', 'map-box', { pins: [self.pin] });
   });
 
   self.on('updated', function () {

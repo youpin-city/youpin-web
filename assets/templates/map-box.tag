@@ -36,9 +36,9 @@ map-box
     self.map = null;
     self.map_options = {
       zoom: 17,
-      fadeAnimation: false,
-      zoomAnimation: false,
-      markerZoomAnimation: false
+      // fadeAnimation: false,
+      // zoomAnimation: false,
+      // markerZoomAnimation: false
     };
     _.forEach(opts, (value, key) => {
       if (regex_options.test(key)) {
@@ -52,13 +52,17 @@ map-box
 
     self.center = { lat: 13.7304311, lng: 100.5696901 };
     self.markers = [];
-    self.markers_center = opts.markers_center || [];
+    self.pin_clickable = opts.pinClickable !== 'false';
+    self.pins = _.filter(opts.pins || [], pin => {
+      if (!pin.location) return false;
+      return true;
+    });
     // Define
     self.YPIcon = L.icon({
-        iconUrl: util.site_url('/public/image/marker-m.png'),
-        iconSize: [32, 51],
-        iconAnchor: [16, 48],
-        popupAnchor: [0, -51]
+      iconUrl: util.site_url('/public/image/marker-m-3d.png'),
+      iconSize: [36, 54],
+      iconAnchor: [16, 51],
+      popupAnchor: [0, -51]
     });
     /***************
      * CHANGE
@@ -201,17 +205,27 @@ map-box
     }
 
     function createMarker() {
-      self.markers = _.map(self.markers_center, center => {
-        return L.marker(center, {
-            icon: self.YPIcon,
-            interactive: false,
-            keyboard: false,
-            riseOnHover: true
-          })
-          .addTo(self.map);
+      self.markers = _.map(self.pins, pin => {
+        const marker = L.marker(pin.location, {
+          icon: self.YPIcon,
+          interactive: false,
+          keyboard: false,
+          riseOnHover: true
+        });
+        if (self.pin_clickable) {
+          marker.bindPopup(
+            '<a href="#pins/'+pin.id+'" target="_blank">'
+            + '<div class="pin-image" style="background-image: url('+(_.get(pin, 'photos.0') || util.site_url("/public/image/pin_photo.png"))+');"></div>'
+            + '</a>'
+            + '<div>' + pin.detail + '</div>'
+            + '<div><a href="#pins/'+pin.id+'" target="_blank">View Pin</a></div>'
+          );
+        }
+        marker.addTo(self.map);
+        return marker;
       });
 
-      const bounds = new L.LatLngBounds(self.markers_center);
+      const bounds = new L.LatLngBounds(_.map(self.pins, pin => pin.location));
       // // offset bounds to show pin card on right half
       // const ne = bounds.getNorthEast();
       // bounds.extend([ne.lat, ne.lng + 0.002]);

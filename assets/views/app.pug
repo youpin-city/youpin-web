@@ -7,6 +7,7 @@ append content
       page-feed
     #search.tab-bar-view
       page-feed
+      page-map
     //- #noti.tab-bar-view
     //-   .container
     //-     h4 ข้อความ
@@ -57,7 +58,7 @@ append app_script
         url: util.site_url('/pins?limit=100', app.get('service.api.url'))
       })
       .done(function(data) {
-        var pins = _.map(data.pin_info, function(pin, key) { return parser.pin(pin, null, key); });
+        var pins = data.data || [];
         pins.reverse();
         app.open('page-feed', '#feed', { title: 'พินล่าสุด', pins: pins });
       });
@@ -68,11 +69,12 @@ append app_script
       $('.tab-bar-view').hide();
       $('#search').show();
       $.ajax({
-        url: util.site_url('/api/feed')
+        url: util.site_url('/pins?limit=100', app.get('service.api.url'))
       })
       .done(function(data) {
-        var pins = data;
-        app.open('page-feed', '#search', { title: 'ค้นหาพิน', pins: pins });
+        var pins = data.data || [];
+        pins.reverse();
+        app.open('page-map', '#search', { title: 'ค้นหาพินรอบๆ', pins: pins });
       });
     });
 
@@ -91,7 +93,7 @@ append app_script
         if (qs.mock) {
           pin = data;
         } else {
-          pin = parser.pin(_.get(data, 'pin_info'), _.get(data, 'location.l'));
+          pin = (data.data || [])[0];
         }
         app.open('page-pin', pin);
       });
