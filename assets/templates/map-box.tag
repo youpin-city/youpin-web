@@ -225,12 +225,16 @@ map-box
         return marker;
       });
 
-      const bounds = new L.LatLngBounds(_.map(self.pins, pin => pin.location));
-      // // offset bounds to show pin card on right half
-      // const ne = bounds.getNorthEast();
-      // bounds.extend([ne.lat, ne.lng + 0.002]);
-      self.map.fitBounds(bounds);
-      self.map.setZoom(+self.map_options.zoom || 17);
+      if (self.markers.length > 0) {
+        const bounds = new L.LatLngBounds(_.map(self.pins, pin => pin.location));
+        // // offset bounds to show pin card on right half
+        // const ne = bounds.getNorthEast();
+        // bounds.extend([ne.lat, ne.lng + 0.002]);
+        self.map.fitBounds(bounds);
+        self.map.setZoom(+self.map_options.zoom || 17);
+      } else {
+        console.log('No pins attached');
+      }
     }
 
     function destroyMap() {

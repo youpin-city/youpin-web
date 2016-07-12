@@ -53,10 +53,13 @@
   }
 
   #report-input-modal {
-    #add-image-btn {
+    #add-image-btn,
+    #edit-location-btn {
       position: absolute;
+      z-index: 2;
       bottom: 2rem;
       right: 2rem;
+      opacity: 0.8;
       .icon {
         font-size: $fs-xxl;
       }
@@ -98,6 +101,12 @@
         border-bottom: 1px solid $cl-lightgray;
       }
     }
+    #input-location-complete {
+      position: relative;
+      .map-box-container {
+        height: 200px;
+      }
+    }
   }
 
   #report-photo-modal {
@@ -106,7 +115,13 @@
       width: 100%;
       height: 60px;
       margin: 0 auto;
+      padding: 1rem 2rem;
+      color: $cl-white;
       background-color: $cl-primary;
+
+      font-size: $fs-lg;
+      font-weight: $fw-normal;
+      line-height: 2;
       .icon {
         color: $cl-white;
         vertical-align: middle;

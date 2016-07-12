@@ -6,7 +6,6 @@ append content
     #feed.tab-bar-view
       page-feed
     #search.tab-bar-view
-      page-feed
       page-map
     //- #noti.tab-bar-view
     //-   .container
@@ -15,7 +14,7 @@ append content
     //-   .container
     //-     h4 โปรไฟล์
 
-    page-report(target='#report-btn')
+    page-report
 
     page-pin
 
@@ -28,10 +27,12 @@ prepend footer
           i.icon.material-icons home
       li.tab.col.s3
         a#report-btn(href='#report')
+          i.icon.material-icons.blue.white-text add_location
           img(src=site_url('/public/image/marker-s.png'))
       li.tab.col.s3
         a(href='#search')
-          i.icon.material-icons search
+          i.icon.material-icons map
+          //- i.icon.material-icons search
       //- li.tab.col.s3
       //-   a(href='#noti')
       //-     i.icon.material-icons notifications
@@ -112,10 +113,10 @@ append app_script
         location.href = e.currentTarget.href;
       });
 
-      $('#report-btn').on('click', function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-      });
+      //- $('#report-btn').on('click', function(e) {
+      //-   e.preventDefault();
+      //-   e.stopPropagation();
+      //- });
     });
 
     if (!location.hash) {

@@ -9,7 +9,7 @@ page-report
               | ยกเลิก
         .center
           a.brand-logo(href='#')
-          .modal-title ใส่ข้อมูล
+          .modal-title ใส่ข้อมูลพิน
         ul.right
           //- li
           //-   a(href='#!', onclick='{ clickSubmitReport }')
@@ -29,8 +29,8 @@ page-report
               input(type='hidden', name='neighborhood', value='{ neighborhood }')
 
               .card
-                .card-image(if='{ photos.length === 0 }', href='#report', style='background-image: url({ util.site_url("/public/image/pin_photo.png") });')
-                  a#add-image-btn.btn-floating.btn-large.waves-effect.waves-light.white(href='#report', onclick='{ clickPhoto }')
+                .card-image(if='{ photos.length === 0 }', href='#report', style='background-image: url({ util.site_url("/public/image/pin_photo_upload.png") });')
+                  button#add-image-btn.btn-floating.btn-large.waves-effect.waves-light.white(type='button', onclick='{ clickPhoto }')
                     i.icon.material-icons.large.blue-text add
 
                 .card-image.responsive(if='{ photos.length > 0 }')
@@ -43,25 +43,28 @@ page-report
                     i.icon.material-icons add
                 #input-detail.input-field
                   //- i.icon.material-icons.prefix chat_bubble_outline
-                  textarea.validate.materialize-textarea(name='detail', placeholder='ตั้งชื่อพิน') { detail }
-                  //- input.validate(type='text', name='detail', placeholder='ตั้งชื่อพิน', value='{ detail }')
+                  textarea.validate.materialize-textarea(name='detail', placeholder='ใส่คำอธิบายปัญหาหรือข้อเสนอแนะ', oninput='{ changeDetail }') { detail }
 
                 .card-content
                   #input-categories.input-field
-                    i.icon.material-icons.prefix inbox
-                    select#select-categories(name='categories')
+                    i.icon.material-icons.prefix local_offer
+                    select#select-categories(name='categories', onchange='{ changeCategories }')
                       option(each='{ cat in choice_categories }', value='{ cat.value }', selected='{ cat.selected }') { cat.text }
                     //- input.validate(type='text', name='categories', placeholder='หมวด', value='{ categories }')
 
-                  #input-location.input-field
+                  #input-location.input-field(if='{ !location }')
                     i.icon.material-icons.prefix(class='{ location.lat ? "active" : "" }') place
                     a.location-input.input(href='#', onclick='{ clickLocation }') { location_text }
+                      i.icon.material-icons.green-text.small(if='{ location }', style='vertical-align: top;') check
                     //- input.validate(type='text', name='location', placeholder='ใส่ตำแหน่ง', value='{ location_text }', readonly, onfocus='{ clickLocation }')
 
-                  .spacing
+                #input-location-complete(if='{ location }')
+                  map-box#input-location-map(pin-clickable='false', options-dragging='false', options-zoom='15', options-zoom-control='false', options-scroll-wheel-zoom='false', options-double-click-zoom='false', options-touch-zoom='false', options-tap='false', options-keyboard='false')
+                  button#edit-location-btn.btn-floating.btn-large.waves-effect.waves-light.white(type='button', onclick='{ clickLocation }')
+                    i.icon.material-icons.large.blue-text edit
 
       .fluid-container
-        a#submit-pin-btn.btn.btn-large.btn-block(href='#report', onclick='{ clickSubmitReport }') โพสต์พิน
+        button#submit-pin-btn.btn.btn-large.btn-block(type='button', onclick='{ clickSubmitReport }', class='{ is_pin_complete ? "" : "disabled" }', disabled='{ !is_pin_complete }') โพสต์พิน
 
   #report-photo-modal.modal.bottom-sheet.full-sheet
     .modal-header
@@ -73,7 +76,7 @@ page-report
               | กลับ
         .center
           a.brand-logo(href='#')
-          .modal-title ใส่ภาพถ่าย
+          .modal-title เลือกภาพถ่าย
         ul.right
 
     .modal-content.no-padding-s
@@ -88,12 +91,10 @@ page-report
                   input.validate(type='text', name='photo[{ i }][text]', value='{ photo.text }', placeholder='ใส่คำอธิบาย', data-i='{ i }', onchange='{ changePhotoText }')
 
           .col.s12.m6.offset-m3.l4.offset-l4
-            .card
-              .card-image.responsive
-                .drop-image-preview.hide
-                .card-title.center.drop-image.valign-wrapper(name='dropzone-el')
-                  i.icon.material-icons photo_camera
-                  | เพิ่มรูป
+            .drop-image-preview.hide
+            .card-title.center.drop-image(name='dropzone-el')
+              i.icon.material-icons photo_camera
+              | เพิ่มรูป
 
   #report-map-modal.modal.bottom-sheet.full-sheet
     .modal-header
@@ -105,14 +106,14 @@ page-report
               | กลับ
         .center
           a.brand-logo(href='#')
-          .modal-title เลือกตำแหน่ง
+          .modal-title ตำแหน่งพิน
         ul.right
           li
             a(href='#!', onclick='{ setMapLocationByGeolocation }')
               i.icon.material-icons gps_fixed
 
     .modal-content.no-padding-s
-      #input-location-map.input-location-map
+      #edit-location-map.input-location-map
       a#submit-location-btn.btn.btn-large.btn-block.modal-close ใช้ตำแหน่งนี้
 
   #report-uploading-modal.modal
@@ -153,14 +154,15 @@ page-report
      ***************/
     self.dropzone = null;
     self.slider = false;
+    self.is_pin_complete = false;
 
     self.detail = '';
     self.categories = '';
     self.photos = [];
     self.target = opts.target;
     self.map = null;
-    self.map_id = 'input-location-map';
-    self.location = { lat: '', lng: '' };
+    self.map_id = 'edit-location-map';
+    self.location = null;
     self.neighborhood = 'สีลม';
     // Define
     self.DEFAULT_LOCATION = { lat: 13.7302295, lng: 100.5724075 };
@@ -192,8 +194,9 @@ page-report
      ***************/
     self.on('update', () => {
       self.location_text = self.location && typeof self.location.lat === 'number'
-        ? 'ปักพินแล้ว'
-        : 'เลือกตำแหน่ง';
+        ? 'ปักตำแหน่งแล้ว'
+        : 'ใส่ตำแหน่ง';
+      checkReportComplete();
     });
     self.on('mount', () => {
       // console.log('page report mounted.');
@@ -238,7 +241,7 @@ page-report
           previewsContainer: '.drop-image-preview',
           previewTemplate: '<div class="dz-preview-template" style="display: none;"></div>',
           dictDefaultMessage: '',
-          clickable: [$(self.target)[0], self['dropzone-el']],
+          clickable: _.filter([$(self.target)[0], self['dropzone-el']]),
           uploadMultiple: true,
           fallback: function() {
             $(self.root).find('.dropzone').hide();
@@ -301,6 +304,24 @@ page-report
       createPhotoSlider();
     }
     self.showReportView = showReportView;
+
+    self.changeDetail = function (e) {
+      self.detail = e.currentTarget.value;
+      self.update();
+    };
+
+    self.changeCategories = function (e) {
+      self.categories = e.currentTarget.value;
+      self.update();
+    };
+
+    function checkReportComplete() {
+      self.is_pin_complete = true;
+      if (!self.location) self.is_pin_complete = false;
+      if (!self.detail) self.is_pin_complete = false;
+      if (!self.categories) self.is_pin_complete = false;
+      if (self.photos.length === 0) self.is_pin_complete = false;
+    }
 
     function createPhotoSlider() {
       // make slider
@@ -372,9 +393,7 @@ page-report
       self.map.addLayer(HERE_normalDay);
 
       self.map_marker = L.marker([self.DEFAULT_LOCATION.lat, self.DEFAULT_LOCATION.lng], { icon: self.YPIcon })
-        .bindPopup('ที่นี่มีหลุมบ่อ น้ำท่วมขังบ่อย ส่งกลิ่นเหม็นทุกเย็นเลย')
         .addTo(self.map);
-      //- self.map.addLayer(cities);
 
       self.map.on('drag', _.throttle(() => {
         updateMarkerLocation(self.map.getCenter());
@@ -395,6 +414,7 @@ page-report
       self.location = latlng;
       self.map_marker.setLatLng(latlng);
       self.update();
+      riot.mount('#input-location-map', { pins: [{ location: self.location }] })
     }
 
     function openPhoto(e) {
