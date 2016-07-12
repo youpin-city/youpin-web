@@ -2,7 +2,7 @@
 @import 'variables';
 
 @import '../../../node_modules/materialize-css/sass/components/mixins';
-@import '../../../node_modules/materialize-css/sass/components/color';
+@import 'color'; // @import '../../../node_modules/materialize-css/sass/components/color';
 
 /* ==========================================================================
    Materialize variables
@@ -318,3 +318,4 @@ $progress-bar-color: $primary-color !default;
 
 // Load materialize
 @import '../../../node_modules/materialize-css/sass/materialize.scss';
+@import 'color';

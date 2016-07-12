@@ -31,7 +31,7 @@ page-report
               .card
                 .card-image(if='{ photos.length === 0 }', href='#report', style='background-image: url({ util.site_url("/public/image/pin_photo_upload.png") });')
                   button#add-image-btn.btn-floating.btn-large.waves-effect.waves-light.white(type='button', onclick='{ clickPhoto }')
-                    i.icon.material-icons.large.blue-text add
+                    i.icon.material-icons.large.light-blue-text add
 
                 .card-image.responsive(if='{ photos.length > 0 }')
                   .slider-container
@@ -61,7 +61,7 @@ page-report
                 #input-location-complete(if='{ location }')
                   map-box#input-location-map(pin-clickable='false', options-dragging='false', options-zoom='15', options-zoom-control='false', options-scroll-wheel-zoom='false', options-double-click-zoom='false', options-touch-zoom='false', options-tap='false', options-keyboard='false')
                   button#edit-location-btn.btn-floating.btn-large.waves-effect.waves-light.white(type='button', onclick='{ clickLocation }')
-                    i.icon.material-icons.large.blue-text edit
+                    i.icon.material-icons.large.light-blue-text edit
 
       .fluid-container
         button#submit-pin-btn.btn.btn-large.btn-block(type='button', onclick='{ clickSubmitReport }', class='{ is_pin_complete ? "" : "disabled" }', disabled='{ !is_pin_complete }') โพสต์พิน
@@ -114,7 +114,7 @@ page-report
 
     .modal-content.no-padding-s
       #edit-location-map.input-location-map
-      a#submit-location-btn.btn.btn-large.btn-block.modal-close ใช้ตำแหน่งนี้
+      a#submit-location-btn.btn.btn-large.btn-block.modal-close(onclick='{ clickCloseMap }') ใช้ตำแหน่งนี้
 
   #report-uploading-modal.modal
     .modal-content

@@ -27,8 +27,8 @@ prepend footer
           i.icon.material-icons home
       li.tab.col.s3
         a#report-btn(href='#report')
-          i.icon.material-icons.blue.white-text add_location
-          img(src=site_url('/public/image/marker-s.png'))
+          i.icon.material-icons.light-blue-text.medium add_location
+          //- img(src=site_url('/public/image/marker-s.png'))
       li.tab.col.s3
         a(href='#search')
           i.icon.material-icons map
@@ -44,10 +44,8 @@ append app_script
   script.
     // Route: #report
     app.route('report', function(id, action, qs, hash) {
-      // hide all tab views
-      $('#page-app .tab-bar-view').hide();
-      $('.tabs > .tab > a').removeClass('active');
-
+      $('.tab-bar-view').hide();
+      $('#report').show();
       app.get('page-report').showReportView();
     });
 

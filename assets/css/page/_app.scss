@@ -52,6 +52,22 @@
     }
   }
 
+  #report-input-modal,
+  #report-map-modal,
+  #report-photo-modal {
+    display: none !important;
+    position: relative !important;
+    top: -64px !important;
+    bottom: auto !important;
+
+    &.open {
+      display: block !important;
+    }
+    &.inactive {
+      display: none !important;
+    }
+  }
+
   #report-input-modal {
     #add-image-btn,
     #edit-location-btn {
@@ -130,6 +146,10 @@
   }
 
   #report-map-modal {
+    #edit-location-map {
+      position: relative;
+      height: calc(100vh - 64px);
+    }
     #submit-location-btn {
       position: absolute;
       bottom: 0;
