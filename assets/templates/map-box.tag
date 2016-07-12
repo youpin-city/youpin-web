@@ -186,7 +186,7 @@ map-box
       // HERE Maps
       // @see https://developer.here.com/rest-apis/documentation/enterprise-map-tile/topics/resource-base-maptile.html
       // https: also suppported.
-      var HERE_normalDay = L.tileLayer('http://{s}.{base}.maps.cit.api.here.com/maptile/2.1/{type}/{mapID}/{scheme}/{z}/{x}/{y}/{size}/{format}?app_id={app_id}&app_code={app_code}&lg={language}&style={style}', {
+      var HERE_normalDay = L.tileLayer('http://{s}.{base}.maps.cit.api.here.com/maptile/2.1/{type}/{mapID}/{scheme}/{z}/{x}/{y}/{size}/{format}?app_id={app_id}&app_code={app_code}&lg={language}&style={style}&ppi={ppi}', {
         attribution: 'Map &copy; 1987-2014 <a href="http://developer.here.com">HERE</a>',
         subdomains: '1234',
         mapID: 'newest',
@@ -199,7 +199,8 @@ map-box
         language: 'tha',// 'eng',
         style: 'default',
         format: 'png8',
-        size: '256'
+        size: '256',
+        ppi: 'devicePixelRatio' in window && window.devicePixelRatio >= 2 ? '250' : '72'
       });
       self.map.addLayer(HERE_normalDay);
     }
