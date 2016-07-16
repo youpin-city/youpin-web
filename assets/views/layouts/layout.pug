@@ -18,7 +18,7 @@ html(zone='front')
     include ../components/tracking
 
     block body
-      #app(data-view='')
+      #app(data-route=page.route, data-path=page.path, data-view='')
 
         block header
           include ../components/header

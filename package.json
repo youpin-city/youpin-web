@@ -16,7 +16,8 @@
     "build:tag": "echo '=> build:tag' && riot --template pug --style scss assets/templates/ public/js/tag.build.js && babel public/js/tag.build.js --compact false -o public/js/tag.js && uglifyjs public/js/tag.js -c -m -o public/js/tag.min.js && rm -f public/js/tag.build.js",
     "watch:tag": "touch public/js/tag.build.js && parallelshell \"riot --template pug --style scss --watch assets/templates/ public/js/tag.build.js\" \"babel public/js/tag.build.js --compact false --watch -o public/js/tag.js\"",
     "build": "echo '=> building...' && npm run build:tag -s && npm run build:css -s && npm run build:js -s",
-    "watch": "parallelshell 'npm run watch:tag -s' 'npm run watch:css -s' 'npm run watch:js -s'"
+    "watch": "parallelshell 'npm run watch:tag -s' 'npm run watch:css -s' 'npm run watch:js -s'",
+    "deploy:production": "pm2 deploy ecosystem.json production --force"
   },
   "repository": {
     "type": "git",
