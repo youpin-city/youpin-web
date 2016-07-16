@@ -16,17 +16,19 @@ append content
 
     page-report
 
-    page-pin
+    page-pin#pin-view
+
+    page-feed#tag-view
 
 prepend footer
 
   footer.tab-bar
     ul.tabs
       li.tab.col.s3
-        a(href='#feed')
+        a#feed-tab-btn(href='#feed')
           i.icon.material-icons home
       li.tab.col.s3
-        a#report-btn(href='#report')
+        a#report-tab-btn(href='#report')
           i.icon.material-icons.light-blue-text.medium add_location
           //- img(src=site_url('/public/image/marker-s.png'))
       li.tab.col.s3
@@ -53,13 +55,15 @@ append app_script
     app.route('feed', function(id, action, qs, hash) {
       $('.tab-bar-view').hide();
       $('#feed').show();
+      app.busy();
       $.ajax({
-        url: util.site_url('/pins?limit=100', app.get('service.api.url'))
+        url: util.site_url('/pins?$limit=50&$sort=-_id', app.get('service.api.url'))
       })
       .done(function(data) {
         var pins = data.data || [];
         pins.reverse();
         app.open('page-feed', '#feed', { title: 'พินล่าสุด', pins: pins });
+        app.busy(false);
       });
     });
 
@@ -67,13 +71,14 @@ append app_script
     app.route('search', function(id, action, qs, hash) {
       $('.tab-bar-view').hide();
       $('#search').show();
+      app.busy();
       $.ajax({
-        url: util.site_url('/pins?limit=100', app.get('service.api.url'))
+        url: util.site_url('/pins?$limit=50&$sort=-_id', app.get('service.api.url'))
       })
       .done(function(data) {
         var pins = data.data || [];
-        pins.reverse();
         app.open('page-map', '#search', { title: 'ค้นหาพินรอบๆ', pins: pins });
+        app.busy(false);
       });
     });
 
@@ -83,18 +88,32 @@ append app_script
         app.goto('feed', true);
         return;
       }
-
+      app.busy();
       $.ajax({
-        url: qs.mock ? util.site_url('/api/pin/' + id) : util.site_url('/pins/' + id, app.get('service.api.url'))
+        url: util.site_url('/pins/' + id, app.get('service.api.url'))
       })
       .done(function(data) {
-        var pin;
-        if (qs.mock) {
-          pin = data;
-        } else {
-          pin = (data.data || [])[0];
-        }
+        var pin = data || {};
+        //- var pin = (data.data || [])[0];
         app.open('page-pin', pin);
+        app.busy(false);
+      });
+    });
+
+    // Route: #tags/:tag
+    app.route('tags', function(id, action, qs, hash) {
+      if (!id) {
+        app.goto('feed', true);
+        return;
+      }
+      app.busy();
+      $.ajax({
+        url: util.site_url('/pins?$sort=-_id&tags=' + id, app.get('service.api.url'))
+      })
+      .done(function(data) {
+        var pins = data.data || [];
+        app.open('#tag-view', { title: 'Tag: #' + id, pins: pins });
+        app.busy(false);
       });
     });
 
@@ -111,7 +130,7 @@ append app_script
         location.href = e.currentTarget.href;
       });
 
-      //- $('#report-btn').on('click', function(e) {
+      //- $('#report-tab-btn').on('click', function(e) {
       //-   e.preventDefault();
       //-   e.stopPropagation();
       //- });

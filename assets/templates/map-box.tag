@@ -54,7 +54,7 @@ map-box
     self.markers = [];
     self.pin_clickable = opts.pinClickable !== 'false';
     self.pins = _.filter(opts.pins || [], pin => {
-      if (!pin.location) return false;
+      if (!_.get(pin, 'location.coordinates')) return false;
       return true;
     });
     // Define
@@ -203,11 +203,26 @@ map-box
         ppi: 'devicePixelRatio' in window && window.devicePixelRatio >= 2 ? '250' : '72'
       });
       self.map.addLayer(HERE_normalDay);
+
+
+      // // Facebook Maps
+      // // @example https://external.fbkk2-1.fna.fbcdn.net/map_tile.php?v=25&x=29161&y=12892&z=15&language=en_GB&theme=undefined
+      // // @example https://external.fbkk2-1.fna.fbcdn.net/map_tile.php?v=25&x=25&y=14&z=5&language=en_GB&theme=live_maps&lmv=7
+      // // https: also suppported.
+      // var FB_Maps = L.tileLayer('https://external.fbkk{s}-1.fna.fbcdn.net/map_tile.php?v=25&x={x}&y={y}&z={z}&language={language}&theme={theme}', {
+      //   language: 'th', // 'en_GB',
+      //   attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="https://www.facebook.com">Facebook</a>',
+      //   subdomains: '1234',
+      //   maxZoom: 20,
+      //   theme: 'undefined'
+      // });
+      // self.map.addLayer(FB_Maps);
+
     }
 
     function createMarker() {
       self.markers = _.map(self.pins, pin => {
-        const marker = L.marker(pin.location, {
+        const marker = L.marker(_.get(pin, 'location.coordinates'), {
           icon: self.YPIcon,
           interactive: false,
           keyboard: false,
@@ -227,7 +242,7 @@ map-box
       });
 
       if (self.markers.length > 0) {
-        const bounds = new L.LatLngBounds(_.map(self.pins, pin => pin.location));
+        const bounds = new L.LatLngBounds(_.map(self.pins, pin => _.get(pin, 'location.coordinates')));
         // // offset bounds to show pin card on right half
         // const ne = bounds.getNorthEast();
         // bounds.extend([ne.lat, ne.lng + 0.002]);

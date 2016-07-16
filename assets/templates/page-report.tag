@@ -155,6 +155,7 @@ page-report
     self.dropzone = null;
     self.slider = false;
     self.is_pin_complete = false;
+    self.redirect = '';
 
     self.detail = '';
     self.categories = '';
@@ -283,6 +284,7 @@ page-report
     }
 
     function showReportView() {
+      self.redirect = app.current_hash || '#feed';
       app.goto('report');
       const $input_modal = $(self['report-input-modal']);
       const $photo_modal = $(self['report-photo-modal']);
@@ -296,7 +298,9 @@ page-report
           complete: function() { // when modal close
             resetReportModal();
             closeReportView();
-            app.goto('feed');
+            // app.goto('feed');
+            // $('#feed-tab-btn').click();
+            app.goto(self.redirect.slice(1));
           }
         });
       }
@@ -414,7 +418,10 @@ page-report
       self.location = latlng;
       self.map_marker.setLatLng(latlng);
       self.update();
-      riot.mount('#input-location-map', { pins: [{ location: self.location }] })
+      riot.mount('#input-location-map', { pins: [{ location: {
+        coordinates: self.location,
+        type: 'Point'
+      }}] })
     }
 
     function openPhoto(e) {
@@ -517,6 +524,10 @@ page-report
     self.clickCloseReport = function(e) {
       e.preventDefault();
       e.stopPropagation();
+
+      resetReportModal();
       closeReportView();
-      app.goto('feed');
+      // app.goto('feed');
+      // $('#feed-tab-btn').click();
+      app.goto(self.redirect);
     }

@@ -18,7 +18,7 @@ html(zone='front')
     include ../components/tracking
 
     block body
-      #app(data-page=page.route)
+      #app(data-view='')
 
         block header
           include ../components/header
@@ -44,4 +44,6 @@ html(zone='front')
           script.
             // this application
             app = new App();
-            app.config(_.assign(!{JSON.stringify(app_config)}), {});
+            app.set(_.assign(!{JSON.stringify(app_config || {})}));
+
+            riot.mount('preloader');

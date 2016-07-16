@@ -6,7 +6,7 @@ page-pin
         .col.s12.m6.offset-m6
           .spacing
           .card
-            .card-image(if='{ pin.photos.length === 0 }', href='#pins/{ pin.id }', style='background-image: url({ util.site_url("/public/image/pin_photo.png") });')
+            .card-image(if='{ pin.photos.length === 0 }', href='#pins/{ pin._id }', style='background-image: url({ util.site_url("/public/image/pin_photo.png") });')
             .card-image.responsive(if='{ pin.photos.length > 0 }')
               .slider-container
                 #photo-slider.image-slider
@@ -21,12 +21,12 @@ page-pin
                 .card-description
                   .card-author
                     a(href='#user/{ pin.owner }') @{ pin.owner }
-                  .card-text { pin.detail }
-                  .tag-list(if='{ pin.tags && pin.tags.length > 0 }')
-                    a.tag-item(each='{ tag in pin.tags }', href=('#tag/{ tag }')) {tag}
-                  .card-area(if='{ pin.neighborhood }') ย่าน{ pin.neighborhood }
+                  .card-text(html='{ util.parse_tags(pin.detail) }')
+                  //- .tag-list(if='{ pin.tags && pin.tags.length > 0 }')
+                  //-   a.tag-item(each='{ tag in pin.tags }', href=('#tag/{ tag }')) {tag}
+                  //- .card-area(if='{ pin.neighborhood }') ย่าน{ pin.neighborhood }
 
-                .card-stat
+                //- .card-stat
                   .meta.meta-like.left
                     //- i.icon.material-icons.tiny thumb_up
                     | เห็นด้วย { pin.voters.length } คน
@@ -46,10 +46,10 @@ page-pin
                     .card-description
                       .card-author
                         a(href='#user/{ comment.commented_by }') @{ comment.commented_by }
-                      .card-text { comment.detail }
-                      .tag-list(if='{ comment.tags && comment.tags.length > 0 }')
-                        a.tag-item(each='{ tag in comment.tags }', href=('#tag/{ tag }')) { tag }
-                    .card-stat
+                      .card-text(html='{ util.parse_tags(comment.detail) }')
+                      //- .tag-list(if='{ comment.tags && comment.tags.length > 0 }')
+                      //-   a.tag-item(each='{ tag in comment.tags }', href=('#tag/{ tag }')) { tag }
+                    //- .card-stat
                       //- .meta.meta-like.left เห็นด้วย { comment.voter.length } คน
                       .meta.meta-like.left
                         i.icon.material-icons.tiny person
@@ -80,6 +80,10 @@ page-pin
     });
 
     self.on('updated', () => {
+      // interpolate html
+      const $text = $(this.root).find('.card-text');
+      $text.html($text.attr('html'));
+
       createPhotoSlider();
     });
 

@@ -220,6 +220,12 @@ function extract_tags(str) {
   return _.map(((str || '').match(hash_regex) || []).slice(0), tag => tag.slice(1));
 }
 
+// Replace hashtags string with link
+function parse_tags(str) {
+  const hash_regex = /\S*#(\[[^\]]+\]|\S+)/gi;
+  return str.replace(hash_regex, '<a href="#tags/$1">#$1</a>');
+}
+
 extend(utility, {
   url: site_url,
   parseUrl: urllib.parse,
@@ -235,5 +241,6 @@ extend(utility, {
   device_pixel_ratio,
   cssSizeInPixel,
   uniqueId,
-  extract_tags
+  extract_tags,
+  parse_tags
 });

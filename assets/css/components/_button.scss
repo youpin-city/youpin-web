@@ -4,6 +4,9 @@
 
 .btn-large {
   font-size: $fs-md;
+  i {
+    font-size: $fs-icon-h4;
+  }
 }
 
 .btn-plain {

@@ -3,40 +3,54 @@
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
 
-/* global $ _: true */
+/* global $ _ riot: true */
 
-var DEFAULT_CONFIG = {};
+var DEFAULT_CONFIG = {
+  el: '#app'
+};
 
 var App = function App(config) {
   var self = this;
-  this._config = _.assignIn({}, DEFAULT_CONFIG);
-  this.config(config || {});
-  // // make observerable
-  // riot.observable(self);
+  self.config = _.assignIn({}, DEFAULT_CONFIG);
+
+  self.routes = {};
+  self.current_route = '';
+  self.current_hash = '';
+  self.$el = $(self.get('el'));
+  // make observerable
+  riot.observable(self);
 };
 
-App.prototype.config = function (options) {
-  var self = this;
-  if (!options) return this;
-  _.forEach(options, function (value, key) {
-    self.set(key, value);
-  });
-  return this;
-};
 App.prototype.get = function (key, default_value) {
-  return _.get(this._config, key, default_value);
+  return _.get(this.config, key, default_value);
 };
-App.prototype.set = function (key, value) {
-  _.set(this._config, key, value);
-  if (key === 'csrf') {
-    // setup csrf
-    $(document).ajaxSend(function (event, jqxhr, settings) {
-      jqxhr.setRequestHeader('x-csrf-token', value || null);
-    });
+
+App.prototype.set = function () {
+  var self = this;
+  var options = {};
+
+  for (var _len = arguments.length, opts = Array(_len), _key = 0; _key < _len; _key++) {
+    opts[_key] = arguments[_key];
   }
-  // this.trigger(`data:${key}`, value);
-  return this;
+
+  if (opts.length === 1 && _typeof(opts[0]) === 'object') {
+    _.assign(options, opts[0]);
+  } else {
+    options[opts[0]] = opts[1];
+  }
+  _.forEach(options, function (value, key) {
+    _.set(self.config, key, value);
+    if (key === 'csrf') {
+      // setup csrf
+      $(document).ajaxSend(function (event, jqxhr, settings) {
+        jqxhr.setRequestHeader('x-csrf-token', value || null);
+      });
+    }
+    self.trigger('data:' + key, value);
+  });
+  return self;
 };
+
 App.prototype.start = function (should_start_route) {
   var self = this;
   // init riot router
@@ -68,7 +82,7 @@ App.prototype.startRiotRouter = function () {
   });
 
   // Handle route
-  riot.route(function handlerRoute(collection, id, action, qs, hash) {
+  riot.route(function (collection, id, action, qs, hash) {
     if ((typeof id === 'undefined' ? 'undefined' : _typeof(id)) === 'object') {
       hash = action;
       qs = id;
@@ -142,7 +156,8 @@ App.prototype.open = function () {
 }();
 
 App.prototype.goto = function (path, is_replace) {
-  riot.route(path, null, is_replace);
+  // initial # is optional
+  riot.route(path.replace(/^#/i, ''), null, is_replace);
 };
 
 /**
@@ -151,14 +166,26 @@ App.prototype.goto = function (path, is_replace) {
  * @param  {Function} callback Action taken
  * @return {Function}          Assigned callback
  */
-App.prototype.route = function () {
-  var routes = {};
-  return function (name, callback) {
-    if (!callback) return routes[name];
-    routes[name] = callback;
-    return routes[name];
-  };
-}();
+App.prototype.route = function (name, callback) {
+  var self = this;
+  if (!callback) return self.routes[name];
+  self.routes[name] = _.bind(function () {
+    for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+      args[_key2] = arguments[_key2];
+    }
+
+    if (self.current_route) self.$el.attr('data-view', '');
+    self.$el.attr('data-view', name);
+    callback.apply(self, args);
+    self.current_route = name;
+    self.current_hash = location.hash;
+  }, self);
+  return self.routes[name];
+};
+
+App.prototype.busy = function (is_busy) {
+  this.$el[is_busy === false ? 'removeClass' : 'addClass']('loading');
+};
 
 module.exports = App;
 
@@ -389,6 +416,12 @@ function extract_tags(str) {
   });
 }
 
+// Replace hashtags string with link
+function parse_tags(str) {
+  var hash_regex = /\S*#(\[[^\]]+\]|\S+)/gi;
+  return str.replace(hash_regex, '<a href="#tags/$1">#$1</a>');
+}
+
 extend(utility, {
   url: site_url,
   parseUrl: urllib.parse,
@@ -404,7 +437,8 @@ extend(utility, {
   device_pixel_ratio: device_pixel_ratio,
   cssSizeInPixel: cssSizeInPixel,
   uniqueId: uniqueId,
-  extract_tags: extract_tags
+  extract_tags: extract_tags,
+  parse_tags: parse_tags
 });
 
 },{"path":6,"url":12}],3:[function(require,module,exports){

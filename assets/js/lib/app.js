@@ -1,37 +1,46 @@
-/* global $ _: true */
+/* global $ _ riot: true */
 
-const DEFAULT_CONFIG = {};
+const DEFAULT_CONFIG = {
+  el: '#app'
+};
 
 const App = function (config) {
   const self = this;
-  this._config = _.assignIn({}, DEFAULT_CONFIG);
-  this.config(config || {});
-  // // make observerable
-  // riot.observable(self);
+  self.config = _.assignIn({}, DEFAULT_CONFIG);
+
+  self.routes = {};
+  self.current_route = '';
+  self.current_hash = '';
+  self.$el = $(self.get('el'));
+  // make observerable
+  riot.observable(self);
 };
 
-App.prototype.config = function (options) {
-  const self = this;
-  if (!options) return this;
-  _.forEach(options, (value, key) => {
-    self.set(key, value);
-  });
-  return this;
-};
 App.prototype.get = function (key, default_value) {
-  return _.get(this._config, key, default_value);
+  return _.get(this.config, key, default_value);
 };
-App.prototype.set = function (key, value) {
-  _.set(this._config, key, value);
-  if (key === 'csrf') {
-    // setup csrf
-    $(document).ajaxSend((event, jqxhr, settings) => {
-      jqxhr.setRequestHeader('x-csrf-token', value || null);
-    });
+
+App.prototype.set = function (...opts) {
+  const self = this;
+  const options = {};
+  if (opts.length === 1 && typeof opts[0] === 'object') {
+    _.assign(options, opts[0]);
+  } else {
+    options[opts[0]] = opts[1];
   }
-  // this.trigger(`data:${key}`, value);
-  return this;
+  _.forEach(options, (value, key) => {
+    _.set(self.config, key, value);
+    if (key === 'csrf') {
+      // setup csrf
+      $(document).ajaxSend((event, jqxhr, settings) => {
+        jqxhr.setRequestHeader('x-csrf-token', value || null);
+      });
+    }
+    self.trigger(`data:${key}`, value);
+  });
+  return self;
 };
+
 App.prototype.start = function (should_start_route) {
   const self = this;
   // init riot router
@@ -64,7 +73,7 @@ App.prototype.startRiotRouter = function () {
   });
 
   // Handle route
-  riot.route(function handlerRoute(collection, id, action, qs, hash) {
+  riot.route((collection, id, action, qs, hash) => {
     if (typeof id === 'object') {
       hash = action;
       qs = id;
@@ -140,7 +149,8 @@ App.prototype.open = (() => {
 })();
 
 App.prototype.goto = (path, is_replace) => {
-  riot.route(path, null, is_replace);
+  // initial # is optional
+  riot.route(path.replace(/^#/i, ''), null, is_replace);
 };
 
 /**
@@ -149,13 +159,21 @@ App.prototype.goto = (path, is_replace) => {
  * @param  {Function} callback Action taken
  * @return {Function}          Assigned callback
  */
-App.prototype.route = (() => {
-  const routes = {};
-  return (name, callback) => {
-    if (!callback) return routes[name];
-    routes[name] = callback;
-    return routes[name];
-  };
-})();
+App.prototype.route = function (name, callback) {
+  const self = this;
+  if (!callback) return self.routes[name];
+  self.routes[name] = _.bind((...args) => {
+    if (self.current_route) self.$el.attr('data-view', '');
+    self.$el.attr('data-view', name);
+    callback.apply(self, args);
+    self.current_route = name;
+    self.current_hash = location.hash;
+  }, self);
+  return self.routes[name];
+};
+
+App.prototype.busy = function (is_busy) {
+  this.$el[is_busy === false ? 'removeClass' : 'addClass']('loading');
+};
 
 module.exports = App;

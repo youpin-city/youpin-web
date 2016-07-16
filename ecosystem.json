@@ -4,7 +4,7 @@
       "name": "youpin-web",
       "script": "index.js",
       "args": [],
-      "no-daemon": true,
+      "no-daemon": false,
 
       "log_date_format" : "YYYY-MM-DD HH:mm",
 

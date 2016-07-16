@@ -22,7 +22,7 @@ riot.tag2('map-box', '<div class="map-box-container" id="{id}-container"> <div c
   self.markers = [];
   self.pin_clickable = opts.pinClickable !== 'false';
   self.pins = _.filter(opts.pins || [], function (pin) {
-    if (!pin.location) return false;
+    if (!_.get(pin, 'location.coordinates')) return false;
     return true;
   });
 
@@ -69,7 +69,7 @@ riot.tag2('map-box', '<div class="map-box-container" id="{id}-container"> <div c
 
   function createMarker() {
     self.markers = _.map(self.pins, function (pin) {
-      var marker = L.marker(pin.location, {
+      var marker = L.marker(_.get(pin, 'location.coordinates'), {
         icon: self.YPIcon,
         interactive: false,
         keyboard: false,
@@ -84,7 +84,7 @@ riot.tag2('map-box', '<div class="map-box-container" id="{id}-container"> <div c
 
     if (self.markers.length > 0) {
       var bounds = new L.LatLngBounds(_.map(self.pins, function (pin) {
-        return pin.location;
+        return _.get(pin, 'location.coordinates');
       }));
 
       self.map.fitBounds(bounds);
@@ -102,28 +102,47 @@ riot.tag2('map-box', '<div class="map-box-container" id="{id}-container"> <div c
   }
 });
 
-riot.tag2('page-feed', '<div id="page-feed"> <div class="container no-padding-s"> <h4 class="center" if="{title}">{title}</h4> <div class="row"> <div class="col s12 m6 l4" each="{pin in pins}"> <div class="card hover-card"><a class="card-image" href="#pins/{pin.id}{pin.mock ? &quot;?mock=1&quot; : &quot;&quot;}" riot-style="background-image: url({pin.photos &amp;&amp; pin.photos.length &gt; 0 ? pin.photos[0] : util.site_url(&quot;/public/image/pin_photo.png&quot;)})"></a> <div class="card-content"> <div class="card-description"> <div class="card-author"><a href="#user/{pin.owner}">@{pin.owner}</a></div> <div class="card-text">{pin.detail}</div> <div class="tag-list" if="{pin.tags &amp;&amp; pin.tags.length &gt; 0}"><a class="tag-item" each="{tag in pin.tags}" href="#tag/{tag}">{tag}</a></div> <div class="card-area" if="{pin.neighborhood}">ย่าน{pin.neighborhood}</div> </div> <div class="card-stat"> <div class="meta meta-like left">เห็นด้วย {pin.voters.length} คน</div> <div class="meta meta-comment left"><i class="icon material-icons tiny">chat_bubble_outline</i>ความเห็น {pin.comments.length}</div> </div> <div class="card-meta"> <div class="meta meta-time right">{moment(pin.created_time, [\'x\', \'M/D/YYYY, h:mm A\']).fromNow()}</div> <div class="meta meta-status left" data-status="{pin.status}">{pin.status}</div> </div> </div> </div> </div> </div> </div> </div>', '', '', function (opts) {
+riot.tag2('page-feed', '<div id="page-feed"> <div class="container no-padding-s"> <div class="spacing"></div> <h5 class="center" if="{title}">{title}</h5> <div class="row"> <div class="col s12 m6 l4" each="{pin in pins}"> <div class="card hover-card"><a class="card-image" href="#pins/{pin._id}{pin.mock ? &quot;?mock=1&quot; : &quot;&quot;}" riot-style="background-image: url({pin.photos &amp;&amp; pin.photos.length &gt; 0 ? pin.photos[0] : util.site_url(&quot;/public/image/pin_photo.png&quot;)})"></a> <div class="card-content"> <div class="card-description"> <div class="card-author"><a href="#user/{pin.owner}">@{pin.owner}</a></div> <div class="card-text" html="{util.parse_tags(pin.detail)}"></div> </div> <div class="card-meta"> <div class="meta meta-time right">{moment(pin.created_time, [\'x\', \'M/D/YYYY, h:mm A\']).fromNow()}</div> <div class="meta meta-status left" data-status="{pin.status}">{pin.status}</div> </div> </div> </div> </div> </div> </div> </div>', '', '', function (opts) {
   var self = this;
 
   self.title = opts.title;
   self.pins = opts.pins || [];
 
   self.on('mount', function () {});
+  self.on('updated', function () {
+
+    $(self.root).find('.card-text').each(function (i, el) {
+      var $text = $(el);
+      $text.html($text.attr('html'));
+    });
+  });
 });
 
-riot.tag2('page-map', '<div id="page-map"> <map-box options-zoom="15" options-scroll-wheel-zoom="false"></map-box> <div class="container no-padding-s" id="overlay-layer"> <h5 class="page-name" if="{title}">{title}</h5> </div> </div>', '', '', function (opts) {
+riot.tag2('page-map', '<div id="page-map"> <map-box id="map-{id}" options-zoom="15" options-scroll-wheel-zoom="false"></map-box> <div class="container no-padding-s" id="overlay-layer"> <button class="btn-floating waves-effect waves-light white" type="button" onclick="{setMapLocationByGeolocation}"><i class="icon material-icons light-blue-text">gps_fixed</i></button> </div> </div>', '', '', function (opts) {
   var self = this;
+  self.id = 'page-map-' + util.uniqueId();
 
   self.title = opts.title;
   self.pins = opts.pins || [];
 
   self.on('mount', function () {
 
-    riot.mount('map-box', { pins: self.pins });
+    riot.mount('#map-' + self.id, { pins: self.pins });
+    self.map = _.get(self['map-' + self.id], '_tag.map');
   });
+
+  self.setMapLocationByGeolocation = function (e) {
+    e.preventDefault();
+    e.stopPropagation();
+    if (self.map) {
+      self.map.locate({ setView: true, maxZoom: 16 });
+    }
+  };
 });
 
-riot.tag2('page-pin', '<div id="page-pin"> <div class="fluid-container no-padding-s"> <div class="row"> <div class="col s12 m6 offset-m6"> <div class="spacing"></div> <div class="card"> <div class="card-image" if="{pin.photos.length === 0}" href="#pins/{pin.id}" riot-style="background-image: url({util.site_url(&quot;/public/image/pin_photo.png&quot;)})"></div> <div class="card-image responsive" if="{pin.photos.length &gt; 0}"> <div class="slider-container"> <div class="image-slider" id="photo-slider"> <div class="slider-item" each="{photo in pin.photos}"> <div class="image-item"> <div class="image" riot-style="background-image: url(&quot;{util.site_url(photo)}&quot;)"></div> </div> </div> </div> </div> </div> <div class="card-content"> <div class="pin-content"> <div class="card-description"> <div class="card-author"><a href="#user/{pin.owner}">@{pin.owner}</a></div> <div class="card-text">{pin.detail}</div> <div class="tag-list" if="{pin.tags &amp;&amp; pin.tags.length &gt; 0}"><a class="tag-item" each="{tag in pin.tags}" href="#tag/{tag}">{tag}</a></div> <div class="card-area" if="{pin.neighborhood}">ย่าน{pin.neighborhood}</div> </div> <div class="card-stat"> <div class="meta meta-like left">เห็นด้วย {pin.voters.length} คน</div> <div class="meta meta-comment left"><i class="icon material-icons tiny">chat_bubble_outline</i>ความเห็น {pin.comments.length}</div> </div> <div class="card-meta"> <div class="meta meta-time right">{moment(pin.created_time, [\'x\', \'M/D/YYYY, h:mm A\']).fromNow()}</div> <div class="meta meta-status left" data-status="{pin.status}">{pin.status}</div> </div> </div> <div if="{pin.comments &amp;&amp; pin.comments.length &gt; 0}"> <div class="divider"></div> <h5 class="section-name">ความคิดเห็น</h5> <div class="comment-list"> <div class="comment-item" each="{comment in pin.comments}"> <div class="card-description"> <div class="card-author"><a href="#user/{comment.commented_by}">@{comment.commented_by}</a></div> <div class="card-text">{comment.detail}</div> <div class="tag-list" if="{comment.tags &amp;&amp; comment.tags.length &gt; 0}"><a class="tag-item" each="{tag in comment.tags}" href="#tag/{tag}">{tag}</a></div> </div> <div class="card-stat"> <div class="meta meta-like left"><i class="icon material-icons tiny">person</i>{comment.voter.length} คน</div> </div> </div> </div> </div> </div> </div> </div> </div> </div> <div class="map-container"> <map-box pin-clickable="false" options-zoom="17" options-scroll-wheel-zoom="false" options-tap="false" options-keyboard="false"></map-box> </div> <div class="spacing-large"></div> </div>', '', '', function (opts) {
+riot.tag2('page-pin', '<div id="page-pin"> <div class="fluid-container no-padding-s"> <div class="row"> <div class="col s12 m6 offset-m6"> <div class="spacing"></div> <div class="card"> <div class="card-image" if="{pin.photos.length === 0}" href="#pins/{pin._id}" riot-style="background-image: url({util.site_url(&quot;/public/image/pin_photo.png&quot;)})"></div> <div class="card-image responsive" if="{pin.photos.length &gt; 0}"> <div class="slider-container"> <div class="image-slider" id="photo-slider"> <div class="slider-item" each="{photo in pin.photos}"> <div class="image-item"> <div class="image" riot-style="background-image: url(&quot;{util.site_url(photo)}&quot;)"></div> </div> </div> </div> </div> </div> <div class="card-content"> <div class="pin-content"> <div class="card-description"> <div class="card-author"><a href="#user/{pin.owner}">@{pin.owner}</a></div> <div class="card-text" html="{util.parse_tags(pin.detail)}"></div> </div> <div class="card-meta"> <div class="meta meta-time right">{moment(pin.created_time, [\'x\', \'M/D/YYYY, h:mm A\']).fromNow()}</div> <div class="meta meta-status left" data-status="{pin.status}">{pin.status}</div> </div> </div> <div if="{pin.comments &amp;&amp; pin.comments.length &gt; 0}"> <div class="divider"></div> <h5 class="section-name">ความคิดเห็น</h5> <div class="comment-list"> <div class="comment-item" each="{comment in pin.comments}"> <div class="card-description"> <div class="card-author"><a href="#user/{comment.commented_by}">@{comment.commented_by}</a></div> <div class="card-text" html="{util.parse_tags(comment.detail)}"></div> </div> </div> </div> </div> </div> </div> </div> </div> </div> <div class="map-container"> <map-box pin-clickable="false" options-zoom="17" options-scroll-wheel-zoom="false" options-tap="false" options-keyboard="false"></map-box> </div> <div class="spacing-large"></div> </div>', '', '', function (opts) {
+  var _this = this;
+
   var self = this;
 
   self.pin = opts;
@@ -135,6 +154,10 @@ riot.tag2('page-pin', '<div id="page-pin"> <div class="fluid-container no-paddin
   });
 
   self.on('updated', function () {
+
+    var $text = $(_this.root).find('.card-text');
+    $text.html($text.attr('html'));
+
     createPhotoSlider();
   });
 
@@ -172,6 +195,7 @@ riot.tag2('page-report', '<div class="modal bottom-sheet full-sheet" id="report-
   self.dropzone = null;
   self.slider = false;
   self.is_pin_complete = false;
+  self.redirect = '';
 
   self.detail = '';
   self.categories = '';
@@ -266,6 +290,7 @@ riot.tag2('page-report', '<div class="modal bottom-sheet full-sheet" id="report-
   }
 
   function showReportView() {
+    self.redirect = app.current_hash || '#feed';
     app.goto('report');
     var $input_modal = $(self['report-input-modal']);
     var $photo_modal = $(self['report-photo-modal']);
@@ -277,7 +302,8 @@ riot.tag2('page-report', '<div class="modal bottom-sheet full-sheet" id="report-
         complete: function complete() {
           resetReportModal();
           closeReportView();
-          app.goto('feed');
+
+          app.goto(self.redirect.slice(1));
         }
       });
     }
@@ -382,7 +408,10 @@ riot.tag2('page-report', '<div class="modal bottom-sheet full-sheet" id="report-
     self.location = latlng;
     self.map_marker.setLatLng(latlng);
     self.update();
-    riot.mount('#input-location-map', { pins: [{ location: self.location }] });
+    riot.mount('#input-location-map', { pins: [{ location: {
+          coordinates: self.location,
+          type: 'Point'
+        } }] });
   }
 
   function openPhoto(e) {
@@ -482,7 +511,15 @@ riot.tag2('page-report', '<div class="modal bottom-sheet full-sheet" id="report-
   self.clickCloseReport = function (e) {
     e.preventDefault();
     e.stopPropagation();
+
+    resetReportModal();
     closeReportView();
-    app.goto('feed');
+
+    app.goto(self.redirect);
   };
+});
+
+riot.tag2('preloader', '<div class="preloader-wrapper active {class}"> <div class="spinner-layer spinner-blue-only"> <div class="circle-clipper left"> <div class="circle"></div> </div> <div class="gap-patch"> <div class="circle"></div> </div> <div class="circle-clipper right"> <div class="circle"></div> </div> </div> </div>', '', '', function (opts) {
+  var self = this;
+  self.class = opts.class;
 });

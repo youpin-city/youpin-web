@@ -10,10 +10,24 @@ rdr pass inet proto tcp from any to any port 80 -> 127.0.0.1 port 7000
 rdr pass inet proto tcp from any to any port 443 -> 127.0.0.1 port 7443
 " | sudo pfctl -ef -
 
+# Create rgtok tunnel
+osascript -e "tell app \"Terminal\" to do script \"ngrok http 7000\""
+sleep 4
+SITE_HOST=`node -pe 'JSON.parse(process.argv[1]).tunnels[0].public_url' "$(curl -s http://127.0.0.1:4040/api/tunnels)"`
+RESULT=$?
+if [ $RESULT -ne 0 ]; then
+  echo 'Failed to create tunnel.'
+  exit 1
+fi
+echo $SITE_HOST
+
 # Start app
 npm install
-pm2 startOrRestart ecosystem.json --no-daemon --no-color --env ${NODE_ENV}
+SITE_HOST=$SITE_HOST pm2 startOrRestart ecosystem.json --no-color --env ${NODE_ENV}
 
 # Open browser
 sleep 4
-open `node -e "console.log(require('./lib/config').get('site.host'));"`
+open $SITE_HOST
+
+# Show logs
+pm2 logs youpin-web --lines 0

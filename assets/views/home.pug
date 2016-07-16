@@ -182,16 +182,6 @@ append content
 
 append app_script
   script.
-    $(document).ready(function(){
-      $('ul.tabs').tabs();
-
-      $('#report-btn').on('click', function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-      });
-    });
-
-  script.
     riot.mount('map-box', {
       pins: !{JSON.stringify(sample_pins)}
     });

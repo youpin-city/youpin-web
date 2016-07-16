@@ -1,4 +1,19 @@
-#app[data-page='app'] {
+#app {
+
+  .brand-logo {
+    preloader {
+      display: none;
+      .preloader-wrapper {
+        margin-top: 12px;
+      }
+    }
+  }
+  &.loading {
+    .brand-logo {
+      img { display: none; }
+      preloader { display: inline-block; }
+    }
+  }
 
   .page-footer {
     display: none;
@@ -26,6 +41,18 @@
 }
 
 
+// Page: report
+#app[data-view='report'] {
+  #header,
+  .tab-bar-view,
+  .tab-bar,
+  #pin-view,
+  #tag-view,
+  .page-footer,
+  ~ .lean-overlay {
+    display: none !important;
+  }
+}
 
 #page-app {
   page-report {
@@ -56,9 +83,9 @@
   #report-map-modal,
   #report-photo-modal {
     display: none !important;
-    position: relative !important;
-    top: -64px !important;
-    bottom: auto !important;
+    position: static !important;
+    top: 0 !important;
+    bottom: 0 !important;
 
     &.open {
       display: block !important;
@@ -178,9 +205,9 @@
   #overlay-layer {
     position: absolute;
     z-index: 2;
-    top: 10px;
-    left: 0;
-    right: 0;
+    top: 1rem;
+    right: 1rem;
+    width: auto;
   }
 
   map-box {
