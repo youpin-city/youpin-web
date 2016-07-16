@@ -20,11 +20,13 @@ page-report
         .row
           .col.s12.m6.offset-m3.l4.offset-l4
             form#report-form
-              input(type='hidden', name='location[]:number', value='{ location.lat }')
-              input(type='hidden', name='location[]:number', value='{ location.lng }')
+              input(type='hidden', name='location[coordinates][]:number', value='{ location.lat }')
+              input(type='hidden', name='location[coordinates][]:number', value='{ location.lng }')
+              input(type='hidden', name='location[type][]:string', value='Point')
               input(each='{ photo in photos }', type='hidden', name='photos[]', value='{ photo.url }')
-              input(type='hidden', name='status', value='open')
-              input(type='hidden', name='owner', value='youpin')
+              input(type='hidden', name='status', value='unverified')
+              input(type='hidden', name='owner', value='{ owner }')
+              input(each='{ provider in providers }', type='hidden', name='provider[]', value='{ provider }')
               input(type='hidden', name='level', value='normal')
               input(type='hidden', name='neighborhood', value='{ neighborhood }')
 
@@ -63,8 +65,10 @@ page-report
                   button#edit-location-btn.btn-floating.btn-large.waves-effect.waves-light.white(type='button', onclick='{ clickLocation }')
                     i.icon.material-icons.large.light-blue-text edit
 
-      .fluid-container
-        button#submit-pin-btn.btn.btn-large.btn-block(type='button', onclick='{ clickSubmitReport }', class='{ is_pin_complete ? "" : "disabled" }', disabled='{ !is_pin_complete }') โพสต์พิน
+      .container.no-padding-s
+        .row
+          .col.s12.m6.offset-m3.l4.offset-l4
+            button#submit-pin-btn.btn.btn-large.btn-block(type='button', onclick='{ clickSubmitReport }', class='{ is_pin_complete ? "" : "disabled" }', disabled='{ !is_pin_complete }') โพสต์พิน
 
   #report-photo-modal.modal.bottom-sheet.full-sheet
     .modal-header
@@ -86,11 +90,12 @@ page-report
             .card(data-i='{ i }')
               .card-image.responsive
                 img(src='{ util.site_url(photo.url) }')
-              .card-content
-                .input-field
-                  input.validate(type='text', name='photo[{ i }][text]', value='{ photo.text }', placeholder='ใส่คำอธิบาย', data-i='{ i }', onchange='{ changePhotoText }')
+              //- .card-content
+              //-   .input-field
+              //-     input.validate(type='text', name='photo[{ i }][text]', value='{ photo.text }', placeholder='ใส่คำอธิบาย', data-i='{ i }', onchange='{ changePhotoText }')
 
           .col.s12.m6.offset-m3.l4.offset-l4
+            .spacing
             .drop-image-preview.hide
             .card-title.center.drop-image(name='dropzone-el')
               i.icon.material-icons photo_camera
@@ -164,7 +169,9 @@ page-report
     self.map = null;
     self.map_id = 'edit-location-map';
     self.location = null;
-    self.neighborhood = 'สีลม';
+    self.neighborhood = '';
+    self.owner = app.get('app_user._id');
+    self.providers = [app.get('app_user._id')];
     // Define
     self.DEFAULT_LOCATION = { lat: 13.7302295, lng: 100.5724075 };
     self.YPIcon = L.icon({
@@ -426,7 +433,16 @@ page-report
 
     function openPhoto(e) {
       $('#report-input-modal').addClass('inactive');
-      $('#report-photo-modal').openModal();
+      $('#report-photo-modal').openModal({
+        ready: function() { // when modal open
+          // if (!self.map) {
+          //   createMap();
+          // }
+        },
+        complete: function() { // when modal close
+          createPhotoSlider();
+        }
+      });
     }
 
     function submitReport() {
@@ -447,7 +463,7 @@ page-report
         url: util.site_url('/pins', app.get('service.api.url')),
         method: 'post',
         headers: {
-          'Authorization': 'Basic ' + app.get('service.api.hash_key')
+          'Authorization': 'Bearer ' + app.get('app_token')
         },
         beforeSend: function(xhrObj){
           xhrObj.setRequestHeader('Content-Type', 'application/json');
@@ -459,10 +475,11 @@ page-report
       .done(data => {
         resetReportModal();
         closeReportView();
-        app.goto('pins/' + data.name);
+        app.goto('pins/' + data._id);
       })
       .fail(error => {
         console.error('error:', error);
+        Materialize.toast('ไม่สามารถพินปัญหาได้ (' + error + ')', 5000, 'dialog-error');
       });
     }
 

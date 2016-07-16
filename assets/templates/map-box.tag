@@ -230,11 +230,11 @@ map-box
         });
         if (self.pin_clickable) {
           marker.bindPopup(
-            '<a href="#pins/'+pin.id+'" target="_blank">'
+            '<a href="#pins/'+pin._id+'" target="_blank">'
             + '<div class="pin-image" style="background-image: url('+(_.get(pin, 'photos.0') || util.site_url("/public/image/pin_photo.png"))+');"></div>'
             + '</a>'
             + '<div>' + pin.detail + '</div>'
-            + '<div><a href="#pins/'+pin.id+'" target="_blank">View Pin</a></div>'
+            + '<div><a href="#pins/'+pin._id+'" target="_blank">View Pin</a></div>'
           );
         }
         marker.addTo(self.map);

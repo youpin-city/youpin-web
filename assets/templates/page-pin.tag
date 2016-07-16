@@ -35,7 +35,7 @@ page-pin
                     | ความเห็น { pin.comments.length }
 
                 .card-meta
-                  .meta.meta-time.right { moment(pin.created_time, ['x', 'M/D/YYYY, h:mm A']).fromNow() }
+                  .meta.meta-time.right { moment(pin.created_time).fromNow() }
                   .meta.meta-status.left(data-status='{ pin.status }') { pin.status }
 
               div(if='{ pin.comments && pin.comments.length > 0 }')

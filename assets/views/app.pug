@@ -44,6 +44,11 @@ prepend footer
 
 append app_script
   script.
+    app.set({
+      app_user: !{JSON.stringify(app_user)},
+      app_token: !{JSON.stringify(app_token)}
+    });
+
     // Route: #report
     app.route('report', function(id, action, qs, hash) {
       $('.tab-bar-view').hide();
@@ -55,16 +60,8 @@ append app_script
     app.route('feed', function(id, action, qs, hash) {
       $('.tab-bar-view').hide();
       $('#feed').show();
-      app.busy();
-      $.ajax({
-        url: util.site_url('/pins?$limit=50&$sort=-_id', app.get('service.api.url'))
-      })
-      .done(function(data) {
-        var pins = data.data || [];
-        pins.reverse();
-        app.open('page-feed', '#feed', { title: 'พินล่าสุด', pins: pins });
-        app.busy(false);
-      });
+
+      app.open('page-feed', '#feed', { title: 'พินล่าสุด', pins: [] });
     });
 
     // Route: #search
@@ -73,7 +70,7 @@ append app_script
       $('#search').show();
       app.busy();
       $.ajax({
-        url: util.site_url('/pins?$limit=50&$sort=-_id', app.get('service.api.url'))
+        url: util.site_url('/pins?$limit=30&$sort=-_id', app.get('service.api.url'))
       })
       .done(function(data) {
         var pins = data.data || [];
@@ -94,7 +91,6 @@ append app_script
       })
       .done(function(data) {
         var pin = data || {};
-        //- var pin = (data.data || [])[0];
         app.open('page-pin', pin);
         app.busy(false);
       });
@@ -106,15 +102,10 @@ append app_script
         app.goto('feed', true);
         return;
       }
-      app.busy();
-      $.ajax({
-        url: util.site_url('/pins?$sort=-_id&tags=' + id, app.get('service.api.url'))
-      })
-      .done(function(data) {
-        var pins = data.data || [];
-        app.open('#tag-view', { title: 'Tag: #' + id, pins: pins });
-        app.busy(false);
-      });
+      var query = {
+        tags: id
+      }
+      app.open('page-feed', '#feed', { title: 'Tag: #' + id, pins: [], query: query });
     });
 
     app.start();

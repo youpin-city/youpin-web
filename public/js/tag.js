@@ -76,7 +76,7 @@ riot.tag2('map-box', '<div class="map-box-container" id="{id}-container"> <div c
         riseOnHover: true
       });
       if (self.pin_clickable) {
-        marker.bindPopup('<a href="#pins/' + pin.id + '" target="_blank">' + '<div class="pin-image" style="background-image: url(' + (_.get(pin, 'photos.0') || util.site_url("/public/image/pin_photo.png")) + ');"></div>' + '</a>' + '<div>' + pin.detail + '</div>' + '<div><a href="#pins/' + pin.id + '" target="_blank">View Pin</a></div>');
+        marker.bindPopup('<a href="#pins/' + pin._id + '" target="_blank">' + '<div class="pin-image" style="background-image: url(' + (_.get(pin, 'photos.0') || util.site_url("/public/image/pin_photo.png")) + ');"></div>' + '</a>' + '<div>' + pin.detail + '</div>' + '<div><a href="#pins/' + pin._id + '" target="_blank">View Pin</a></div>');
       }
       marker.addTo(self.map);
       return marker;
@@ -102,13 +102,21 @@ riot.tag2('map-box', '<div class="map-box-container" id="{id}-container"> <div c
   }
 });
 
-riot.tag2('page-feed', '<div id="page-feed"> <div class="container no-padding-s"> <div class="spacing"></div> <h5 class="center" if="{title}">{title}</h5> <div class="row"> <div class="col s12 m6 l4" each="{pin in pins}"> <div class="card hover-card"><a class="card-image" href="#pins/{pin._id}{pin.mock ? &quot;?mock=1&quot; : &quot;&quot;}" riot-style="background-image: url({pin.photos &amp;&amp; pin.photos.length &gt; 0 ? pin.photos[0] : util.site_url(&quot;/public/image/pin_photo.png&quot;)})"></a> <div class="card-content"> <div class="card-description"> <div class="card-author"><a href="#user/{pin.owner}">@{pin.owner}</a></div> <div class="card-text" html="{util.parse_tags(pin.detail)}"></div> </div> <div class="card-meta"> <div class="meta meta-time right">{moment(pin.created_time, [\'x\', \'M/D/YYYY, h:mm A\']).fromNow()}</div> <div class="meta meta-status left" data-status="{pin.status}">{pin.status}</div> </div> </div> </div> </div> </div> </div> </div>', '', '', function (opts) {
+riot.tag2('page-feed', '<div id="page-feed"> <div class="container no-padding-s"> <div class="spacing"></div> <h5 class="center" if="{title}">{title}</h5> <div class="row"> <div class="col s12 m6 l4" each="{pin in pins}"> <div class="card hover-card"><a class="card-image" href="#pins/{pin._id}{pin.mock ? &quot;?mock=1&quot; : &quot;&quot;}" riot-style="background-image: url({pin.photos &amp;&amp; pin.photos.length &gt; 0 ? pin.photos[0] : util.site_url(&quot;/public/image/pin_photo.png&quot;)})"></a> <div class="card-content"> <div class="card-description"> <div class="card-author"><a href="#user/{pin.owner}">@{pin.owner}</a></div> <div class="card-text" html="{util.parse_tags(pin.detail)}"></div> </div> <div class="card-meta"> <div class="meta meta-time right">{moment(pin.created_time).fromNow()}</div> <div class="meta meta-status left" data-status="{pin.status}">{pin.status}</div> </div> </div> </div> </div> </div> <div class="center"> <button class="btn waves-effect waves-light white light-blue-text" if="{has_more &amp;&amp; !is_loading}" type="button" onclick="{clickLoadMore}"><i class="icon material-icons light-blue-text">expand_more</i>โหลดเพิ่ม</button> <preloader class="small" if="{is_loading}"></preloader> </div> <div class="spacing-large"></div> </div> </div>', '', '', function (opts) {
   var self = this;
 
   self.title = opts.title;
   self.pins = opts.pins || [];
+  self.is_loading = false;
+  self.has_more = false;
+  self.skip = 0;
+  self.limit = 30;
+  self.query = opts.query || {};
 
-  self.on('mount', function () {});
+  self.on('mount', function () {
+
+    loadNext();
+  });
   self.on('updated', function () {
 
     $(self.root).find('.card-text').each(function (i, el) {
@@ -116,6 +124,33 @@ riot.tag2('page-feed', '<div id="page-feed"> <div class="container no-padding-s"
       $text.html($text.attr('html'));
     });
   });
+
+  function loadNext() {
+    app.busy();
+    self.is_loading = true;
+    $.ajax({
+      url: util.site_url('/pins', app.get('service.api.url')),
+      data: _.assign({
+        $sort: '-created_time'
+      }, self.query, {
+        $skip: self.skip,
+        $limit: self.limit
+      })
+    }).done(function (data) {
+      var new_pins = data.data || [];
+      self.skip += Math.min(new_pins.length, self.limit);
+      self.has_more = new_pins.length >= self.limit;
+      self.pins = self.pins.concat(new_pins);
+    }).always(function () {
+      self.is_loading = false;
+      app.busy(false);
+      self.update();
+    });
+  }
+
+  self.clickLoadMore = function (e) {
+    loadNext();
+  };
 });
 
 riot.tag2('page-map', '<div id="page-map"> <map-box id="map-{id}" options-zoom="15" options-scroll-wheel-zoom="false"></map-box> <div class="container no-padding-s" id="overlay-layer"> <button class="btn-floating waves-effect waves-light white" type="button" onclick="{setMapLocationByGeolocation}"><i class="icon material-icons light-blue-text">gps_fixed</i></button> </div> </div>', '', '', function (opts) {
@@ -140,7 +175,7 @@ riot.tag2('page-map', '<div id="page-map"> <map-box id="map-{id}" options-zoom="
   };
 });
 
-riot.tag2('page-pin', '<div id="page-pin"> <div class="fluid-container no-padding-s"> <div class="row"> <div class="col s12 m6 offset-m6"> <div class="spacing"></div> <div class="card"> <div class="card-image" if="{pin.photos.length === 0}" href="#pins/{pin._id}" riot-style="background-image: url({util.site_url(&quot;/public/image/pin_photo.png&quot;)})"></div> <div class="card-image responsive" if="{pin.photos.length &gt; 0}"> <div class="slider-container"> <div class="image-slider" id="photo-slider"> <div class="slider-item" each="{photo in pin.photos}"> <div class="image-item"> <div class="image" riot-style="background-image: url(&quot;{util.site_url(photo)}&quot;)"></div> </div> </div> </div> </div> </div> <div class="card-content"> <div class="pin-content"> <div class="card-description"> <div class="card-author"><a href="#user/{pin.owner}">@{pin.owner}</a></div> <div class="card-text" html="{util.parse_tags(pin.detail)}"></div> </div> <div class="card-meta"> <div class="meta meta-time right">{moment(pin.created_time, [\'x\', \'M/D/YYYY, h:mm A\']).fromNow()}</div> <div class="meta meta-status left" data-status="{pin.status}">{pin.status}</div> </div> </div> <div if="{pin.comments &amp;&amp; pin.comments.length &gt; 0}"> <div class="divider"></div> <h5 class="section-name">ความคิดเห็น</h5> <div class="comment-list"> <div class="comment-item" each="{comment in pin.comments}"> <div class="card-description"> <div class="card-author"><a href="#user/{comment.commented_by}">@{comment.commented_by}</a></div> <div class="card-text" html="{util.parse_tags(comment.detail)}"></div> </div> </div> </div> </div> </div> </div> </div> </div> </div> <div class="map-container"> <map-box pin-clickable="false" options-zoom="17" options-scroll-wheel-zoom="false" options-tap="false" options-keyboard="false"></map-box> </div> <div class="spacing-large"></div> </div>', '', '', function (opts) {
+riot.tag2('page-pin', '<div id="page-pin"> <div class="fluid-container no-padding-s"> <div class="row"> <div class="col s12 m6 offset-m6"> <div class="spacing"></div> <div class="card"> <div class="card-image" if="{pin.photos.length === 0}" href="#pins/{pin._id}" riot-style="background-image: url({util.site_url(&quot;/public/image/pin_photo.png&quot;)})"></div> <div class="card-image responsive" if="{pin.photos.length &gt; 0}"> <div class="slider-container"> <div class="image-slider" id="photo-slider"> <div class="slider-item" each="{photo in pin.photos}"> <div class="image-item"> <div class="image" riot-style="background-image: url(&quot;{util.site_url(photo)}&quot;)"></div> </div> </div> </div> </div> </div> <div class="card-content"> <div class="pin-content"> <div class="card-description"> <div class="card-author"><a href="#user/{pin.owner}">@{pin.owner}</a></div> <div class="card-text" html="{util.parse_tags(pin.detail)}"></div> </div> <div class="card-meta"> <div class="meta meta-time right">{moment(pin.created_time).fromNow()}</div> <div class="meta meta-status left" data-status="{pin.status}">{pin.status}</div> </div> </div> <div if="{pin.comments &amp;&amp; pin.comments.length &gt; 0}"> <div class="divider"></div> <h5 class="section-name">ความคิดเห็น</h5> <div class="comment-list"> <div class="comment-item" each="{comment in pin.comments}"> <div class="card-description"> <div class="card-author"><a href="#user/{comment.commented_by}">@{comment.commented_by}</a></div> <div class="card-text" html="{util.parse_tags(comment.detail)}"></div> </div> </div> </div> </div> </div> </div> </div> </div> </div> <div class="map-container"> <map-box pin-clickable="false" options-zoom="17" options-scroll-wheel-zoom="false" options-tap="false" options-keyboard="false"></map-box> </div> <div class="spacing-large"></div> </div>', '', '', function (opts) {
   var _this = this;
 
   var self = this;
@@ -189,7 +224,7 @@ riot.tag2('page-pin', '<div id="page-pin"> <div class="fluid-container no-paddin
   }
 });
 
-riot.tag2('page-report', '<div class="modal bottom-sheet full-sheet" id="report-input-modal"> <div class="modal-header"> <nav> <ul class="left"> <li><a class="modal-action modal-close" href="#" onclick="{clickCloseReport}">ยกเลิก</a></li> </ul> <div class="center"><a class="brand-logo" href="#"></a> <div class="modal-title">ใส่ข้อมูลพิน</div> </div> <ul class="right"></ul> </nav> </div> <div class="modal-content no-padding-s"> <div class="container no-padding-s"> <div class="row"> <div class="col s12 m6 offset-m3 l4 offset-l4"> <form id="report-form"> <input type="hidden" name="location[]:number" value="{location.lat}"> <input type="hidden" name="location[]:number" value="{location.lng}"> <input each="{photo in photos}" type="hidden" name="photos[]" value="{photo.url}"> <input type="hidden" name="status" value="open"> <input type="hidden" name="owner" value="youpin"> <input type="hidden" name="level" value="normal"> <input type="hidden" name="neighborhood" value="{neighborhood}"> <div class="card"> <div class="card-image" if="{photos.length === 0}" href="#report" riot-style="background-image: url({util.site_url(&quot;/public/image/pin_photo_upload.png&quot;)})"> <button class="btn-floating btn-large waves-effect waves-light white" id="add-image-btn" type="button" onclick="{clickPhoto}"><i class="icon material-icons large light-blue-text">add</i></button> </div> <div class="card-image responsive" if="{photos.length &gt; 0}"> <div class="slider-container"> <div class="image-slider" id="photo-slider"> <div class="slider-item" each="{photo, i in photos}" data-i="{i}"> <div class="image-item" data-i="{i}" href="#!"> <div class="image" riot-style="background-image: url(&quot;{util.site_url(photo.url)}&quot;)"></div> </div> </div> </div> </div><a class="btn-floating btn-large waves-effect waves-light" id="add-image-btn" href="#report" onclick="{clickPhoto}"><i class="icon material-icons">add</i></a> </div> <div class="input-field" id="input-detail"> <textarea class="validate materialize-textarea" name="detail" placeholder="ใส่คำอธิบายปัญหาหรือข้อเสนอแนะ" oninput="{changeDetail}">{detail}</textarea> </div> <div class="card-content"> <div class="input-field" id="input-categories"><i class="icon material-icons prefix">local_offer</i> <select id="select-categories" name="categories" onchange="{changeCategories}"> <option each="{cat in choice_categories}" value="{cat.value}" __selected="{cat.selected}">{cat.text}</option> </select> </div> <div class="input-field" id="input-location" if="{!location}"><i class="icon material-icons prefix {location.lat ? &quot;active&quot; : &quot;&quot;}">place</i><a class="location-input input" href="#" onclick="{clickLocation}">{location_text}<i class="icon material-icons green-text small" if="{location}" style="vertical-align: top">check</i></a></div> </div> <div id="input-location-complete" if="{location}"> <map-box id="input-location-map" pin-clickable="false" options-dragging="false" options-zoom="15" options-zoom-control="false" options-scroll-wheel-zoom="false" options-double-click-zoom="false" options-touch-zoom="false" options-tap="false" options-keyboard="false"></map-box> <button class="btn-floating btn-large waves-effect waves-light white" id="edit-location-btn" type="button" onclick="{clickLocation}"><i class="icon material-icons large light-blue-text">edit</i></button> </div> </div> </form> </div> </div> </div> <div class="fluid-container"> <button class="btn btn-large btn-block {is_pin_complete ? &quot;&quot; : &quot;disabled&quot;}" id="submit-pin-btn" type="button" onclick="{clickSubmitReport}" __disabled="{!is_pin_complete}">โพสต์พิน</button> </div> </div> </div> <div class="modal bottom-sheet full-sheet" id="report-photo-modal"> <div class="modal-header"> <nav> <ul class="left"> <li><a class="modal-action modal-close" href="#report" onclick="{clickClosePhoto}">กลับ</a></li> </ul> <div class="center"><a class="brand-logo" href="#"></a> <div class="modal-title">เลือกภาพถ่าย</div> </div> <ul class="right"></ul> </nav> </div> <div class="modal-content no-padding-s"> <div class="container no-padding-s"> <div class="row card-list"> <div class="col s12 m6 offset-m3 l4 offset-l4" each="{photo, i in photos}"> <div class="card" data-i="{i}"> <div class="card-image responsive"><img riot-src="{util.site_url(photo.url)}"></div> <div class="card-content"> <div class="input-field"> <input class="validate" type="text" name="photo[{i}][text]" value="{photo.text}" placeholder="ใส่คำอธิบาย" data-i="{i}" onchange="{changePhotoText}"> </div> </div> </div> </div> <div class="col s12 m6 offset-m3 l4 offset-l4"> <div class="drop-image-preview hide"></div> <div class="card-title center drop-image" name="dropzone-el"><i class="icon material-icons">photo_camera</i>เพิ่มรูป</div> </div> </div> </div> </div> </div> <div class="modal bottom-sheet full-sheet" id="report-map-modal"> <div class="modal-header"> <nav> <ul class="left"> <li><a class="modal-action modal-close" href="#report" onclick="{clickCloseMap}">กลับ</a></li> </ul> <div class="center"><a class="brand-logo" href="#"></a> <div class="modal-title">ตำแหน่งพิน</div> </div> <ul class="right"> <li><a href="#!" onclick="{setMapLocationByGeolocation}"><i class="icon material-icons">gps_fixed</i></a></li> </ul> </nav> </div> <div class="modal-content no-padding-s"> <div class="input-location-map" id="edit-location-map"></div><a class="btn btn-large btn-block modal-close" id="submit-location-btn" onclick="{clickCloseMap}">ใช้ตำแหน่งนี้</a> </div> </div> <div class="modal" id="report-uploading-modal"> <div class="modal-content"> <div class="progress"> <div class="indeterminate"></div> </div> <h4 class="center">กำลังอัพโหลด</h4> </div> </div> <div class="modal" id="report-saving-modal"> <div class="modal-content"> <div class="progress"> <div class="indeterminate"></div> </div> <h4 class="center">กำลังพิน</h4> </div> </div>', 'page-report .input-location-map,[riot-tag="page-report"] .input-location-map,[data-is="page-report"] .input-location-map{ position: absolute; top: 0; bottom: 0; left: 0; right: 0; } page-report .leaflet-map-pane,[riot-tag="page-report"] .leaflet-map-pane,[data-is="page-report"] .leaflet-map-pane{ z-index: 2 !important; } page-report .leaflet-google-layer,[riot-tag="page-report"] .leaflet-google-layer,[data-is="page-report"] .leaflet-google-layer{ z-index: 1 !important; }', '', function (opts) {
+riot.tag2('page-report', '<div class="modal bottom-sheet full-sheet" id="report-input-modal"> <div class="modal-header"> <nav> <ul class="left"> <li><a class="modal-action modal-close" href="#" onclick="{clickCloseReport}">ยกเลิก</a></li> </ul> <div class="center"><a class="brand-logo" href="#"></a> <div class="modal-title">ใส่ข้อมูลพิน</div> </div> <ul class="right"></ul> </nav> </div> <div class="modal-content no-padding-s"> <div class="container no-padding-s"> <div class="row"> <div class="col s12 m6 offset-m3 l4 offset-l4"> <form id="report-form"> <input type="hidden" name="location[coordinates][]:number" value="{location.lat}"> <input type="hidden" name="location[coordinates][]:number" value="{location.lng}"> <input type="hidden" name="location[type][]:string" value="Point"> <input each="{photo in photos}" type="hidden" name="photos[]" value="{photo.url}"> <input type="hidden" name="status" value="unverified"> <input type="hidden" name="owner" value="{owner}"> <input each="{provider in providers}" type="hidden" name="provider[]" value="{provider}"> <input type="hidden" name="level" value="normal"> <input type="hidden" name="neighborhood" value="{neighborhood}"> <div class="card"> <div class="card-image" if="{photos.length === 0}" href="#report" riot-style="background-image: url({util.site_url(&quot;/public/image/pin_photo_upload.png&quot;)})"> <button class="btn-floating btn-large waves-effect waves-light white" id="add-image-btn" type="button" onclick="{clickPhoto}"><i class="icon material-icons large light-blue-text">add</i></button> </div> <div class="card-image responsive" if="{photos.length &gt; 0}"> <div class="slider-container"> <div class="image-slider" id="photo-slider"> <div class="slider-item" each="{photo, i in photos}" data-i="{i}"> <div class="image-item" data-i="{i}" href="#!"> <div class="image" riot-style="background-image: url(&quot;{util.site_url(photo.url)}&quot;)"></div> </div> </div> </div> </div><a class="btn-floating btn-large waves-effect waves-light" id="add-image-btn" href="#report" onclick="{clickPhoto}"><i class="icon material-icons">add</i></a> </div> <div class="input-field" id="input-detail"> <textarea class="validate materialize-textarea" name="detail" placeholder="ใส่คำอธิบายปัญหาหรือข้อเสนอแนะ" oninput="{changeDetail}">{detail}</textarea> </div> <div class="card-content"> <div class="input-field" id="input-categories"><i class="icon material-icons prefix">local_offer</i> <select id="select-categories" name="categories" onchange="{changeCategories}"> <option each="{cat in choice_categories}" value="{cat.value}" __selected="{cat.selected}">{cat.text}</option> </select> </div> <div class="input-field" id="input-location" if="{!location}"><i class="icon material-icons prefix {location.lat ? &quot;active&quot; : &quot;&quot;}">place</i><a class="location-input input" href="#" onclick="{clickLocation}">{location_text}<i class="icon material-icons green-text small" if="{location}" style="vertical-align: top">check</i></a></div> </div> <div id="input-location-complete" if="{location}"> <map-box id="input-location-map" pin-clickable="false" options-dragging="false" options-zoom="15" options-zoom-control="false" options-scroll-wheel-zoom="false" options-double-click-zoom="false" options-touch-zoom="false" options-tap="false" options-keyboard="false"></map-box> <button class="btn-floating btn-large waves-effect waves-light white" id="edit-location-btn" type="button" onclick="{clickLocation}"><i class="icon material-icons large light-blue-text">edit</i></button> </div> </div> </form> </div> </div> </div> <div class="container no-padding-s"> <div class="row"> <div class="col s12 m6 offset-m3 l4 offset-l4"> <button class="btn btn-large btn-block {is_pin_complete ? &quot;&quot; : &quot;disabled&quot;}" id="submit-pin-btn" type="button" onclick="{clickSubmitReport}" __disabled="{!is_pin_complete}">โพสต์พิน</button> </div> </div> </div> </div> </div> <div class="modal bottom-sheet full-sheet" id="report-photo-modal"> <div class="modal-header"> <nav> <ul class="left"> <li><a class="modal-action modal-close" href="#report" onclick="{clickClosePhoto}">กลับ</a></li> </ul> <div class="center"><a class="brand-logo" href="#"></a> <div class="modal-title">เลือกภาพถ่าย</div> </div> <ul class="right"></ul> </nav> </div> <div class="modal-content no-padding-s"> <div class="container no-padding-s"> <div class="row card-list"> <div class="col s12 m6 offset-m3 l4 offset-l4" each="{photo, i in photos}"> <div class="card" data-i="{i}"> <div class="card-image responsive"><img riot-src="{util.site_url(photo.url)}"></div> </div> </div> <div class="col s12 m6 offset-m3 l4 offset-l4"> <div class="spacing"></div> <div class="drop-image-preview hide"></div> <div class="card-title center drop-image" name="dropzone-el"><i class="icon material-icons">photo_camera</i>เพิ่มรูป</div> </div> </div> </div> </div> </div> <div class="modal bottom-sheet full-sheet" id="report-map-modal"> <div class="modal-header"> <nav> <ul class="left"> <li><a class="modal-action modal-close" href="#report" onclick="{clickCloseMap}">กลับ</a></li> </ul> <div class="center"><a class="brand-logo" href="#"></a> <div class="modal-title">ตำแหน่งพิน</div> </div> <ul class="right"> <li><a href="#!" onclick="{setMapLocationByGeolocation}"><i class="icon material-icons">gps_fixed</i></a></li> </ul> </nav> </div> <div class="modal-content no-padding-s"> <div class="input-location-map" id="edit-location-map"></div><a class="btn btn-large btn-block modal-close" id="submit-location-btn" onclick="{clickCloseMap}">ใช้ตำแหน่งนี้</a> </div> </div> <div class="modal" id="report-uploading-modal"> <div class="modal-content"> <div class="progress"> <div class="indeterminate"></div> </div> <h4 class="center">กำลังอัพโหลด</h4> </div> </div> <div class="modal" id="report-saving-modal"> <div class="modal-content"> <div class="progress"> <div class="indeterminate"></div> </div> <h4 class="center">กำลังพิน</h4> </div> </div>', 'page-report .input-location-map,[riot-tag="page-report"] .input-location-map,[data-is="page-report"] .input-location-map{ position: absolute; top: 0; bottom: 0; left: 0; right: 0; } page-report .leaflet-map-pane,[riot-tag="page-report"] .leaflet-map-pane,[data-is="page-report"] .leaflet-map-pane{ z-index: 2 !important; } page-report .leaflet-google-layer,[riot-tag="page-report"] .leaflet-google-layer,[data-is="page-report"] .leaflet-google-layer{ z-index: 1 !important; }', '', function (opts) {
   var self = this;
 
   self.dropzone = null;
@@ -204,7 +239,9 @@ riot.tag2('page-report', '<div class="modal bottom-sheet full-sheet" id="report-
   self.map = null;
   self.map_id = 'edit-location-map';
   self.location = null;
-  self.neighborhood = 'สีลม';
+  self.neighborhood = '';
+  self.owner = app.get('app_user._id');
+  self.providers = [app.get('app_user._id')];
 
   self.DEFAULT_LOCATION = { lat: 13.7302295, lng: 100.5724075 };
   self.YPIcon = L.icon({
@@ -416,7 +453,12 @@ riot.tag2('page-report', '<div class="modal bottom-sheet full-sheet" id="report-
 
   function openPhoto(e) {
     $('#report-input-modal').addClass('inactive');
-    $('#report-photo-modal').openModal();
+    $('#report-photo-modal').openModal({
+      ready: function ready() {},
+      complete: function complete() {
+        createPhotoSlider();
+      }
+    });
   }
 
   function submitReport() {
@@ -436,7 +478,7 @@ riot.tag2('page-report', '<div class="modal bottom-sheet full-sheet" id="report-
       url: util.site_url('/pins', app.get('service.api.url')),
       method: 'post',
       headers: {
-        'Authorization': 'Basic ' + app.get('service.api.hash_key')
+        'Authorization': 'Bearer ' + app.get('app_token')
       },
       beforeSend: function beforeSend(xhrObj) {
         xhrObj.setRequestHeader('Content-Type', 'application/json');
@@ -447,9 +489,10 @@ riot.tag2('page-report', '<div class="modal bottom-sheet full-sheet" id="report-
     }).done(function (data) {
       resetReportModal();
       closeReportView();
-      app.goto('pins/' + data.name);
+      app.goto('pins/' + data._id);
     }).fail(function (error) {
       console.error('error:', error);
+      Materialize.toast('ไม่สามารถพินปัญหาได้ (' + error + ')', 5000, 'dialog-error');
     });
   }
 

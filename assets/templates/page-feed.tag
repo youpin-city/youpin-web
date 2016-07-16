@@ -26,8 +26,16 @@ page-feed
                   | ความเห็น { pin.comments.length }
 
               .card-meta
-                .meta.meta-time.right { moment(pin.created_time, ['x', 'M/D/YYYY, h:mm A']).fromNow() }
+                .meta.meta-time.right { moment(pin.created_time).fromNow() }
                 .meta.meta-status.left(data-status='{ pin.status }') { pin.status }
+
+      .center
+        button.btn.waves-effect.waves-light.white.light-blue-text(if='{ has_more && !is_loading }', type='button', onclick='{ clickLoadMore }')
+          i.icon.material-icons.light-blue-text expand_more
+          | โหลดเพิ่ม
+        preloader(if='{ is_loading }', class='small')
+
+      .spacing-large
 
   script.
     const self = this;
@@ -36,6 +44,11 @@ page-feed
      ***************/
     self.title = opts.title;
     self.pins = opts.pins || [];
+    self.is_loading = false;
+    self.has_more = false;
+    self.skip = 0;
+    self.limit = 30;
+    self.query = opts.query || {};
 
     /***************
      * CHANGE
@@ -46,6 +59,7 @@ page-feed
      ***************/
      self.on('mount', () => {
       // console.log('mount:', self.opts);
+      loadNext();
      });
      self.on('updated', () => {
       // interpolate html
@@ -58,3 +72,31 @@ page-feed
     /***************
      * ACTION
      ***************/
+    function loadNext() {
+      app.busy();
+      self.is_loading = true;
+      $.ajax({
+        url: util.site_url('/pins', app.get('service.api.url')),
+        data: _.assign({
+          $sort: '-created_time'
+        }, self.query, {
+          $skip: self.skip,
+          $limit: self.limit
+        })
+      })
+      .done(function(data) {
+        var new_pins = data.data || [];
+        self.skip += Math.min(new_pins.length, self.limit);
+        self.has_more = new_pins.length >= self.limit;
+        self.pins = self.pins.concat(new_pins);
+      })
+      .always(function() {
+        self.is_loading = false;
+        app.busy(false);
+        self.update();
+      });
+    }
+
+    self.clickLoadMore = function(e) {
+      loadNext();
+    }

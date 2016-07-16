@@ -2,6 +2,13 @@
   width: 100%;
 }
 
+.btn {
+  i {
+    font-size: 2.4rem;// $fs-icon-h5;
+    vertical-align: middle;
+    // line-height: 1;
+  }
+}
 .btn-large {
   font-size: $fs-md;
   i {
