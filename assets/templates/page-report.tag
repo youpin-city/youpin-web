@@ -24,7 +24,7 @@ page-report
               input(type='hidden', name='location[coordinates][]:number', value='{ location.lng }')
               input(type='hidden', name='location[type][]:string', value='Point')
               input(each='{ photo in photos }', type='hidden', name='photos[]', value='{ photo.url }')
-              input(type='hidden', name='status', value='unverified')
+              input(type='hidden', name='status', value='{ status }')
               input(type='hidden', name='owner', value='{ owner }')
               input(each='{ provider in providers }', type='hidden', name='provider[]', value='{ provider }')
               input(type='hidden', name='level', value='normal')
@@ -32,7 +32,7 @@ page-report
 
               .card
                 .card-image(if='{ photos.length === 0 }', href='#report', style='background-image: url({ util.site_url("/public/image/pin_photo_upload.png") });')
-                  button#add-image-btn.btn-floating.btn-large.waves-effect.waves-light.white(type='button', onclick='{ clickPhoto }')
+                  button#add-first-image-btn.btn-floating.btn-large.waves-effect.waves-light.white(type='button', onclick='{ clickPhoto }')
                     i.icon.material-icons.large.light-blue-text add
 
                 .card-image.responsive(if='{ photos.length > 0 }')
@@ -169,6 +169,8 @@ page-report
     self.map = null;
     self.map_id = 'edit-location-map';
     self.location = null;
+    self.default_status = 'verified';
+    self.status = '';
     self.neighborhood = '';
     self.owner = app.get('app_user._id');
     self.providers = [app.get('app_user._id')];
@@ -230,6 +232,7 @@ page-report
 
       self.detail = '';
       self.categories = '';
+      self.status = self.default_status;
       self.photos = [];
       self.map = null;
       self.location = null;
@@ -249,7 +252,7 @@ page-report
           previewsContainer: '.drop-image-preview',
           previewTemplate: '<div class="dz-preview-template" style="display: none;"></div>',
           dictDefaultMessage: '',
-          clickable: _.filter([$(self.target)[0], self['dropzone-el']]),
+          clickable: _.filter([$(self.target)[0], self['dropzone-el'], self['add-first-image-btn']]),
           uploadMultiple: true,
           fallback: function() {
             $(self.root).find('.dropzone').hide();
@@ -292,11 +295,16 @@ page-report
 
     function showReportView() {
       self.redirect = app.current_hash || '#feed';
+      if (self.redirect === '#report') self.redirect = '#feed';
       app.goto('report');
       const $input_modal = $(self['report-input-modal']);
       const $photo_modal = $(self['report-photo-modal']);
       if ($input_modal.hasClass('open')) {
-        $photo_modal.openModal();
+        // $photo_modal.openModal();
+        if (self.photos.length <= 1) {
+          // auto close photo view when there's only one photo
+          $photo_modal.find('.modal-close').click();
+        }
       } else {
         $input_modal.openModal({
           ready: function() {
@@ -456,6 +464,9 @@ page-report
         cat => _.trim(cat)
       );
       form_data.tags = util.extract_tags(form_data.detail);
+      // treat categories as tags for now
+      // TODO: discard categories as tags when API support filter by categories
+      form_data.tags = form_data.tags.concat(form_data.categories);
       form_data.created_time = Date.now();
       form_data.updated_time = form_data.created_time;
 
