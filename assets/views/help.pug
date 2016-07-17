@@ -1,0 +1,34 @@
+extends layouts/layout
+
+append content
+
+  #page-help
+
+    .container
+      .row
+        .col.s12.m10.offset-m1
+          h4 ความช่วยเหลือ
+          ul.collapsible.popout(data-collapsible='accordion')
+            li
+              .collapsible-header 1. ไม่สามารถใช้งานปุ่ม <i class="icon material-icons" style="display: inline; float: none; margin: 0;">gps_fixed</i> เพื่อแสดงตำแหน่งปัจจุบันได้
+              .collapsible-body
+                p <strong>สำหรับผู้ใช้ iOS</strong>
+                ol
+                  li เข้าไปตั้งค่าที่ การตั้งค่า (Settings) &gt; ความเป็นส่วนตัว (Privacy) &gt; บริการหาตำแหน่งที่ตั้ง (Location Services)
+                  li เลือกเปิด "บริการหาตำแหน่งที่ตั้ง"
+                  li เข้าไปแอปที่ใช้ (Safari หรือ Chrome) เลือก "ขณะใช้แอป" (While Using the App)
+                p <strong>สำหรับผู้ใช้ Android (4.4 ขึ้นไป)</strong>
+                ol
+                  li เข้าไปตั้งค่าที่แอป การตั้งค่า (Settings) > ตำแหน่ง (Location)
+                  li เลือกเปิดสวิตช์ตำแหน่ง (Location)
+                  li เปิดแอป Google Chrome
+                  li แตะที่เครื่องหมาย
+                    i.icon.material-icons more_vert
+                  li แตะ การตั้งค่า (Settings) &gt; การตั้งค่าเว็บไซต์ (Site Settings) &gt; ตำแหน่ง (Location)
+                  li เลือกเปิดสวิตช์เพื่อให้แอปเข้าถึงตำแหน่งของคุณ
+                  li หรือหาก youpin.city ถูกบล็อก ให้แตะที่เว็บไซต์เพื่ออนุญาต
+
+            li
+              .collapsible-header 2. ใส่ข้อมูลผิด อยากจะแก้ไขทำยังไง?
+              .collapsible-body
+                p ขณะนี้ยังไม่สามารถแก้ได้ค่ะ

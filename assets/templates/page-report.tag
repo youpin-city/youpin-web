@@ -51,6 +51,7 @@ page-report
                   #input-categories.input-field
                     i.icon.material-icons.prefix local_offer
                     select#select-categories(name='categories', onchange='{ changeCategories }')
+                      option(value='') เลือกหมวดหมู่
                       option(each='{ cat in choice_categories }', value='{ cat.value }', selected='{ cat.selected }') { cat.text }
                     //- input.validate(type='text', name='categories', placeholder='หมวด', value='{ categories }')
 
@@ -170,7 +171,7 @@ page-report
     self.map_id = 'edit-location-map';
     self.location = null;
     self.default_status = 'verified';
-    self.status = '';
+    self.status = self.default_status;
     self.neighborhood = '';
     self.owner = app.get('app_user._id');
     self.providers = [app.get('app_user._id')];
@@ -384,7 +385,8 @@ page-report
       });
       self.map.on('locationerror', err => {
         console.error(err.message);
-        self.map.setView([13.7302295, 100.5724075], 16);
+        Materialize.toast('ไม่สามารถแสดงตำแหน่งปัจจุบันได้ <a href="/help" target="_blank">อ่านที่นี่เพื่อแก้ไข</a>', 5000, 'dialog-error');
+        self.map.setView([13.756727, 100.5018549], 16);
       });
 
       // // Add google maps
@@ -394,7 +396,7 @@ page-report
       // HERE Maps
       // @see https://developer.here.com/rest-apis/documentation/enterprise-map-tile/topics/resource-base-maptile.html
       // https: also suppported.
-      var HERE_normalDay = L.tileLayer('http://{s}.{base}.maps.cit.api.here.com/maptile/2.1/{type}/{mapID}/{scheme}/{z}/{x}/{y}/{size}/{format}?app_id={app_id}&app_code={app_code}&lg={language}&style={style}', {
+      var HERE_normalDay = L.tileLayer('https://{s}.{base}.maps.cit.api.here.com/maptile/2.1/{type}/{mapID}/{scheme}/{z}/{x}/{y}/{size}/{format}?app_id={app_id}&app_code={app_code}&lg={language}&style={style}', {
         attribution: 'Map &copy; 1987-2014 <a href="http://developer.here.com">HERE</a>',
         subdomains: '1234',
         mapID: 'newest',
@@ -414,10 +416,16 @@ page-report
       self.map_marker = L.marker([self.DEFAULT_LOCATION.lat, self.DEFAULT_LOCATION.lng], { icon: self.YPIcon })
         .addTo(self.map);
 
-      self.map.on('drag', _.throttle(() => {
+      // self.map.on('drag', _.throttle(() => {
+      //   updateMarkerLocation(self.map.getCenter());
+      // }, 100));
+      // self.map.on('dragend', e => {
+      //   updateMarkerLocation(self.map.getCenter());
+      // });
+      self.map.on('move', _.throttle(() => {
         updateMarkerLocation(self.map.getCenter());
       }, 100));
-      self.map.on('dragend', e => {
+      self.map.on('moveend zoomend resize', e => {
         updateMarkerLocation(self.map.getCenter());
       });
     }
@@ -522,7 +530,11 @@ page-report
           }
         },
         complete: function() { // when modal close
-          updateMarkerLocation(self.map.getCenter());
+          if (self.location) {
+            // updateMarkerLocation(self.location);
+          } else {
+
+          }
         }
       });
     };
@@ -531,7 +543,11 @@ page-report
       e.preventDefault();
       e.stopPropagation();
       if (self.map) {
-        self.map.locate({ setView: true, maxZoom: 16 });
+        self.map.locate({
+          setView: true,
+          maxZoom: 16,
+          enableHighAccuracy: true
+        });
       }
     };
 

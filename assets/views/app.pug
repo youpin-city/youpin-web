@@ -70,7 +70,7 @@ append app_script
       $('#search').show();
       app.busy();
       $.ajax({
-        url: util.site_url('/pins?$limit=30&$sort=-_id', app.get('service.api.url'))
+        url: util.site_url('/pins?$limit=50&$sort=-_id', app.get('service.api.url'))
       })
       .done(function(data) {
         var pins = data.data || [];
