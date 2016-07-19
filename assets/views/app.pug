@@ -68,15 +68,8 @@ append app_script
     app.route('search', function(id, action, qs, hash) {
       $('.tab-bar-view').hide();
       $('#search').show();
-      app.busy();
-      $.ajax({
-        url: util.site_url('/pins?$limit=50&$sort=-_id', app.get('service.api.url'))
-      })
-      .done(function(data) {
-        var pins = data.data || [];
-        app.open('page-map', '#search', { title: 'ค้นหาพินรอบๆ', pins: pins });
-        app.busy(false);
-      });
+
+      app.open('page-map', '#search', { title: 'ค้นหาพินรอบๆ', pins: [] });
     });
 
     // Route: #pins/:id

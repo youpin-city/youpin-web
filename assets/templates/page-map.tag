@@ -2,7 +2,7 @@ page-map
 
   #page-map
 
-    map-box(id='map-{ id }', options-zoom='14', options-scroll-wheel-zoom='false')
+    map-box(id='map-{ id }', options-zoom='auto', options-scroll-wheel-zoom='false')
 
     #overlay-layer.container.no-padding-s
       //- h5.page-name(if='{ title }') { title }
@@ -17,6 +17,10 @@ page-map
      ***************/
     self.title = opts.title;
     self.pins = opts.pins || [];
+    self.has_more = false;
+    self.skip = 0;
+    self.limit = 50;
+    self.query = opts.query || {};
 
     /***************
      * CHANGE
@@ -28,8 +32,7 @@ page-map
      ***************/
     self.on('mount', () => {
       // console.log('mount:', self.opts);
-      riot.mount('#map-' + self.id, { pins: self.pins });
-      self.map = _.get(self['map-' + self.id], '_tag.map');
+      loadNext();
     });
 
     /***************
@@ -45,13 +48,47 @@ page-map
     self.setMapLocationByGeolocation = function(e) {
       e.preventDefault();
       e.stopPropagation();
-      if (self.map) {
-        self.map.locate({
-          setView: true,
-          maxZoom: 16,
-          enableHighAccuracy: true
-        });
-        self.map.off('locationerror', locationError);
-        self.map.on('locationerror', locationError);
-      }
+      if (!self.map) return;
+      self.map.locate({
+        setView: true,
+        maxZoom: 16,
+        enableHighAccuracy: true
+      });
+      self.map.off('locationerror', locationError);
+      self.map.on('locationerror', locationError);
     };
+
+    function loadNext() {
+      app.busy();
+      self.is_loading = true;
+      $.ajax({
+        url: util.site_url('/pins', app.get('service.api.url')),
+        data: _.assign({
+          $sort: '-created_time'
+        }, self.query, {
+          $skip: self.skip,
+          $limit: self.limit
+        })
+      })
+      .done(function(data) {
+        var new_pins = data.data || [];
+        self.skip += Math.min(new_pins.length, self.limit);
+        self.has_more = new_pins.length >= self.limit;
+        self.pins = self.pins.concat(new_pins);
+
+        if (self.has_more && self.pins.length < 500) {
+          loadNext();
+        } else {
+          updateMap();
+        }
+      })
+      .always(function() {
+        self.is_loading = false;
+        app.busy(false);
+      });
+    }
+
+    function updateMap() {
+      riot.mount('#map-' + self.id, { pins: self.pins });
+      self.map = _.get(self['map-' + self.id], '_tag.map');
+    }

@@ -87,7 +87,7 @@ map-box
 
       self.map = L.map(self.id, self.map_options);
       self.map.setView(self.center);
-      self.map.setZoom(+self.map_options.zoom);
+      self.map.setZoom(self.map_options.zoom === 'auto' ? 15 : +self.map_options.zoom);
 
       // // Add google maps
       // var googleLayer = new L.Google('ROADMAP');
@@ -220,6 +220,15 @@ map-box
 
     }
 
+    // @return {Array} translate3d as [x, y, z]
+    function getTransform(el) {
+      var results = $(el).css('transform').match(/matrix(?:(3d)\(\d+(?:, \d+)*(?:, (\d+))(?:, (\d+))(?:, (\d+)), \d+\)|\(\d+(?:, \d+)*(?:, (\d+))(?:, (\d+))\))/)
+      if(!results) return [0, 0, 0];
+      if(results[1] == '3d') return results.slice(2,5);
+      results.push(0);
+      return results.slice(5, 8);
+    }
+
     function createMarker() {
       self.markers = _.map(self.pins, pin => {
         const marker = L.marker(_.get(pin, 'location.coordinates'), {
@@ -233,8 +242,11 @@ map-box
             '<a href="#pins/'+pin._id+'" target="_blank">'
             + '<div class="pin-image" style="background-image: url('+(_.get(pin, 'photos.0') || util.site_url("/public/image/pin_photo.png"))+');"></div>'
             + '</a>'
-            + '<div>' + pin.detail + '</div>'
-            + '<div><a href="#pins/'+pin._id+'" target="_blank">View Pin</a></div>'
+            + '<div style="margin: 1rem 0;">'
+              + '<strong data-url="#user/' + pin.owner + '">@' + app.get('app_user.name').toLowerCase() + '</strong> '
+              + pin.detail
+              + '<a href="#pins/' + pin._id + '" target="_blank" style="margin: 0 0.4rem;">View Pin</a>'
+            + '</div>'
           );
         }
         marker.addTo(self.map);
@@ -247,7 +259,9 @@ map-box
         // const ne = bounds.getNorthEast();
         // bounds.extend([ne.lat, ne.lng + 0.002]);
         self.map.fitBounds(bounds);
-        self.map.setZoom(+self.map_options.zoom || 17);
+        if (self.map_options.zoom !== 'auto') {
+          self.map.setZoom(+self.map_options.zoom || 17);
+        }
       } else {
         console.log('No pins attached');
       }

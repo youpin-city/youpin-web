@@ -11,7 +11,7 @@ page-feed
             .card-content
               .card-description
                 .card-author
-                  a(href='#user/{ pin.owner }') @{ app.get('app_user.name').toLowerCase() }
+                  strong(data-url='#user/{ pin.owner }') @{ app.get('app_user.name').toLowerCase() }
                   //- a(href='#user/{ pin.owner }') @{ pin.owner }
                 .card-text(html='{ util.parse_tags(pin.detail) }')
                 .tag-list(if='{ pin.categories && pin.categories.length > 0 }')
@@ -47,11 +47,12 @@ page-feed
      ***************/
     self.title = opts.title;
     self.pins = opts.pins || [];
-    self.is_loading = false;
     self.has_more = false;
     self.skip = 0;
     self.limit = 30;
     self.query = opts.query || {};
+
+    self.is_loading = false;
 
     /***************
      * CHANGE

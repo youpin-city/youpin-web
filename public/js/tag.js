@@ -46,7 +46,7 @@ riot.tag2('map-box', '<div class="map-box-container" id="{id}-container"> <div c
 
     self.map = L.map(self.id, self.map_options);
     self.map.setView(self.center);
-    self.map.setZoom(+self.map_options.zoom);
+    self.map.setZoom(self.map_options.zoom === 'auto' ? 15 : +self.map_options.zoom);
 
     var HERE_normalDay = L.tileLayer('https://{s}.{base}.maps.cit.api.here.com/maptile/2.1/{type}/{mapID}/{scheme}/{z}/{x}/{y}/{size}/{format}?app_id={app_id}&app_code={app_code}&lg={language}&style={style}&ppi={ppi}', {
       attribution: 'Map &copy; 1987-2014 <a href="http://developer.here.com">HERE</a>',
@@ -67,6 +67,14 @@ riot.tag2('map-box', '<div class="map-box-container" id="{id}-container"> <div c
     self.map.addLayer(HERE_normalDay);
   }
 
+  function getTransform(el) {
+    var results = $(el).css('transform').match(/matrix(?:(3d)\(\d+(?:, \d+)*(?:, (\d+))(?:, (\d+))(?:, (\d+)), \d+\)|\(\d+(?:, \d+)*(?:, (\d+))(?:, (\d+))\))/);
+    if (!results) return [0, 0, 0];
+    if (results[1] == '3d') return results.slice(2, 5);
+    results.push(0);
+    return results.slice(5, 8);
+  }
+
   function createMarker() {
     self.markers = _.map(self.pins, function (pin) {
       var marker = L.marker(_.get(pin, 'location.coordinates'), {
@@ -76,7 +84,7 @@ riot.tag2('map-box', '<div class="map-box-container" id="{id}-container"> <div c
         riseOnHover: true
       });
       if (self.pin_clickable) {
-        marker.bindPopup('<a href="#pins/' + pin._id + '" target="_blank">' + '<div class="pin-image" style="background-image: url(' + (_.get(pin, 'photos.0') || util.site_url("/public/image/pin_photo.png")) + ');"></div>' + '</a>' + '<div>' + pin.detail + '</div>' + '<div><a href="#pins/' + pin._id + '" target="_blank">View Pin</a></div>');
+        marker.bindPopup('<a href="#pins/' + pin._id + '" target="_blank">' + '<div class="pin-image" style="background-image: url(' + (_.get(pin, 'photos.0') || util.site_url("/public/image/pin_photo.png")) + ');"></div>' + '</a>' + '<div style="margin: 1rem 0;">' + '<strong data-url="#user/' + pin.owner + '">@' + app.get('app_user.name').toLowerCase() + '</strong> ' + pin.detail + '<a href="#pins/' + pin._id + '" target="_blank" style="margin: 0 0.4rem;">View Pin</a>' + '</div>');
       }
       marker.addTo(self.map);
       return marker;
@@ -88,7 +96,9 @@ riot.tag2('map-box', '<div class="map-box-container" id="{id}-container"> <div c
       }));
 
       self.map.fitBounds(bounds);
-      self.map.setZoom(+self.map_options.zoom || 17);
+      if (self.map_options.zoom !== 'auto') {
+        self.map.setZoom(+self.map_options.zoom || 17);
+      }
     } else {
       console.log('No pins attached');
     }
@@ -102,16 +112,17 @@ riot.tag2('map-box', '<div class="map-box-container" id="{id}-container"> <div c
   }
 });
 
-riot.tag2('page-feed', '<div id="page-feed"> <div class="container no-padding-s"> <div class="spacing"></div> <h5 class="center" if="{title}">{title}</h5> <div class="row"> <div class="col s12 m6 l4" each="{pin in pins}"> <div class="card hover-card"><a class="card-image" href="#pins/{pin._id}{pin.mock ? &quot;?mock=1&quot; : &quot;&quot;}" riot-style="background-image: url({pin.photos &amp;&amp; pin.photos.length &gt; 0 ? pin.photos[0] : util.site_url(&quot;/public/image/pin_photo.png&quot;)})"></a> <div class="card-content"> <div class="card-description"> <div class="card-author"><a href="#user/{pin.owner}">@{app.get(\'app_user.name\').toLowerCase()}</a></div> <div class="card-text" html="{util.parse_tags(pin.detail)}"></div> <div class="tag-list" if="{pin.categories &amp;&amp; pin.categories.length &gt; 0}"><a class="tag-item" each="{cat in pin.categories}" href="#tags/{cat}">{cat}</a></div> </div> <div class="card-meta"> <div class="meta meta-time right">{moment(pin.created_time).fromNow()}</div> <div class="meta meta-status left" data-status="{pin.status}">{pin.status}</div> </div> </div> </div> </div> </div> <div class="center"> <button class="btn waves-effect waves-light white light-blue-text" if="{has_more &amp;&amp; !is_loading}" type="button" onclick="{clickLoadMore}"><i class="icon material-icons light-blue-text">expand_more</i>โหลดเพิ่ม</button> <preloader class="small" if="{is_loading}"></preloader> </div> <div class="spacing-large"></div> </div> </div>', '', '', function (opts) {
+riot.tag2('page-feed', '<div id="page-feed"> <div class="container no-padding-s"> <div class="spacing"></div> <h5 class="center" if="{title}">{title}</h5> <div class="row"> <div class="col s12 m6 l4" each="{pin in pins}"> <div class="card hover-card"><a class="card-image" href="#pins/{pin._id}{pin.mock ? &quot;?mock=1&quot; : &quot;&quot;}" riot-style="background-image: url({pin.photos &amp;&amp; pin.photos.length &gt; 0 ? pin.photos[0] : util.site_url(&quot;/public/image/pin_photo.png&quot;)})"></a> <div class="card-content"> <div class="card-description"> <div class="card-author"><strong data-url="#user/{pin.owner}">@{app.get(\'app_user.name\').toLowerCase()}</strong></div> <div class="card-text" html="{util.parse_tags(pin.detail)}"></div> <div class="tag-list" if="{pin.categories &amp;&amp; pin.categories.length &gt; 0}"><a class="tag-item" each="{cat in pin.categories}" href="#tags/{cat}">{cat}</a></div> </div> <div class="card-meta"> <div class="meta meta-time right">{moment(pin.created_time).fromNow()}</div> <div class="meta meta-status left" data-status="{pin.status}">{pin.status}</div> </div> </div> </div> </div> </div> <div class="center"> <button class="btn waves-effect waves-light white light-blue-text" if="{has_more &amp;&amp; !is_loading}" type="button" onclick="{clickLoadMore}"><i class="icon material-icons light-blue-text">expand_more</i>โหลดเพิ่ม</button> <preloader class="small" if="{is_loading}"></preloader> </div> <div class="spacing-large"></div> </div> </div>', '', '', function (opts) {
   var self = this;
 
   self.title = opts.title;
   self.pins = opts.pins || [];
-  self.is_loading = false;
   self.has_more = false;
   self.skip = 0;
   self.limit = 30;
   self.query = opts.query || {};
+
+  self.is_loading = false;
 
   self.on('mount', function () {
 
@@ -153,17 +164,20 @@ riot.tag2('page-feed', '<div id="page-feed"> <div class="container no-padding-s"
   };
 });
 
-riot.tag2('page-map', '<div id="page-map"> <map-box id="map-{id}" options-zoom="14" options-scroll-wheel-zoom="false"></map-box> <div class="container no-padding-s" id="overlay-layer"> <button class="btn-floating waves-effect waves-light white" type="button" onclick="{setMapLocationByGeolocation}"><i class="icon material-icons light-blue-text">gps_fixed</i></button> </div> </div>', '', '', function (opts) {
+riot.tag2('page-map', '<div id="page-map"> <map-box id="map-{id}" options-zoom="auto" options-scroll-wheel-zoom="false"></map-box> <div class="container no-padding-s" id="overlay-layer"> <button class="btn-floating waves-effect waves-light white" type="button" onclick="{setMapLocationByGeolocation}"><i class="icon material-icons light-blue-text">gps_fixed</i></button> </div> </div>', '', '', function (opts) {
   var self = this;
   self.id = 'page-map-' + util.uniqueId();
 
   self.title = opts.title;
   self.pins = opts.pins || [];
+  self.has_more = false;
+  self.skip = 0;
+  self.limit = 50;
+  self.query = opts.query || {};
 
   self.on('mount', function () {
 
-    riot.mount('#map-' + self.id, { pins: self.pins });
-    self.map = _.get(self['map-' + self.id], '_tag.map');
+    loadNext();
   });
 
   function locationError(err) {
@@ -175,19 +189,51 @@ riot.tag2('page-map', '<div id="page-map"> <map-box id="map-{id}" options-zoom="
   self.setMapLocationByGeolocation = function (e) {
     e.preventDefault();
     e.stopPropagation();
-    if (self.map) {
-      self.map.locate({
-        setView: true,
-        maxZoom: 16,
-        enableHighAccuracy: true
-      });
-      self.map.off('locationerror', locationError);
-      self.map.on('locationerror', locationError);
-    }
+    if (!self.map) return;
+    self.map.locate({
+      setView: true,
+      maxZoom: 16,
+      enableHighAccuracy: true
+    });
+    self.map.off('locationerror', locationError);
+    self.map.on('locationerror', locationError);
   };
+
+  function loadNext() {
+    app.busy();
+    self.is_loading = true;
+    $.ajax({
+      url: util.site_url('/pins', app.get('service.api.url')),
+      data: _.assign({
+        $sort: '-created_time'
+      }, self.query, {
+        $skip: self.skip,
+        $limit: self.limit
+      })
+    }).done(function (data) {
+      var new_pins = data.data || [];
+      self.skip += Math.min(new_pins.length, self.limit);
+      self.has_more = new_pins.length >= self.limit;
+      self.pins = self.pins.concat(new_pins);
+
+      if (self.has_more && self.pins.length < 500) {
+        loadNext();
+      } else {
+        updateMap();
+      }
+    }).always(function () {
+      self.is_loading = false;
+      app.busy(false);
+    });
+  }
+
+  function updateMap() {
+    riot.mount('#map-' + self.id, { pins: self.pins });
+    self.map = _.get(self['map-' + self.id], '_tag.map');
+  }
 });
 
-riot.tag2('page-pin', '<div id="page-pin"> <div class="fluid-container no-padding-s"> <div class="row"> <div class="col s12 m6 offset-m6"> <div class="spacing"></div> <div class="card"> <div class="card-image" if="{pin.photos.length === 0}" href="#pins/{pin._id}" riot-style="background-image: url({util.site_url(&quot;/public/image/pin_photo.png&quot;)})"></div> <div class="card-image responsive" if="{pin.photos.length &gt; 0}"> <div class="slider-container"> <div class="image-slider" id="photo-slider"> <div class="slider-item" each="{photo in pin.photos}"> <div class="image-item"> <div class="image" riot-style="background-image: url(&quot;{util.site_url(photo)}&quot;)"></div> </div> </div> </div> </div> </div> <div class="card-content"> <div class="pin-content"> <div class="card-description"> <div class="card-author"><a href="#user/{pin.owner}">@{app.get(\'app_user.name\').toLowerCase()}</a></div> <div class="card-text" html="{util.parse_tags(pin.detail)}"></div> <div class="tag-list" if="{pin.categories &amp;&amp; pin.categories.length &gt; 0}"><a class="tag-item" each="{cat in pin.categories}" href="#tags/{cat}">{cat}</a></div> </div> <div class="card-meta"> <div class="meta meta-time right">{moment(pin.created_time).fromNow()}</div> <div class="meta meta-status left" data-status="{pin.status}">{pin.status}</div> </div> </div> <div if="{pin.comments &amp;&amp; pin.comments.length &gt; 0}"> <div class="divider"></div> <h5 class="section-name">ความคิดเห็น</h5> <div class="comment-list"> <div class="comment-item" each="{comment in pin.comments}"> <div class="card-description"> <div class="card-author"><a href="#user/{comment.commented_by}">@{comment.commented_by}</a></div> <div class="card-text" html="{util.parse_tags(comment.detail)}"></div> </div> </div> </div> </div> </div> </div> </div> </div> </div> <div class="map-container"> <map-box pin-clickable="false" options-zoom="17" options-scroll-wheel-zoom="false" options-tap="false" options-keyboard="false"></map-box> </div> <div class="spacing-large"></div> </div>', '', '', function (opts) {
+riot.tag2('page-pin', '<div id="page-pin"> <div class="fluid-container no-padding-s"> <div class="row"> <div class="col s12 m6 offset-m6"> <div class="spacing"></div> <div class="card"> <div class="card-image" if="{pin.photos.length === 0}" href="#pins/{pin._id}" riot-style="background-image: url({util.site_url(&quot;/public/image/pin_photo.png&quot;)})"></div> <div class="card-image responsive" if="{pin.photos.length &gt; 0}"> <div class="slider-container"> <div class="image-slider" id="photo-slider"> <div class="slider-item" each="{photo in pin.photos}"> <div class="image-item"> <div class="image" riot-style="background-image: url(&quot;{util.site_url(photo)}&quot;)"></div> </div> </div> </div> </div> </div> <div class="card-content"> <div class="pin-content"> <div class="card-description"> <div class="card-author"><strong data-url="#user/{pin.owner}">@{app.get(\'app_user.name\').toLowerCase()}</strong></div> <div class="card-text" html="{util.parse_tags(pin.detail)}"></div> <div class="tag-list" if="{pin.categories &amp;&amp; pin.categories.length &gt; 0}"><a class="tag-item" each="{cat in pin.categories}" href="#tags/{cat}">{cat}</a></div> </div> <div class="card-meta"> <div class="meta meta-time right">{moment(pin.created_time).fromNow()}</div> <div class="meta meta-status left" data-status="{pin.status}">{pin.status}</div> </div> </div> <div if="{pin.comments &amp;&amp; pin.comments.length &gt; 0}"> <div class="divider"></div> <h5 class="section-name">ความคิดเห็น</h5> <div class="comment-list"> <div class="comment-item" each="{comment in pin.comments}"> <div class="card-description"> <div class="card-author"><a href="#user/{comment.commented_by}">@{comment.commented_by}</a></div> <div class="card-text" html="{util.parse_tags(comment.detail)}"></div> </div> </div> </div> </div> </div> </div> </div> </div> </div> <div class="map-container"> <map-box pin-clickable="false" options-zoom="17" options-scroll-wheel-zoom="false" options-tap="false" options-keyboard="false"></map-box> </div> <div class="spacing-large"></div> </div>', '', '', function (opts) {
   var _this = this;
 
   var self = this;
