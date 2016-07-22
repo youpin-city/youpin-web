@@ -57,13 +57,13 @@ page-report
 
                   #input-location.input-field(if='{ !location }')
                     i.icon.material-icons.prefix(class='{ location.lat ? "active" : "" }') place
-                    a.location-input.input(href='#', onclick='{ clickLocation }') { location_text }
+                    a.location-input.input(href='#', onclick='{ clickMapLocation }') { location_text }
                       i.icon.material-icons.green-text.small(if='{ location }', style='vertical-align: top;') check
-                    //- input.validate(type='text', name='location', placeholder='ใส่ตำแหน่ง', value='{ location_text }', readonly, onfocus='{ clickLocation }')
+                    //- input.validate(type='text', name='location', placeholder='ใส่ตำแหน่ง', value='{ location_text }', readonly, onfocus='{ clickMapLocation }')
 
                 #input-location-complete(if='{ location }')
-                  map-box#input-location-map(pin-clickable='false', options-dragging='false', options-zoom='15', options-zoom-control='false', options-scroll-wheel-zoom='false', options-double-click-zoom='false', options-touch-zoom='false', options-tap='false', options-keyboard='false')
-                  button#edit-location-btn.btn-floating.btn-large.waves-effect.waves-light.white(type='button', onclick='{ clickLocation }')
+                  map-box#input-location-map(pin-clickable='false', options-dragging='false', options-zoom='17', options-zoom-control='false', options-scroll-wheel-zoom='false', options-double-click-zoom='false', options-touch-zoom='false', options-tap='false', options-keyboard='false')
+                  button#edit-location-btn.btn-floating.btn-large.waves-effect.waves-light.white(type='button', onclick='{ clickMapLocation }')
                     i.icon.material-icons.large.light-blue-text edit
 
       .container.no-padding-s
@@ -115,7 +115,7 @@ page-report
           .modal-title ตำแหน่งพิน
         ul.right
           li
-            a(href='#!', onclick='{ setMapLocationByGeolocation }')
+            a(href='#!', onclick='{ clickLocateMe }')
               i.icon.material-icons gps_fixed
 
     .modal-content.no-padding-s
@@ -176,7 +176,6 @@ page-report
     self.owner = app.get('app_user._id');
     self.providers = [app.get('app_user._id')];
     // Define
-    self.DEFAULT_LOCATION = { lat: 13.7302295, lng: 100.5724075 };
     self.YPIcon = L.icon({
         iconUrl: util.site_url('/public/image/marker-m.png'),
         iconSize: [32, 51],
@@ -217,6 +216,8 @@ page-report
     });
     self.on('updated', () => {
       initDropzone();
+      initMap();
+
       $('#select-categories').material_select('destroy');
       $('#select-categories').material_select();
     });
@@ -242,6 +243,34 @@ page-report
       self.update();
     }
 
+    function to_decimal($deg, $min, $sec, $hem){
+      const $d = $deg + (($min/60) + ($sec/3600));
+      return $d * (($hem =='S' || $hem=='W') ? -1 : 1);
+    }
+
+    function base64ToFile(dataURI, origFile) {
+      let byteString;
+      if (dataURI.split(',')[0].indexOf('base64') !== -1) {
+        byteString = atob(dataURI.split(',')[1]);
+      } else {
+        byteString = decodeURI(dataURI.split(',')[1]);
+      }
+      const mimestring = dataURI.split(',')[0].split(':')[1].split(';')[0];
+      const content = [];
+      for (let i = 0; i < byteString.length; i++) {
+        content[i] = byteString.charCodeAt(i);
+      }
+      const new_file = new Blob([new Uint8Array(content)], {type: 'image/png'});
+      // Copy props set by the dropzone in the original file
+      const origProps = [
+        'upload', 'status', 'previewElement', 'previewTemplate', 'accepted'
+      ];
+      $.each(origProps, function(i, p) {
+        new_file[p] = origFile[p];
+      });
+      return new_file;
+    }
+
     function initDropzone() {
       if (!self.dropzone) {
         self.dropzone = new Dropzone(self['dropzone-el'], {
@@ -255,14 +284,115 @@ page-report
           dictDefaultMessage: '',
           clickable: _.filter([$(self.target)[0], self['dropzone-el'], self['add-first-image-btn']]),
           uploadMultiple: true,
+          autoQueue: false, // to normalize orientation and resize image
           fallback: function() {
             $(self.root).find('.dropzone').hide();
             $(self.root).find('.dropzone-error').show();
           }
         });
         self.dropzone
-          .on('addedfile', function(file) {
-            // console.log(file);
+          .on('addedfile', function(origFile) {
+            const MAX_WIDTH  = 800;
+            const MAX_HEIGHT = 800;
+            const dropzone = self.dropzone;
+            const reader = new FileReader();
+
+            // Convert file to img
+            reader.addEventListener('load', function(event) {
+              const orig_img = new Image();
+              orig_img.src = event.target.result;
+              orig_img.addEventListener('load', function(event) {
+                let width  = event.target.width;
+                let height = event.target.height;
+                // Don't resize if it's small enough
+                if (width <= MAX_WIDTH && height <= MAX_HEIGHT) {
+                  dropzone.enqueueFile(origFile);
+                  return;
+                }
+                // Calc new dims otherwise
+                if (width > height) {
+                  if (width > MAX_WIDTH) {
+                    height *= MAX_WIDTH / width;
+                    width = MAX_WIDTH;
+                  }
+                } else {
+                  if (height > MAX_HEIGHT) {
+                    width *= MAX_HEIGHT / height;
+                    height = MAX_HEIGHT;
+                  }
+                }
+
+                // Read EXIF metadata
+                EXIF.getData(origFile, function() {
+                  const exifdata = this.exifdata;
+                  const orientation = exifdata.Orientation || false;
+                  let gps_location = null;
+                  if (exifdata.GPSLatitude && exifdata.GPSLongitude) {
+                    const lat = to_decimal(
+                      _.get(exifdata, 'GPSLatitude.0', 0),
+                      _.get(exifdata, 'GPSLatitude.1', 0),
+                      _.get(exifdata, 'GPSLatitude.2', 0),
+                      _.get(exifdata, 'GPSLatitudeRef', 'N')
+                    );
+                    const lng = to_decimal(
+                      _.get(exifdata, 'GPSLongitude.0', 0),
+                      _.get(exifdata, 'GPSLongitude.1', 0),
+                      _.get(exifdata, 'GPSLongitude.2', 0),
+                      _.get(exifdata, 'GPSLongitudeRef', 'N')
+                    );
+                    gps_location = [lat, lng];
+                  }
+
+                  // Resize
+                  var canvas = document.createElement('canvas');
+                  canvas.width = width;
+                  canvas.height = height;
+
+                  // Canvas
+                  var ctx = canvas.getContext('2d');
+                  ctx.save();
+
+                  // Correct orientation
+                  if (orientation) {
+                    if (orientation > 4) {
+                      canvas.width  = height;
+                      canvas.height = width;
+                    }
+                    switch (orientation) {
+                      case 2: ctx.translate(width, 0);     ctx.scale(-1, 1); break;
+                      case 3: ctx.translate(width, height); ctx.rotate(Math.PI); break;
+                      case 4: ctx.translate(0, height);     ctx.scale(1, -1); break;
+                      case 5: ctx.rotate(0.5 * Math.PI);   ctx.scale(1, -1); break;
+                      case 6: ctx.rotate(0.5 * Math.PI);   ctx.translate(0, -height); break;
+                      case 7: ctx.rotate(0.5 * Math.PI);   ctx.translate(width, -height); ctx.scale(-1, 1); break;
+                      case 8: ctx.rotate(-0.5 * Math.PI);  ctx.translate(-width, 0); break;
+                    }
+                  }
+
+                  ctx.drawImage(orig_img, 0, 0, width, height);
+                  ctx.restore();
+
+                  // Use GPS location of photo
+                  if (gps_location) {
+                    if (!self.location) {
+                      setLocation(gps_location);
+                    }
+                  }
+
+                  // Create normalized file
+                  const resized_file = base64ToFile(canvas.toDataURL('image/jpeg'), origFile);
+                  // Replace original with resized
+                  const orig_file_index = dropzone.files.indexOf(origFile);
+                  dropzone.files[orig_file_index] = resized_file;
+
+                  // Enqueue added file manually making it available for
+                  // further processing by dropzone
+                  dropzone.enqueueFile(resized_file);
+                });
+              });
+            });
+
+            reader.readAsDataURL(origFile);
           })
           .on('sendingmultiple', function(file, xhr, form_data) {
             uploadPhotoList();
@@ -375,19 +505,11 @@ page-report
       }
     }
 
-    function createMap() {
-      if (self.map) destroyMap();
+    function initMap() {
+      if (self.map) return;
+      if (!self.location) return;
 
       self.map = L.map(self.map_id);
-      self.map.locate({ setView: true, maxZoom: 16 });
-      self.map.on('locationfound', e => {
-        updateMarkerLocation(self.map.getCenter());
-      });
-      self.map.on('locationerror', err => {
-        console.error(err.message);
-        Materialize.toast('ไม่สามารถแสดงตำแหน่งปัจจุบันได้ <a href="/help" target="_blank">อ่านที่นี่เพื่อแก้ไข</a>', 5000, 'dialog-error');
-        self.map.setView([13.756727, 100.5018549], 16);
-      });
 
       // // Add google maps
       // var googleLayer = new L.Google('ROADMAP');
@@ -397,7 +519,7 @@ page-report
       // @see https://developer.here.com/rest-apis/documentation/enterprise-map-tile/topics/resource-base-maptile.html
       // https: also suppported.
       var HERE_normalDay = L.tileLayer('https://{s}.{base}.maps.cit.api.here.com/maptile/2.1/{type}/{mapID}/{scheme}/{z}/{x}/{y}/{size}/{format}?app_id={app_id}&app_code={app_code}&lg={language}&style={style}', {
-        attribution: 'Map &copy; 1987-2014 <a href="http://developer.here.com">HERE</a>',
+        attribution: 'Map &copy; 1987-2014 <a href="https://developer.here.com">HERE</a>',
         subdomains: '1234',
         mapID: 'newest',
         app_id: app.get('service.here.app_id'),
@@ -412,9 +534,10 @@ page-report
         size: '256'
       });
       self.map.addLayer(HERE_normalDay);
-
-      self.map_marker = L.marker([self.DEFAULT_LOCATION.lat, self.DEFAULT_LOCATION.lng], { icon: self.YPIcon })
+      self.map_marker = L.marker(app.get('location.default'), { icon: self.YPIcon })
         .addTo(self.map);
+
+      updateMarkerLocation(self.location, { zoom: true });
 
       // self.map.on('drag', _.throttle(() => {
       //   updateMarkerLocation(self.map.getCenter());
@@ -437,14 +560,59 @@ page-report
       }
     }
 
-    function updateMarkerLocation(latlng) {
+    function setMapLocationByGeolocation() {
+      if (!self.map) return false;
+      self.map.locate({
+        setView: true,
+        maxZoom: 16,
+        enableHighAccuracy: true
+      });
+
+      self.map.on('locationfound', e => {
+        updateMarkerLocation(self.map.getCenter(), { zoom: 15 });
+      });
+      self.map.on('locationerror', err => {
+        console.error(err.message);
+        Materialize.toast('ไม่สามารถแสดงตำแหน่งปัจจุบันได้ <a href="/help" target="_blank">อ่านที่นี่เพื่อแก้ไข</a>', 5000, 'dialog-error');
+        self.map.setView(app.get('location.default'), 16);
+      });
+      return true;
+    }
+
+    function setLocation(latlng) {
+      updateMarkerLocation(latlng, { zoom: 16 });
       self.location = latlng;
-      self.map_marker.setLatLng(latlng);
       self.update();
+
       riot.mount('#input-location-map', { pins: [{ location: {
         coordinates: self.location,
         type: 'Point'
-      }}] })
+      }}] });
+    }
+
+    function updateMarkerLocation(latlng, options = {}) {
+      if (!self.map || !self.map_marker) return false;
+      self.map_marker.setLatLng(latlng);
+
+      if (options.zoom) {
+        const bounds = new L.LatLngBounds([latlng]);
+        self.map.fitBounds(bounds);
+        if (typeof options.zoom === 'number') {
+          self.map.setZoom(options.zoom)
+        }
+      }
+      return true;
+    }
+
+    function updateMap() {
+      _.forEach([self].concat($(self.root).find('map-box').map(function() {
+        const el = this;
+        return el._tag;
+      }).toArray()), tag => {
+        if (tag.map) {
+          tag.map.invalidateSize();
+        }
+      });
     }
 
     function openPhoto(e) {
@@ -452,11 +620,12 @@ page-report
       $('#report-photo-modal').openModal({
         ready: function() { // when modal open
           // if (!self.map) {
-          //   createMap();
+          //   initMap();
           // }
         },
         complete: function() { // when modal close
           createPhotoSlider();
+          updateMap();
         }
       });
     }
@@ -519,36 +688,32 @@ page-report
       self.photos[i].text = e.value;
     };
 
-    self.clickLocation = function(e) {
+    self.clickMapLocation = function(e) {
       e.preventDefault();
       e.stopPropagation();
+      openMapLocation();
+    };
+
+    function openMapLocation() {
       $('#report-input-modal').addClass('inactive');
       $('#report-map-modal').openModal({
         ready: function() { // when modal open
-          if (!self.map) {
-            createMap();
+          if (self.map) {
+            updateMap();
           }
         },
         complete: function() { // when modal close
           if (self.location) {
-            // updateMarkerLocation(self.location);
-          } else {
-
+            updateMap();
           }
         }
       });
-    };
+    }
 
-    self.setMapLocationByGeolocation = function(e) {
+    self.clickLocateMe = function(e) {
       e.preventDefault();
       e.stopPropagation();
-      if (self.map) {
-        self.map.locate({
-          setView: true,
-          maxZoom: 16,
-          enableHighAccuracy: true
-        });
-      }
+      setMapLocationByGeolocation();
     };
 
     self.clickSubmitReport = function(e) {
@@ -562,6 +727,7 @@ page-report
     }
 
     self.clickCloseMap = function(e) {
+      setLocation(self.map.getCenter());
       $('#report-input-modal').removeClass('inactive');
     }
 

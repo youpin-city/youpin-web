@@ -42,7 +42,7 @@ page-map
     function locationError(err) {
       console.error(err.message);
       Materialize.toast('ไม่สามารถแสดงตำแหน่งปัจจุบันได้ <a href="/help" target="_blank">อ่านที่นี่เพื่อแก้ไข</a>', 5000, 'dialog-error');
-      self.map.setView([13.756727, 100.5018549], 16);
+      self.map.setView(app.get('location.default'), 16);
     }
 
     self.setMapLocationByGeolocation = function(e) {

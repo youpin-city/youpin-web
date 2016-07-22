@@ -30,4 +30,7 @@ else root = {};
   window.L = require('leaflet');
   window.L.Google = require('./dep/leaflet-google');
   window.L.BingLayer = require('./dep/leaflet-bing');
+
+  // exif
+  window.EXIF = require('exif-js');
 }(root));

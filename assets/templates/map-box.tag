@@ -50,7 +50,7 @@ map-box
       }
     });
 
-    self.center = { lat: 13.7304311, lng: 100.5696901 };
+    self.center = app.get('location.default');
     self.markers = [];
     self.pin_clickable = opts.pinClickable !== 'false';
     self.pins = _.filter(opts.pins || [], pin => {
@@ -187,7 +187,7 @@ map-box
       // @see https://developer.here.com/rest-apis/documentation/enterprise-map-tile/topics/resource-base-maptile.html
       // https: also suppported.
       var HERE_normalDay = L.tileLayer('https://{s}.{base}.maps.cit.api.here.com/maptile/2.1/{type}/{mapID}/{scheme}/{z}/{x}/{y}/{size}/{format}?app_id={app_id}&app_code={app_code}&lg={language}&style={style}&ppi={ppi}', {
-        attribution: 'Map &copy; 1987-2014 <a href="http://developer.here.com">HERE</a>',
+        attribution: 'Map &copy; 1987-2014 <a href="https://developer.here.com">HERE</a>',
         subdomains: '1234',
         mapID: 'newest',
         app_id: app.get('service.here.app_id'),
