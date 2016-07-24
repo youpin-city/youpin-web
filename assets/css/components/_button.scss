@@ -20,3 +20,10 @@
   color: $cl-darkgray;
   @include background-hover($cl-lightgray, lighten($cl-lightgray, 4%));
 }
+
+.btn-native {
+  color: $cl-primary;
+  @include background-hover($cl-white, darken($cl-white, 4%));
+  border: 1px solid $cl-verylightgray;
+  box-shadow: none !important;
+}

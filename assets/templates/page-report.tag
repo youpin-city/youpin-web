@@ -50,19 +50,18 @@ page-report
                 .card-content
                   #input-categories.input-field
                     i.icon.material-icons.prefix local_offer
-                    select#select-categories(name='categories', onchange='{ changeCategories }')
-                      option(value='') เลือกหมวดหมู่
-                      option(each='{ cat in choice_categories }', value='{ cat.value }', selected='{ cat.selected }') { cat.text }
-                    //- input.validate(type='text', name='categories', placeholder='หมวด', value='{ categories }')
+                    .input
+                      select#select-categories.browser-default(name='categories', onchange='{ changeCategories }')
+                        option(value='') เลือกหมวดหมู่
+                        option(each='{ cat in choice_categories }', value='{ cat.value }', selected='{ cat.selected }') { cat.text }
 
                   #input-location.input-field(if='{ !location }')
                     i.icon.material-icons.prefix(class='{ location.lat ? "active" : "" }') place
-                    a.location-input.input(href='#', onclick='{ clickMapLocation }') { location_text }
-                      i.icon.material-icons.green-text.small(if='{ location }', style='vertical-align: top;') check
-                    //- input.validate(type='text', name='location', placeholder='ใส่ตำแหน่ง', value='{ location_text }', readonly, onfocus='{ clickMapLocation }')
+                    .input
+                      button.location-input.btn.btn-block.btn-native(type='button', onclick='{ clickMapLocation }') { location_text }
 
                 #input-location-complete(if='{ location }')
-                  map-box#input-location-map(pin-clickable='false', options-dragging='false', options-zoom='17', options-zoom-control='false', options-scroll-wheel-zoom='false', options-double-click-zoom='false', options-touch-zoom='false', options-tap='false', options-keyboard='false')
+                  map-box#preview-location(pin-clickable='false', options-dragging='false', options-zoom='17', options-zoom-control='false', options-scroll-wheel-zoom='false', options-double-click-zoom='false', options-touch-zoom='false', options-tap='false', options-keyboard='false')
                   button#edit-location-btn.btn-floating.btn-large.waves-effect.waves-light.white(type='button', onclick='{ clickMapLocation }')
                     i.icon.material-icons.large.light-blue-text edit
 
@@ -195,6 +194,26 @@ page-report
       { value: 'violation', text: 'ละเมิดสิทธิ', selected: false }
     ];
 
+    function check_fileapi_support() {
+      return !!(window.File && window.FileList && window.FileReader);
+    }
+
+    function check_canvas_support() {
+      var elem = document.createElement('canvas');
+      return !!(elem.getContext && elem.getContext('2d'));
+    }
+
+    function check_blob_support() {
+      try {
+        return !!new Blob();
+      } catch (e) {
+        return false;
+      }
+    }
+    const support_blob = check_blob_support();
+    const support_canvas = check_canvas_support();
+    const support_fileapi = check_fileapi_support();
+
     /***************
      * CHANGE
      ***************/
@@ -218,8 +237,8 @@ page-report
       initDropzone();
       initMap();
 
-      $('#select-categories').material_select('destroy');
-      $('#select-categories').material_select();
+      // $('#select-categories').material_select('destroy');
+      // $('#select-categories').material_select();
     });
 
     /***************
@@ -248,14 +267,14 @@ page-report
       return $d * (($hem =='S' || $hem=='W') ? -1 : 1);
     }
 
-    function base64ToFile(dataURI, origFile) {
+    function base64ToFile(data_uri, orig_file) {
       let byteString;
-      if (dataURI.split(',')[0].indexOf('base64') !== -1) {
-        byteString = atob(dataURI.split(',')[1]);
+      if (data_uri.split(',')[0].indexOf('base64') !== -1) {
+        byteString = atob(data_uri.split(',')[1]);
       } else {
-        byteString = decodeURI(dataURI.split(',')[1]);
+        byteString = decodeURI(data_uri.split(',')[1]);
       }
-      const mimestring = dataURI.split(',')[0].split(':')[1].split(';')[0];
+      const mimestring = data_uri.split(',')[0].split(':')[1].split(';')[0];
       const content = [];
       for (let i = 0; i < byteString.length; i++) {
         content[i] = byteString.charCodeAt(i);
@@ -266,7 +285,7 @@ page-report
         'upload', 'status', 'previewElement', 'previewTemplate', 'accepted'
       ];
       $.each(origProps, function(i, p) {
-        new_file[p] = origFile[p];
+        new_file[p] = orig_file[p];
       });
       return new_file;
     }
@@ -291,7 +310,14 @@ page-report
           }
         });
         self.dropzone
-          .on('addedfile', function(origFile) {
+          .on('addedfile', function(orig_file) {
+            uploadPhotoList();
+
+            if (!support_blob || !support_fileapi || !support_canvas) {
+              dropzone.enqueueFile(orig_file);
+              return;
+            }
+
             const MAX_WIDTH  = 800;
             const MAX_HEIGHT = 800;
             const dropzone = self.dropzone;
@@ -306,7 +332,7 @@ page-report
                 let height = event.target.height;
                 // Don't resize if it's small enough
                 if (width <= MAX_WIDTH && height <= MAX_HEIGHT) {
-                  dropzone.enqueueFile(origFile);
+                  dropzone.enqueueFile(orig_file);
                   return;
                 }
                 // Calc new dims otherwise
@@ -323,7 +349,7 @@ page-report
                 }
 
                 // Read EXIF metadata
-                EXIF.getData(origFile, function() {
+                EXIF.getData(orig_file, function() {
                   const exifdata = this.exifdata;
                   const orientation = exifdata.Orientation || false;
                   let gps_location = null;
@@ -380,9 +406,9 @@ page-report
                   }
 
                   // Create normalized file
-                  const resized_file = base64ToFile(canvas.toDataURL('image/jpeg'), origFile);
+                  const resized_file = base64ToFile(canvas.toDataURL('image/jpeg'), orig_file);
                   // Replace original with resized
-                  const orig_file_index = dropzone.files.indexOf(origFile);
+                  const orig_file_index = dropzone.files.indexOf(orig_file);
                   dropzone.files[orig_file_index] = resized_file;
 
                   // Enqueue added file manually making it available for
@@ -392,10 +418,10 @@ page-report
               });
             });
 
-            reader.readAsDataURL(origFile);
+            reader.readAsDataURL(orig_file);
           })
           .on('sendingmultiple', function(file, xhr, form_data) {
-            uploadPhotoList();
+            // uploadPhotoList();
           })
           .on('successmultiple', function(files, results) {
             for (let i = 0; i < files.length; i++) {
@@ -433,8 +459,10 @@ page-report
       if ($input_modal.hasClass('open')) {
         // $photo_modal.openModal();
         if (self.photos.length <= 1) {
-          // auto close photo view when there's only one photo
-          $photo_modal.find('.modal-close').click();
+          setTimeout(function() {
+            // next tick, auto close photo view when there's only one photo
+            $photo_modal.find('.modal-close').click();
+          }, 1);
         }
       } else {
         $input_modal.openModal({
@@ -537,7 +565,7 @@ page-report
       self.map_marker = L.marker(app.get('location.default'), { icon: self.YPIcon })
         .addTo(self.map);
 
-      updateMarkerLocation(self.location, { zoom: true });
+      updateMarkerLocation(self.location, { zoom: 16 });
 
       // self.map.on('drag', _.throttle(() => {
       //   updateMarkerLocation(self.map.getCenter());
@@ -569,22 +597,22 @@ page-report
       });
 
       self.map.on('locationfound', e => {
-        updateMarkerLocation(self.map.getCenter(), { zoom: 15 });
+        updateMarkerLocation(self.map.getCenter(), { zoom: 18 });
       });
       self.map.on('locationerror', err => {
         console.error(err.message);
         Materialize.toast('ไม่สามารถแสดงตำแหน่งปัจจุบันได้ <a href="/help" target="_blank">อ่านที่นี่เพื่อแก้ไข</a>', 5000, 'dialog-error');
-        self.map.setView(app.get('location.default'), 16);
+        // self.map.setView(app.get('location.default'), 16);
       });
       return true;
     }
 
     function setLocation(latlng) {
-      updateMarkerLocation(latlng, { zoom: 16 });
-      self.location = latlng;
+      updateMarkerLocation(latlng, { zoom: 17 });
+      self.location = L.latLng(latlng);
       self.update();
 
-      riot.mount('#input-location-map', { pins: [{ location: {
+      riot.mount('#preview-location', { pins: [{ location: {
         coordinates: self.location,
         type: 'Point'
       }}] });
@@ -598,7 +626,9 @@ page-report
         const bounds = new L.LatLngBounds([latlng]);
         self.map.fitBounds(bounds);
         if (typeof options.zoom === 'number') {
-          self.map.setZoom(options.zoom)
+          setTimeout(function() {
+            self.map.setZoom(options.zoom);
+          }, 300);
         }
       }
       return true;
@@ -700,6 +730,11 @@ page-report
         ready: function() { // when modal open
           if (self.map) {
             updateMap();
+          } else {
+            if (!self.location) {
+              self.location = app.get('location.default');
+            }
+            self.update();
           }
         },
         complete: function() { // when modal close

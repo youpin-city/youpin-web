@@ -260,10 +260,12 @@ map-box
         // bounds.extend([ne.lat, ne.lng + 0.002]);
         self.map.fitBounds(bounds);
         if (self.map_options.zoom !== 'auto') {
-          self.map.setZoom(+self.map_options.zoom || 17);
+          setTimeout(function() {
+            self.map.setZoom(+self.map_options.zoom || 17);
+          }, 300);
         }
       } else {
-        console.log('No pins attached');
+        // console.log('No pins attached');
       }
     }
 

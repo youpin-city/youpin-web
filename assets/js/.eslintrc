@@ -1,0 +1,6 @@
+env:
+  node: true
+  browser: true
+  jquery: true
+rules:
+  camelcase: 0

@@ -132,6 +132,9 @@
       > .icon {
         margin-top: 0.6rem;
       }
+      .input {
+        margin-left: 3rem;
+      }
       .select-wrapper {
         .caret {
           top: 0.8rem;
@@ -142,7 +145,6 @@
       .input {
         display: block;
         margin-left: 3rem;
-        border-bottom: 1px solid $cl-lightgray;
       }
     }
     #input-location-complete {
