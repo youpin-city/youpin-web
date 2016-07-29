@@ -20,6 +20,8 @@ append content
 
     page-feed#tag-view
 
+    page-error
+
 prepend footer
 
   footer.tab-bar
@@ -85,6 +87,10 @@ append app_script
       .done(function(data) {
         var pin = data || {};
         app.open('page-pin', pin);
+        app.busy(false);
+      })
+      .fail(function(err_text) {
+        app.open('page-error', { icon: 'place', title: 'ป้าหาพินที่ต้องการไม่เจอ', message: 'ลองช่วยปักพินใหม่มั้ยจ๊ะ?' });
         app.busy(false);
       });
     });

@@ -1,6 +1,6 @@
 'use strict';
 
-riot.tag2('map-box', '<div class="map-box-container" id="{id}-container"> <div class="map-box-widget" id="{id}"></div> </div>', 'map-box .map-box-container,[riot-tag="map-box"] .map-box-container,[data-is="map-box"] .map-box-container{ position: relative; width: 100%; height: 400px; } map-box .map-box-container .map-box-widget,[riot-tag="map-box"] .map-box-container .map-box-widget,[data-is="map-box"] .map-box-container .map-box-widget{ position: absolute; top: 0; bottom: 0; left: 0; right: 0; } map-box .leaflet-map-pane,[riot-tag="map-box"] .leaflet-map-pane,[data-is="map-box"] .leaflet-map-pane{ z-index: 2 !important; } map-box .leaflet-google-layer,[riot-tag="map-box"] .leaflet-google-layer,[data-is="map-box"] .leaflet-google-layer{ z-index: 1 !important; }', '', function (opts) {
+riot.tag2('map-box', '<div class="map-box-container {pin_clickable ? &quot;&quot; : &quot;pin-click-disabled&quot;}" id="{id}-container"> <div class="map-box-widget" id="{id}"></div> </div>', 'map-box .map-box-container,[riot-tag="map-box"] .map-box-container,[data-is="map-box"] .map-box-container{ position: relative; width: 100%; height: 400px; } map-box .map-box-container .map-box-widget,[riot-tag="map-box"] .map-box-container .map-box-widget,[data-is="map-box"] .map-box-container .map-box-widget{ position: absolute; top: 0; bottom: 0; left: 0; right: 0; } map-box .leaflet-map-pane,[riot-tag="map-box"] .leaflet-map-pane,[data-is="map-box"] .leaflet-map-pane{ z-index: 2 !important; } map-box .leaflet-google-layer,[riot-tag="map-box"] .leaflet-google-layer,[data-is="map-box"] .leaflet-google-layer{ z-index: 1 !important; } map-box .pin-click-disabled .leaflet-clickable,[riot-tag="map-box"] .pin-click-disabled .leaflet-clickable,[data-is="map-box"] .pin-click-disabled .leaflet-clickable{ cursor: default; }', '', function (opts) {
   var self = this;
   self.id = 'map-box-' + util.uniqueId();
 
@@ -18,8 +18,9 @@ riot.tag2('map-box', '<div class="map-box-container" id="{id}-container"> <div c
     }
   });
 
-  self.center = app.get('location.default');
+  self.center = opts.center || app.get('location.default');
   self.markers = [];
+  self.fit_bounds = opts.fitBounds || true;
   self.pin_clickable = opts.pinClickable !== 'false';
   self.pins = _.filter(opts.pins || [], function (pin) {
     if (!_.get(pin, 'location.coordinates')) return false;
@@ -90,7 +91,7 @@ riot.tag2('map-box', '<div class="map-box-container" id="{id}-container"> <div c
       return marker;
     });
 
-    if (self.markers.length > 0) {
+    if (self.fit_boudns && self.markers.length > 0) {
       var bounds = new L.LatLngBounds(_.map(self.pins, function (pin) {
         return _.get(pin, 'location.coordinates');
       }));
@@ -110,6 +111,13 @@ riot.tag2('map-box', '<div class="map-box-container" id="{id}-container"> <div c
       delete self.map;
     }
   }
+});
+
+riot.tag2('page-error', '<div id="page-error"> <div class="container"> <div class="row"> <div class="col s12 m6 offset-m3 l4 offset-l4"> <div class="spacing-large"></div> <div class="center"><i class="icon material-icons title-icon">{icon}</i> <h4 class="center">{title}</h4> <h5>{message}</h5> </div> <div class="spacing-large"></div> </div> </div> </div> </div>', '', '', function (opts) {
+  var self = this;
+  self.title = opts.title || 'เกิดปัญหาขึ้น!';
+  self.message = opts.message || 'ลองดูใหม่นะ';
+  self.icon = opts.icon || 'info_outline';
 });
 
 riot.tag2('page-feed', '<div id="page-feed"> <div class="container no-padding-s"> <div class="spacing"></div> <h5 class="center" if="{title}">{title}</h5> <div class="row"> <div class="col s12 m6 l4" each="{pin in pins}"> <div class="card hover-card"><a class="card-image" href="#pins/{pin._id}{pin.mock ? &quot;?mock=1&quot; : &quot;&quot;}" riot-style="background-image: url({pin.photos &amp;&amp; pin.photos.length &gt; 0 ? pin.photos[0] : util.site_url(&quot;/public/image/pin_photo.png&quot;)})"></a> <div class="card-content"> <div class="card-description"> <div class="card-author"><strong data-url="#user/{pin.owner}">@{app.get(\'app_user.name\').toLowerCase()}</strong></div> <div class="card-text" html="{util.parse_tags(pin.detail)}"></div> <div class="tag-list" if="{pin.categories &amp;&amp; pin.categories.length &gt; 0}"><a class="tag-item" each="{cat in pin.categories}" href="#tags/{cat}">{cat}</a></div> </div> <div class="card-meta"> <div class="meta meta-time right">{moment(pin.created_time).fromNow()}</div> <div class="meta meta-status left" data-status="{pin.status}">{pin.status}</div> </div> </div> </div> </div> </div> <div class="center"> <button class="btn waves-effect waves-light white light-blue-text" if="{has_more &amp;&amp; !is_loading}" type="button" onclick="{clickLoadMore}"><i class="icon material-icons light-blue-text">expand_more</i>โหลดเพิ่ม</button> <preloader class="small" if="{is_loading}"></preloader> </div> <div class="spacing-large"></div> </div> </div>', '', '', function (opts) {

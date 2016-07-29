@@ -1,5 +1,5 @@
 map-box
-  .map-box-container(id='{ id }-container')
+  .map-box-container(id='{ id }-container', class='{ pin_clickable ? "" : "pin-click-disabled" }')
     .map-box-widget(id='{ id }')
 
   style(type='scss', scoped).
@@ -26,6 +26,12 @@ map-box
       z-index: 1 !important;
     }
 
+    .pin-click-disabled {
+      .leaflet-clickable {
+        cursor: default;
+      }
+    }
+
   script.
     const self = this;
     self.id = 'map-box-' + util.uniqueId();
@@ -50,8 +56,9 @@ map-box
       }
     });
 
-    self.center = app.get('location.default');
+    self.center = opts.center || app.get('location.default');
     self.markers = [];
+    self.fit_bounds = opts.fitBounds || true;
     self.pin_clickable = opts.pinClickable !== 'false';
     self.pins = _.filter(opts.pins || [], pin => {
       if (!_.get(pin, 'location.coordinates')) return false;
@@ -253,7 +260,7 @@ map-box
         return marker;
       });
 
-      if (self.markers.length > 0) {
+      if (self.fit_boudns && self.markers.length > 0) {
         const bounds = new L.LatLngBounds(_.map(self.pins, pin => _.get(pin, 'location.coordinates')));
         // // offset bounds to show pin card on right half
         // const ne = bounds.getNorthEast();
