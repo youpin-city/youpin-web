@@ -213,6 +213,29 @@
     width: auto;
   }
 
+  #search-input-field {
+    position: absolute;
+    z-index: 2;
+    top: 0.5rem;
+    left: 6rem;
+    right: 8rem;
+    width: auto;
+
+    #search-input {
+      padding-left: 1rem;
+      padding-right: 1rem;
+      width: 100%;
+      &,
+      &:hover {
+        background-color: #fcfcfc; // $cl-veryverylightgray;
+      }
+      &:active,
+      &:focus {
+        background-color: $cl-white;
+      }
+    }
+  }
+
   map-box {
     .map-box-container {
       height: 100vh;

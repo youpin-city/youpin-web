@@ -9,6 +9,11 @@ page-map
       button.btn-floating.waves-effect.waves-light.white(type='button', onclick='{ setMapLocationByGeolocation }')
         i.icon.material-icons.light-blue-text gps_fixed
 
+    #search-input-field.input-field
+      form(onsubmit='{ onSubmitSearch }')
+        input#search-input(type='search', placeholder='ค้นหาคำ')
+        //- label(for='search-input') ค้นหา
+
   script.
     const self = this;
     self.id = 'page-map-' + util.uniqueId();
@@ -77,6 +82,7 @@ page-map
         self.pins = self.pins.concat(new_pins);
 
         if (self.has_more && self.pins.length < 500) {
+          updateMap();
           loadNext();
         } else {
           updateMap();
@@ -90,5 +96,45 @@ page-map
 
     function updateMap() {
       riot.mount('#map-' + self.id, { pins: self.pins });
-      self.map = _.get(self['map-' + self.id], '_tag.map');
+      self.mapbox = _.get(self['map-' + self.id], '_tag');
+      self.map = _.get(self.mapbox, 'map');
     }
+
+    self.onSubmitSearch = function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+
+      const $input = $(e.target).find('#search-input');
+      let keyword = $input.val();
+
+      self.choice_categories = [
+        { value: 'footpath', text: 'ทางเท้า', selected: false },
+        { value: 'pollution', text: 'มลภาวะ', selected: false },
+        { value: 'roads', text: 'ถนน', selected: false },
+        { value: 'publictransport', text: 'ขนส่งสาธารณะ', selected: false },
+        { value: 'garbage', text: 'ขยะ', selected: false },
+        { value: 'drainage', text: 'ระบายน้ำ', selected: false },
+        { value: 'trees', text: 'ต้นไม้', selected: false },
+        { value: 'safety', text: 'ความปลอดภัย', selected: false },
+        { value: 'violation', text: 'ละเมิดสิทธิ', selected: false }
+      ];
+
+      const match = _.find(self.choice_categories, ['text', keyword]);
+      if (match) {
+        keyword = match.value;
+      }
+
+      if (self.mapbox) self.mapbox.clearMarker();
+      self.pins = [];
+      self.skip = 0;
+      self.has_more = false;
+      if (keyword) {
+        self.query = {
+          // tags: keyword,
+          categories: keyword
+        };
+      } else {
+        self.query = {};
+      }
+      loadNext();
+    };

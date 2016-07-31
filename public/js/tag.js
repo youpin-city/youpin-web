@@ -105,6 +105,13 @@ riot.tag2('map-box', '<div class="map-box-container {pin_clickable ? &quot;&quot
     } else {}
   }
 
+  self.clearMarker = function () {
+    _.forEach(self.markers, function (marker) {
+      self.map.removeLayer(marker);
+    });
+    self.pins = [];
+  };
+
   function destroyMap() {
     if (self.map) {
       self.map.remove();
@@ -172,7 +179,7 @@ riot.tag2('page-feed', '<div id="page-feed"> <div class="container no-padding-s"
   };
 });
 
-riot.tag2('page-map', '<div id="page-map"> <map-box id="map-{id}" options-zoom="auto" options-scroll-wheel-zoom="false"></map-box> <div class="container no-padding-s" id="overlay-layer"> <button class="btn-floating waves-effect waves-light white" type="button" onclick="{setMapLocationByGeolocation}"><i class="icon material-icons light-blue-text">gps_fixed</i></button> </div> </div>', '', '', function (opts) {
+riot.tag2('page-map', '<div id="page-map"> <map-box id="map-{id}" options-zoom="auto" options-scroll-wheel-zoom="false"></map-box> <div class="container no-padding-s" id="overlay-layer"> <button class="btn-floating waves-effect waves-light white" type="button" onclick="{setMapLocationByGeolocation}"><i class="icon material-icons light-blue-text">gps_fixed</i></button> </div> <div class="input-field" id="search-input-field"> <form onsubmit="{onSubmitSearch}"> <input id="search-input" type="search" placeholder="ค้นหาคำ"> </form> </div> </div>', '', '', function (opts) {
   var self = this;
   self.id = 'page-map-' + util.uniqueId();
 
@@ -225,6 +232,7 @@ riot.tag2('page-map', '<div id="page-map"> <map-box id="map-{id}" options-zoom="
       self.pins = self.pins.concat(new_pins);
 
       if (self.has_more && self.pins.length < 500) {
+        updateMap();
         loadNext();
       } else {
         updateMap();
@@ -237,8 +245,38 @@ riot.tag2('page-map', '<div id="page-map"> <map-box id="map-{id}" options-zoom="
 
   function updateMap() {
     riot.mount('#map-' + self.id, { pins: self.pins });
-    self.map = _.get(self['map-' + self.id], '_tag.map');
+    self.mapbox = _.get(self['map-' + self.id], '_tag');
+    self.map = _.get(self.mapbox, 'map');
   }
+
+  self.onSubmitSearch = function (e) {
+    e.preventDefault();
+    e.stopPropagation();
+
+    var $input = $(e.target).find('#search-input');
+    var keyword = $input.val();
+
+    self.choice_categories = [{ value: 'footpath', text: 'ทางเท้า', selected: false }, { value: 'pollution', text: 'มลภาวะ', selected: false }, { value: 'roads', text: 'ถนน', selected: false }, { value: 'publictransport', text: 'ขนส่งสาธารณะ', selected: false }, { value: 'garbage', text: 'ขยะ', selected: false }, { value: 'drainage', text: 'ระบายน้ำ', selected: false }, { value: 'trees', text: 'ต้นไม้', selected: false }, { value: 'safety', text: 'ความปลอดภัย', selected: false }, { value: 'violation', text: 'ละเมิดสิทธิ', selected: false }];
+
+    var match = _.find(self.choice_categories, ['text', keyword]);
+    if (match) {
+      keyword = match.value;
+    }
+
+    if (self.mapbox) self.mapbox.clearMarker();
+    self.pins = [];
+    self.skip = 0;
+    self.has_more = false;
+    if (keyword) {
+      self.query = {
+
+        categories: keyword
+      };
+    } else {
+      self.query = {};
+    }
+    loadNext();
+  };
 });
 
 riot.tag2('page-pin', '<div id="page-pin"> <div class="fluid-container no-padding-s"> <div class="row"> <div class="col s12 m6 offset-m6"> <div class="spacing"></div> <div class="card"> <div class="card-image" if="{pin.photos.length === 0}" href="#pins/{pin._id}" riot-style="background-image: url({util.site_url(&quot;/public/image/pin_photo.png&quot;)})"></div> <div class="card-image responsive" if="{pin.photos.length &gt; 0}"> <div class="slider-container"> <div class="image-slider" id="photo-slider"> <div class="slider-item" each="{photo in pin.photos}"> <div class="image-item"> <div class="image" riot-style="background-image: url(&quot;{util.site_url(photo)}&quot;)"></div> </div> </div> </div> </div> </div> <div class="card-content"> <div class="pin-content"> <div class="card-description"> <div class="card-author"><strong data-url="#user/{pin.owner}">@{app.get(\'app_user.name\').toLowerCase()}</strong></div> <div class="card-text" html="{util.parse_tags(pin.detail)}"></div> <div class="tag-list" if="{pin.categories &amp;&amp; pin.categories.length &gt; 0}"><a class="tag-item" each="{cat in pin.categories}" href="#tags/{cat}">{cat}</a></div> </div> <div class="card-meta"> <div class="meta meta-time right">{moment(pin.created_time).fromNow()}</div> <div class="meta meta-status left" data-status="{pin.status}">{pin.status}</div> </div> </div> <div if="{pin.comments &amp;&amp; pin.comments.length &gt; 0}"> <div class="divider"></div> <h5 class="section-name">ความคิดเห็น</h5> <div class="comment-list"> <div class="comment-item" each="{comment in pin.comments}"> <div class="card-description"> <div class="card-author"><a href="#user/{comment.commented_by}">@{comment.commented_by}</a></div> <div class="card-text" html="{util.parse_tags(comment.detail)}"></div> </div> </div> </div> </div> </div> </div> </div> </div> </div> <div class="map-container"> <map-box pin-clickable="false" options-zoom="17" options-scroll-wheel-zoom="false" options-tap="false" options-keyboard="false"></map-box> </div> <div class="spacing-large"></div> </div>', '', '', function (opts) {

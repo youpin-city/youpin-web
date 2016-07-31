@@ -276,6 +276,13 @@ map-box
       }
     }
 
+    self.clearMarker = function() {
+      _.forEach(self.markers, marker => {
+        self.map.removeLayer(marker);
+      });
+      self.pins = [];
+    };
+
     function destroyMap() {
       if (self.map) {
         self.map.remove();
