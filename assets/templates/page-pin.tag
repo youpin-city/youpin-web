@@ -22,7 +22,7 @@ page-pin
                   .card-author
                     strong(data-url='#user/{ pin.owner }') @{ app.get('app_user.name').toLowerCase() }
                     //- a(href='#user/{ pin.owner }') @{ pin.owner }
-                  .card-text(html='{ util.parse_tags(pin.detail) }')
+                  .card-text(html='{ util.parse_tags(pin.detail, pin.categories ) }')
                   .tag-list(if='{ pin.categories && pin.categories.length > 0 }')
                     a.tag-item(each='{ cat in pin.categories }', href=('#tags/{ cat }')) {cat}
                   //- .card-area(if='{ pin.neighborhood }') ย่าน{ pin.neighborhood }

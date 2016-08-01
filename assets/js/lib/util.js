@@ -1,6 +1,9 @@
+"use strict";
 /* global app: true */
 const urllib = require('url');
 const pathlib = require('path');
+const _ = require('lodash');
+
 const utility = module.exports;
 
 const hasOwnProperty = Object.prototype.hasOwnProperty;
@@ -221,9 +224,16 @@ function extract_tags(str) {
 }
 
 // Replace hashtags string with link
-function parse_tags(str) {
+function parse_tags( str, category_tags ) {
   const hash_regex = /\S*#(\[[^\]]+\]|\S+)/gi;
-  return str.replace(hash_regex, '<a href="#tags/$1">#$1</a>');
+  if( category_tags && category_tags.length > 0 ){
+    category_tags = _.map( category_tags, function(tag){
+        return `#${tag}`;
+    });
+    const category_tags_regex = new RegExp( category_tags.join("|"), "ig");
+    str = str.replace( category_tags_regex, "" );
+  }
+  return str.replace(hash_regex, '<a href="#tags/$1">#$1</a>').trim();
 }
 
 extend(utility, {
