@@ -1,7 +1,10 @@
+"use strict";
 /* global app: true */
 const urllib = require('url');
 const pathlib = require('path');
 const utility = module.exports;
+const saw = require('string-saw');
+const _ = require('lodash');
 
 const hasOwnProperty = Object.prototype.hasOwnProperty;
 function extend(dest, src) {
@@ -226,6 +229,13 @@ function parse_tags(str) {
   return str.replace(hash_regex, '<a href="#tags/$1">#$1</a>');
 }
 
+function remove_duplicate_tags( catagories, content ) {
+  const tagsInContent = saw(content).match(/#\w+/g).map(function(h){
+    return h.replace(/#/, '');
+  }).toArray();
+  return _.difference( catagories, tagsInContent );
+}
+
 extend(utility, {
   url: site_url,
   parseUrl: urllib.parse,
@@ -242,5 +252,6 @@ extend(utility, {
   cssSizeInPixel,
   uniqueId,
   extract_tags,
-  parse_tags
+  parse_tags,
+  remove_duplicate_tags
 });
