@@ -12,11 +12,7 @@ function extend(dest, ...args) {
   let from;
   for (let s = 0; s < args.length; s++) {
     from = Object(args[s]);
-    for (const key in from) {
-      if (hasOwnProperty.call(from, key)) {
-        to[key] = from[key];
-      }
-    }
+    Object.assign(to, from);
   }
   return to;
 }
@@ -94,19 +90,12 @@ function make_querystring(query) {
  */
 function format_querystring(query) {
   const qs = [];
-  for (const k in query) {
-    if (hasOwnProperty.call(query, k)) {
-      qs.push(k + '=' + query[k]);
-    }
-  }
+  Object.keys(query).forEach((k) => {
+    qs.push(k + '=' + query[k]);
+  });
+
   return qs.join('&');
 }
-
-// function format_querystring(params) {
-//   return Object.keys(params)
-//     .map(k => k + '=' + params[k])
-//     .join('&');
-// }
 
 function client_size() {
   const w = window;
@@ -181,8 +170,8 @@ function site_url(url, basepath, query, hash) {
 
 function is_touch_device() {
   return (('ontouchstart' in window)
-  || (navigator.MaxTouchPoints > 0)
-  || (navigator.msMaxTouchPoints > 0));
+    || (navigator.MaxTouchPoints > 0)
+    || (navigator.msMaxTouchPoints > 0));
 }
 
 function device_pixel_ratio() {
