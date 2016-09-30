@@ -23,7 +23,7 @@ page-pin
                     strong(data-url='#user/{ pin.owner }') @{ app.get('app_user.name').toLowerCase() }
                     //- a(href='#user/{ pin.owner }') @{ pin.owner }
                   .card-text(html='{ util.parse_tags(pin.detail) }')
-                  - var categories = util.remove_duplicate_tags( pin.categories, pin.details )
+                   var categories = util.remove_duplicate_tags( pin.categories, pin.details )
                   .tag-list(if='{ categories.length > 0 }')
                     a.tag-item(each='{ cat in categories }', href=('#tags/{ cat }')) {cat}
                   //- .card-area(if='{ pin.neighborhood }') ย่าน{ pin.neighborhood }
