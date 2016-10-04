@@ -7,11 +7,11 @@ const saw = require('string-saw');
 const _ = require('lodash');
 
 const hasOwnProperty = Object.prototype.hasOwnProperty;
-function extend(dest, src) {
-  const to = dest;
+function extend(...args) {
+  const to = args[0];
   let from;
-  for (let s = 1; s < arguments.length; s++) {
-    from = Object(arguments[s]);
+  for (let s = 1; s < args.length; s++) {
+    from = Object(args[s]);
     Object.assign(to, from);
   }
   return to;
