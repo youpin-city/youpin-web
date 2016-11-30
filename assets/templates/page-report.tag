@@ -677,6 +677,9 @@ page-report
       form_data.created_time = Date.now();
       form_data.updated_time = form_data.created_time;
 
+      // mafueng
+      form_data.organization = '583ddb7a3db23914407f9b58';
+
       $.ajax({
         url: util.site_url('/pins', app.get('service.api.url')),
         method: 'post',

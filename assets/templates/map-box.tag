@@ -94,7 +94,7 @@ map-box
 
       self.map = L.map(self.id, self.map_options);
       self.map.setView(self.center);
-      self.map.setZoom(self.map_options.zoom === 'auto' ? 15 : +self.map_options.zoom);
+      self.map.setZoom(self.map_options.zoom === 'auto' ? 17 : +self.map_options.zoom);
 
       // // Add google maps
       // var googleLayer = new L.Google('ROADMAP');

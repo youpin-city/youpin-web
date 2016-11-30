@@ -1,8 +1,8 @@
 {
   "env": "production",
-  "port": 7000,
+  "port": 7200,
   "site": {
     "protocol": "https",
-    "hostname": "youpin.city"
+    "hostname": "mafueng-web.youpin.city"
   }
 }
