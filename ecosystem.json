@@ -39,7 +39,7 @@
       "host" : ["128.199.87.142"],
       "ref"  : "origin/mafueng-development",
       "repo" : "git@github.com:youpin-city/youpin-web.git",
-      "path" : "/opt/youpin-web.development",
+      "path" : "/opt/mafueng-web.development",
       "post-deploy" : "cp ../shared/.env . && npm install --production && pm2 startOrRestart ecosystem.development.json --env development",
       "pre-deploy-local" : "echo '[development] deploy completed.'"
     },
@@ -48,7 +48,7 @@
       "host" : ["128.199.87.142"],
       "ref"  : "origin/mafueng",
       "repo" : "git@github.com:youpin-city/youpin-web.git",
-      "path" : "/opt/youpin-web.production",
+      "path" : "/opt/mafueng-web.production",
       "post-deploy" : "cp ../shared/.env . && npm install --production && pm2 startOrRestart ecosystem.json --env production",
       "pre-deploy-local" : "echo '[production] deploy completed.'"
     }
