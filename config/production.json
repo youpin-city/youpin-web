@@ -3,6 +3,6 @@
   "port": 7200,
   "site": {
     "protocol": "https",
-    "hostname": "mafueng-web.youpin.city"
+    "hostname": "mafueng.youpin.city"
   }
 }
