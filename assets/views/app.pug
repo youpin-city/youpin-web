@@ -20,6 +20,8 @@ append content
 
     page-feed#tag-view
 
+    //- page-login#login-view(login-url=site_url('/auth/facebook/login', app_config.service.api.url, { successRedirect: login_success_url, failureRedirect: login_failure_url }))
+
     page-error
 
 prepend footer
@@ -46,15 +48,11 @@ prepend footer
 
 append app_script
   script.
-    app.set({
-      app_user: !{JSON.stringify(app_user)},
-      app_token: !{JSON.stringify(app_token)}
-    });
 
     // Route: #report
     app.route('report', function(id, action, qs, hash) {
       $('.tab-bar-view').hide();
-      $('#report').show();
+      //- $('#report').show();
       app.get('page-report').showReportView();
     });
 
@@ -63,7 +61,7 @@ append app_script
       $('.tab-bar-view').hide();
       $('#feed').show();
 
-      app.open('page-feed', '#feed', { title: 'พินล่าสุด', pins: [] });
+      app.open('page-feed', '#feed', { title: 'พินของคุณ', pins: [] });
     });
 
     // Route: #search
@@ -107,10 +105,20 @@ append app_script
       app.open('page-feed', '#feed', { title: 'Tag: #' + id, pins: [], query: query });
     });
 
+
+    //- // Route: #login
+    //- app.route('login', function(id, action, qs, hash) {
+    //-   $('.tab-bar-view').hide();
+    //-   app.get('page-login').showLoginView();
+    //- });
+
     app.start();
 
     var pageReport = riot.mount('page-report')[0];
     app.set('page-report', pageReport);
+
+    //- var pageLogin = riot.mount('page-login')[0];
+    //- app.set('page-login', pageLogin);
 
   script.
     $(document).ready(function(){

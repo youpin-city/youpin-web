@@ -73,6 +73,7 @@
         .tag-item {
           display: inline-block;
           white-space: nowrap;
+          @include text-hover($cl-lightblue, lighten($cl-lightblue, 15%));
         }
       }
       .card-area {
@@ -117,7 +118,7 @@
         }
       }
       .meta-time {
-        color: $cl-gray;
+        color: $cl-white;
       }
     }
   }
@@ -157,14 +158,15 @@
       &:hover {
         .card-image {
           transition: opacity 0.2s ease-out;
-          opacity: 0.3;
+          opacity: 0.2;
         }
         .card-content {
           transition: transform 0.2s ease-out, opacity 0.2s ease-out;
           // transform: translate(0, 0%);
           opacity: 1;
           a {
-            color: $cl-primary-active;
+            // color: $cl-primary-active;
+            @include text-hover($cl-lightblue, lighten($cl-lightblue, 15%));
           }
         }
       }

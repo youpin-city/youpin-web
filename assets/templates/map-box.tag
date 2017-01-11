@@ -250,7 +250,7 @@ map-box
             + '<div class="pin-image" style="background-image: url('+(_.get(pin, 'photos.0') || util.site_url("/public/image/pin_photo.png"))+');"></div>'
             + '</a>'
             + '<div style="margin: 1rem 0;">'
-              + '<strong data-url="#user/' + pin.owner + '">@' + app.get('app_user.name').toLowerCase() + '</strong> '
+              + '<strong data-url="#user/' + _.get(pin, 'owner._id') + '">@' + _.snakeCase(_.get(pin, 'owner.name')) + '</strong> '
               + pin.detail
               + '<a href="#pins/' + pin._id + '" target="_blank" style="margin: 0 0.4rem;">View Pin</a>'
             + '</div>'

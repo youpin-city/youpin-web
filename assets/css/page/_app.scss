@@ -1,3 +1,15 @@
+html[data-route='login'] {
+  header#header {
+    display: none;
+  }
+  body {
+    background-color: $cl-veryverylightgray;
+    #login-box {
+      border: 1px solid $cl-lightgray;
+    }
+  }
+}
+
 #app[data-route='app'] {
 
   .brand-logo {
@@ -56,6 +68,10 @@
 
 #page-app {
   page-report {
+    .profile-name {
+      margin: 0 1rem;
+    }
+
     .modal.full-sheet {
       &.open {
         position: relative;
@@ -128,7 +144,8 @@
         box-shadow: none;
       }
     }
-    #input-categories {
+    #input-categories,
+    #input-location-name {
       > .icon {
         margin-top: 0.6rem;
       }

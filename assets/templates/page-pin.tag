@@ -20,7 +20,7 @@ page-pin
 
                 .card-description
                   .card-author
-                    strong(data-url='#user/{ pin.owner }') @{ app.get('app_user.name').toLowerCase() }
+                    strong(data-url='#user/{ _.get(pin, "owner._id") }') @{ _.snakeCase(_.get(pin, 'owner.name')) }
                     //- a(href='#user/{ pin.owner }') @{ pin.owner }
                   .card-text(html='{ util.parse_tags(pin.detail) }')
                   .tag-list(if='{ util.remove_duplicate_tags( pin.categories, pin.details ).length > 0 }')

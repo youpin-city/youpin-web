@@ -5,12 +5,16 @@ page-report
       nav
         ul.left
           li
+            //-a.modal-action.modal-close(href='/')
+              | ปิด
             a.modal-action.modal-close(href='#', onclick='{ clickCloseReport }')
-              | ยกเลิก
+              | ปิด
         .center
           a.brand-logo(href='#')
           .modal-title ใส่ข้อมูลพิน
         ul.right
+          li
+            span.profile-name { user.name }
           //- li
           //-   a(href='#!', onclick='{ clickSubmitReport }')
           //-    | ปักพิน
@@ -55,8 +59,12 @@ page-report
                         option(value='') เลือกหมวดหมู่
                         option(each='{ cat in choice_categories }', value='{ cat.value }', selected='{ cat.selected }') { cat.text }
 
-                  #input-location.input-field(if='{ !location }')
+                  #input-location-name.input-field
                     i.icon.material-icons.prefix(class='{ location.lat ? "active" : "" }') place
+                    .input
+                      input(name='location_name', placeholder='ห้อง, ตึก, ชั้น', oninput='{ changeLocationDetail }')
+
+                  #input-location.input-field(if='{ !location }')
                     .input
                       button.location-input.btn.btn-block.btn-native(type='button', onclick='{ clickMapLocation }') { location_text }
 
@@ -168,12 +176,13 @@ page-report
     self.target = opts.target;
     self.map = null;
     self.map_id = 'edit-location-map';
-    self.location = null;
-    self.default_status = 'verified';
+    self.location_name = '';
+    self.location = null; // app.get('location.default');
+    self.default_status = 'unverified';
     self.status = self.default_status;
     self.neighborhood = '';
-    self.owner = app.get('app_user._id');
-    self.providers = [app.get('app_user._id')];
+    self.owner = app.get('user._id');
+    self.providers = [app.get('user._id')];
     // Define
     self.YPIcon = L.icon({
         iconUrl: util.site_url('/public/image/marker-m.png'),
@@ -256,7 +265,8 @@ page-report
       self.status = self.default_status;
       self.photos = [];
       self.map = null;
-      self.location = null;
+      self.location_name = '';
+      self.location = null; // app.get('location.default');
       $(self.root).find('textarea[name="detail"]').val('');
       $(self.root).find('select[name="categories"]').val('');
       self.update();
@@ -493,6 +503,11 @@ page-report
       self.update();
     };
 
+    self.changeLocationDetail = function (e) {
+      self.location_name = e.currentTarget.value;
+      self.update();
+    };
+
     function checkReportComplete() {
       self.is_pin_complete = true;
       if (!self.location) self.is_pin_complete = false;
@@ -678,13 +693,13 @@ page-report
       form_data.updated_time = form_data.created_time;
 
       // mafueng
-      form_data.organization = '583ddb7a3db23914407f9b58';
+      form_data.organization = app.get('organization.id');
 
       $.ajax({
         url: util.site_url('/pins', app.get('service.api.url')),
         method: 'post',
         headers: {
-          'Authorization': 'Bearer ' + app.get('app_token')
+          'Authorization': 'Bearer ' + app.get('user.token')
         },
         beforeSend: function(xhrObj){
           xhrObj.setRequestHeader('Content-Type', 'application/json');
@@ -701,6 +716,7 @@ page-report
       .fail(error => {
         console.error('error:', error);
         Materialize.toast('ไม่สามารถพินปัญหาได้ (' + error + ')', 5000, 'dialog-error');
+        $('#report-saving-modal').closeModal();
       });
     }
 

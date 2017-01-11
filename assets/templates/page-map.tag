@@ -25,6 +25,7 @@ page-map
     self.has_more = false;
     self.skip = 0;
     self.limit = 50;
+    self.max_pin = 1000;
     self.query = opts.query || {};
 
     /***************
@@ -69,7 +70,8 @@ page-map
       $.ajax({
         url: util.site_url('/pins', app.get('service.api.url')),
         data: _.assign({
-          $sort: '-created_time'
+          $sort: '-created_time',
+          owner: app.get('user._id')
         }, self.query, {
           $skip: self.skip,
           $limit: self.limit
@@ -81,7 +83,7 @@ page-map
         self.has_more = new_pins.length >= self.limit;
         self.pins = self.pins.concat(new_pins);
 
-        if (self.has_more && self.pins.length < 500) {
+        if (self.has_more && self.pins.length < self.max_pin) {
           updateMap();
           loadNext();
         } else {

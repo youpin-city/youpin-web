@@ -4,4 +4,20 @@ header#header {
       display: none;
     }
   }
+
+  .profile-name {
+    margin: 0 1rem;
+  }
+}
+
+.content-padding {
+  padding: 4rem 2rem;
+}
+
+.opaque-bg {
+  background-color: $cl-white;
+
+  &.color-b {
+    background-color: $cl-verylightgray;
+  }
 }

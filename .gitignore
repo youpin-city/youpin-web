@@ -23,3 +23,7 @@ npm-debug.log
 *.DS_Store
 *~
 *.build.js
+
+config/current.json
+public/css
+public/js

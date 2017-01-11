@@ -1,0 +1,39 @@
+extends layouts/layout
+
+append head
+  style.
+    .page .site-logo {
+      width: 206px;
+      height: 60px;
+      margin: 2rem auto;
+      background-image: url('/public/image/logo-l.png');
+      background-size: cover;
+    }
+
+    .facebook-login {
+      background-color: #3b5998;
+    }
+
+    .page-footer {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+    }
+
+append content
+  #page-login.page
+    .container
+      .row
+        .col.s12.m8.offset-m2
+
+          .spacing-large
+
+          #login-box.content-padding.opaque-bg
+            .row
+              .col.s12.m8.offset-m2
+                .site-logo.bg
+
+                .input-field
+                  a.facebook-login.btn.btn-block(href=site_url('/auth/facebook/login', app_config.service.api.url, { successRedirect: success_url, failureRedirect: failure_url }))
+                    | Login with Facebook

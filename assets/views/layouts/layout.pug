@@ -1,5 +1,5 @@
 doctype html
-html(zone='front')
+html(zone='front', data-route=page.route, data-path=page.path, data-view='')
   head
     block head
       link(rel='stylesheet', href=site_url('/public/css/main.css'))
@@ -31,12 +31,14 @@ html(zone='front')
 
       block script
         block dep_script
+          script.
+            var user = !{JSON.stringify(user || null)};
           //- if settings.site.protocol === 'https'
           //-   script(src='https://maps-api-ssl.google.com/maps/api/js?callback=&key=' + settings.service.google.api_key)
           //- else
           //-   script(src='http://maps.googleapis.com/maps/api/js?callback=&key=' + settings.service.google.api_key)
           script(src=asset_url('/public/js/dep.js'))
-          script(src=asset_url('/public/js/materialize.js'))
+          script(src=asset_url('/public/dep/materialize.js'))
           script(src=asset_url('/public/js/main.js'))
           script(src=asset_url('/public/js/tag.js'))
 
@@ -45,5 +47,6 @@ html(zone='front')
             // this application
             app = new App();
             app.set(_.assign(!{JSON.stringify(app_config || {})}));
+            app.set('user', !{JSON.stringify(user || null)});
 
             riot.mount('preloader');

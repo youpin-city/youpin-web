@@ -1,0 +1,33 @@
+---
+env: default
+port: 7100
+site:
+  protocol: http
+  hostname: localhost:7100
+logger:
+  console:
+    level: 'debug'
+    colorize: true
+    timestamp: true
+    # json: true
+    # stringify: true
+    humanReadableUnhandledException: true
+feature:
+  enabled_email: true
+  enabled_sms: false
+organization:
+  id: '583ddb7a3db23914407f9b58'
+service:
+  cookie:
+    maxAge: 2592000000
+    httpOnly: true
+  api:
+    url: 'http://localhost:9100'
+  map:
+    initial_location: [13.7365673, 100.5326298]
+  ga:
+    id:
+  facebook:
+    app_id:
+    page: https://www.facebook.com/Mafueng-281055212289797
+    chatbot: https://www.messenger.com/t/281055212289797

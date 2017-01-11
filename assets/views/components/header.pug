@@ -14,3 +14,20 @@ header#header
       //-     a(href=site_url('/map')) แผนที่
       //-   li
       //-     a(href=site_url('/design')) ออกแบบ
+
+      ul#site-nav-top-menu.nav-list.right.hide-on-small-and-down
+        li
+          search-box
+
+        if page.route !== 'login'
+          if user
+            li
+              span.profile-name= user.name
+            li
+              a#desktop-logout-btn.hide-on-global-search(href=site_url('/logout'))
+                | Logout
+                //- .image.profile-image(style='background-image: url("' + user.image + '")')
+          else
+            li
+              a#desktop-login-btn.hide-on-global-search(href=site_url('/login'))
+                | Login

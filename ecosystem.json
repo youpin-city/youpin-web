@@ -49,7 +49,7 @@
       "ref"  : "origin/mafueng",
       "repo" : "git@github.com:youpin-city/youpin-web.git",
       "path" : "/opt/mafueng-web.production",
-      "post-deploy" : "cp ../shared/.env . && npm install --production && pm2 startOrRestart ecosystem.json --env production",
+      "post-deploy" : "cp ../shared/.env . && ln -fs `pwd`/config/production.json config/current.json && npm install --production && pm2 startOrRestart ecosystem.json --env production",
       "pre-deploy-local" : "echo '[production] deploy completed.'"
     }
   }

@@ -11,7 +11,7 @@ page-feed
             .card-content
               .card-description
                 .card-author
-                  strong(data-url='#user/{ pin.owner }') @{ app.get('app_user.name').toLowerCase() }
+                  strong(data-url='#user/{ _.get(pin, "owner._id") }') @{ _.snakeCase(_.get(pin, 'owner.name')) }
                   //- a(href='#user/{ pin.owner }') @{ pin.owner }
                 .card-text(html='{ util.parse_tags(pin.detail) }')
                 .tag-list(if='{ pin.categories && pin.categories.length > 0 }')
@@ -82,7 +82,8 @@ page-feed
       $.ajax({
         url: util.site_url('/pins', app.get('service.api.url')),
         data: _.assign({
-          $sort: '-created_time'
+          $sort: '-created_time',
+          owner: app.get('user._id')
         }, self.query, {
           $skip: self.skip,
           $limit: self.limit
