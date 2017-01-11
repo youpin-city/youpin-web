@@ -107,10 +107,11 @@ append app_script
 
 
     //- // Route: #login
-    //- app.route('login', function(id, action, qs, hash) {
+    app.route('login', function(id, action, qs, hash) {
+      location.href = '/login';
     //-   $('.tab-bar-view').hide();
     //-   app.get('page-login').showLoginView();
-    //- });
+    });
 
     app.start();
 

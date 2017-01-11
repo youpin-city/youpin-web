@@ -191,17 +191,7 @@ page-report
         popupAnchor: [0, -51]
     });
 
-    self.choice_categories = [
-      { value: 'footpath', text: 'ทางเท้า', selected: false },
-      { value: 'pollution', text: 'มลภาวะ', selected: false },
-      { value: 'roads', text: 'ถนน', selected: false },
-      { value: 'publictransport', text: 'ขนส่งสาธารณะ', selected: false },
-      { value: 'garbage', text: 'ขยะ', selected: false },
-      { value: 'drainage', text: 'ระบายน้ำ', selected: false },
-      { value: 'trees', text: 'ต้นไม้', selected: false },
-      { value: 'safety', text: 'ความปลอดภัย', selected: false },
-      { value: 'violation', text: 'ละเมิดสิทธิ', selected: false }
-    ];
+    self.choice_categories = app.get('issue.categories');
 
     function check_fileapi_support() {
       return !!(window.File && window.FileList && window.FileReader);
