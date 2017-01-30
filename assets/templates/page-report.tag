@@ -178,7 +178,7 @@ page-report
     self.map_id = 'edit-location-map';
     self.location_name = '';
     self.location = null; // app.get('location.default');
-    self.default_status = 'unverified';
+    self.default_status = 'pending';
     self.status = self.default_status;
     self.neighborhood = '';
     self.owner = app.get('user._id');

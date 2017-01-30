@@ -3,22 +3,20 @@ extends layouts/layout
 append content
 
   #page-home
-    map-box(pin-clickable='false', options-zoom='16', options-zoom-control='false', options-scroll-wheel-zoom='false', options-double-click-zoom='false', options-touch-zoom='false', options-tap='false', options-keyboard='false')
-
     #floating-logo
       .logo
 
     .container
       #hero
         #hero-logo
-        #hero-subtitle พินปัญหา พินความเห็น พินตำแหน่ง พินที่ "มะเฟือง"
+        #hero-subtitle พินปัญหา พินความเห็น พินตำแหน่ง พินที่ "iCare"
         #hero-slogan Transforming Passive to Active Student
 
         .row
           .col.s12.m6.offset-m3.l6.offset-l3
-            a.btn.btn-large.btn-block.waves-effect.waves-light(href=site_url('/login')) รายงานปัญหากับน้องมะเฟือง
+            a.btn.btn-large.btn-block.waves-effect.waves-light(href=site_url('/login')) รายงานปัญหากับ iCare
             .spacing-small
-            a.btn.btn-large.btn-block.waves-effect.waves-light(href=app_config.service.chatbot, target='_blank') คุยกับน้องมะเฟือง
+            a.btn.btn-large.btn-block.waves-effect.waves-light(href=app_config.service.chatbot, target='_blank') คุยกับ iCare
             .spacing-small
             a.btn.btn-large.btn-block.waves-effect.waves-light.white.blue-text(href='https://www.facebook.com/ChulaEngineering', target='_blank') Follow Us on Facebook
 
@@ -42,185 +40,3 @@ append content
                 .meta.meta-time.right= moment(pin.created_at).fromNow()
                 .meta.meta-status.left(data-status=pin.status)= pin.status
 
-    //- #story.container.clearfix
-    //-   .row
-    //-     .col.s12.m5
-    //-       img.responsive-img(src='https://d4z6dx8qrln4r.cloudfront.net/image-577cda44aa379-default.jpeg')
-    //-     .col.s12.m6.offset-m1
-    //-       h2.section-name Bangkok Urban Hack (แหก) Day
-    //-       h3.subsection-name มาร่วม Hack เมืองให้น่าอยู่กัน
-
-    //-       p งานเดียวที่นำเอา Designer, Developer, Thinker, Media และ Marketer ที่เก่งกาจในการแก้ปัญหา มาเจอกับคนที่รู้ปัญหา เพื่อร่วมระดมสมองและลงมือสร้างนวัตกรรมต้นแบบ ในรูปแบบ Hackathon โดยใช้เทคโนโลยีและพลังของ Big Data ตลอด 30 ชั่วโมง!
-    //-       p โดยงาน Bangkok Urban Hack Day ได้รับเงินสนับสนุนจากสำนักงานรัฐบาลอิเล็กทรอนิกส์ (EGA) และความร่วมมือจากศูนย์สร้างสรรค์งานออกแบบ (TCDC)
-
-    //-       h4 เวลางาน
-    //-       table.highlight.striped
-    //-         tbody
-    //-           tr
-    //-             td(style='width: 160px;') ศุกร์ 29 กรกฎาคม :
-    //-             td เริ่มงาน 18.00 น.
-    //-           tr
-    //-             td เสาร์ 30 กรกฎาคม :
-    //-             td 10.00 - 21.00 น.
-    //-           tr
-    //-             td อาทิตย์ 31 กรกฎาคม :
-    //-             td 10.00 - 19.00 น.
-
-    //-   .row
-    //-     .col.s12.m5
-    //-       h4 การสมัคร
-    //-       ul.list
-    //-         li หมดเขตการลงทะเบียน 20 กรกฎาคม 2559
-    //-         li รับจำนวนจำกัดทั้งหมดไม่เกิน 30 คน (ขอเฉพาะที่ตั้งใจจริง ๆ)
-    //-         li มาเป็นทีม 2-4 คน หรือ มาเดี่ยว ๆ (เราจะจัดกลุ่มให้) พร้อมตอบคำถามในใบสมัคร
-    //-         li ไอเดียที่เรามองหา คือ
-    //-           ol.list
-    //-             li ด้านการเดินทาง ระบบขนส่ง ถนน ทางเท้า
-    //-             li ด้านการออกแบบเพื่อมวลชน (Universal Design) เช่น ผู้สูงอายุ คนพิการ
-    //-             li มลภาวะและสิ่งแวดล้อม เช่น ต้นไม้ พื้นที่สีเขียว
-    //-             li ชุมชนและการมีส่วนร่วม เช่น การอนุรักษ์อาคารเก่าในชุมชน
-    //-             li ผังเมืองและการจัดสรรพื้นที่
-    //-       p โดยเราได้เชิญกลุ่มผู้เชี่ยวชาญตามสาขาดังกล่าวมาให้คำปรึกษาในงาน และเป็นโอกาสที่ดีในการพบปะแลกเปลี่ยนมุมมองกับผู้มีประสบการณ์ในการเปลี่ยนเมืองด้านต่าง ๆ เพื่อต่อยอดและเรียนรู้จากคนที่เคยผ่านมาแล้ว
-    //-       p ＊ สำหรับผู้ที่ต้องการสังเกตการณ์หรือสื่อมวลชน สามารถลงทะเบียนได้ที่ช่องทางเดียวกัน (เลือกหัวข้อ "มาสังเกตการณ์")
-
-    //-     .col.s12.m6.offset-m1
-    //-       h4 การประกาศผล
-    //-       p วันที่ 22 กรกฎาคม 2559 ทาง <a href='https://www.facebook.com/youpin.city/', target='_blank'>เพจมะเฟือง YouPin</a> และ <a href='http://www.tcdcconnect.com/' target='_blank'>TCDC CONNECT</a>
-
-    //-       h4 การคัดเลือกและรางวัล
-    //-       h5: strong คัดเลือกทีมที่ผลงานดีที่สุด 3 ทีม
-    //-       p โดยคัดเลือกจากกรรมการและผู้ร่วมงาน
-
-    //-       ul.list
-    //-         li EGA ให้รางวัลทีมละ 10,000 บาท
-    //-         li ให้เวลาทำงานต่อ 1 เดือน โดยมีทีมที่ปรึกษาจากทีม YouPin, EGA, TCDC และทีมที่ปรึกษา ทำเสร็จมารับอีก 20,000
-    //-         li ใช้สถานที่ (ห้องประชุม ทำงาน) Ma:D ฟรี ระหว่างการพัฒนา
-    //-         li บัตรสมาชิก TCDC (สาขาเจริญกรุง แห่งใหม่) ฟรี
-    //-         li ผลงานถูกนำไปเผยแพร่บน <a href="https://data.go.th">data.go.th</a>, <a href="http://waymagazine.org/">Waymagazine.org</a> และ <a href="http://www.tcdcconnect.com/">TCDC CONNECT</a>
-
-    //-       h5: strong ของรางวัลสำหรับทุกท่านที่ร่วม Hack (แหก)
-    //-       ul.list
-    //-         li ชุดหนังสือพิเศษจาก TCDC และ ของชำร่วยจาก UNDP
-    //-         li จัดแสดงผลงานที่ TCDC (8-21 สิงหาคม 2559)
-    //-         li จัดแสดงในงาน Sleep Over ที่ The Reading Room (ตลอดเดือนกันยายน)
-    //-         li จัดแสดงผลงานที่งาน Opendata Thailand จัดโดย สำนักงานรัฐบาลอิเล็กทรอนิกส์ (องค์การมหาชน) (EGA) ปลายเดือนตุลาคม
-    //-         li มีเครดิตเป็นผู้ร่วมพัฒนา YouPin
-
-    //-   .row
-    //-     .col.s12.m6.offset-m3
-    //-       button.btn.btn-large.btn-block.disabled สมัครเพื่อร่วม Hack เมือง
-    //-       //- a.btn.btn-large.btn-block.waves-effect.waves-light(href='https://bkkurbanhackday.typeform.com/to/kp2FIU', target='_blank') สมัครเพื่อร่วม Hack เมือง
-
-    //- .fluid-container.alt-container
-    //-   .container
-    //-     .row
-    //-       .col.s12.m6.offset-m3
-    //-         img#award-image(src=site_url('/public/image/winner@2x.png'))
-    //-         #award-name Winner
-    //-         #award-subtitle Country Prize
-    //-         #award-description Big Ideas Competition<br> for Sustainable Cities and Urban Communities 2016
-    //-         .spacing
-
-    //- .container
-    //-   .center
-    //-     strong ร่วมกันจัดทำโดย
-
-    //-   //- tcdc, connect, undp, bml, social, thianet, hhs, way, urbanwhy, volunteer, mad, readingroom, changefusion
-    //-   ul.partner-list.clearfix
-    //-     li
-    //-       a(href='http://www.tcdc.or.th')
-    //-         img.responsive-img(src=site_url('/public/image/partner/TCDC@2x.png'))
-
-    //-     li
-    //-       a(href='http://www.tcdcconnect.com')
-    //-         img.responsive-img(src=site_url('/public/image/partner/TCDCCN@2x.png'))
-
-    //-     li
-    //-       a(href='http://www.th.undp.org/')
-    //-         img.responsive-img(src=site_url('/public/image/partner/UNDP@2x.png'))
-
-    //-     li
-    //-       a(href='https://www.ega.or.th')
-    //-         img.responsive-img(src=site_url('/public/image/partner/EGA@2x.png'))
-
-    //-     li
-    //-       a(href='http://www.boonmeelab.com')
-    //-         img.responsive-img(src=site_url('/public/image/partner/BML@2x.png'))
-
-    //-     li
-    //-       a(href='http://socialtech.or.th/')
-    //-         img.responsive-img(src=site_url('/public/image/partner/STI@2x.png'))
-
-    //-     li
-    //-       a(href='https://thainetizen.org/')
-    //-         img.responsive-img(src=site_url('/public/image/partner/ThaiNetizen@2x.png'))
-
-    //-     li
-    //-       a(href='https://hhs2558.com/')
-    //-         img.responsive-img(src=site_url('/public/image/partner/HHS@2x.png'))
-
-    //-     li
-    //-       a(href='http://waymagazine.org/')
-    //-         img.responsive-img(src=site_url('/public/image/partner/Way@2x.png'))
-
-    //-     li
-    //-       a(href='http://urbanwhy.com/')
-    //-         img.responsive-img(src=site_url('/public/image/partner/UrbanWhy@2x.png'))
-
-    //-     li
-    //-       a(href='http://larngeartech.com/')
-    //-         img.responsive-img(src=site_url('/public/image/partner/LarngearTech@2x.png'))
-
-    //-     li
-    //-       a(href='http://www.volunteerspirit.org/')
-    //-         img.responsive-img(src=site_url('/public/image/partner/VSN@2x.png'))
-
-    //-     li
-    //-       a(href='http://madeehub.com/')
-    //-         img.responsive-img(src=site_url('/public/image/partner/Madee@2x.png'))
-
-    //-     li
-    //-       a(href='http://readingroombkk.org/')
-    //-         img.responsive-img(src=site_url('/public/image/partner/TheReadingRoom@2x.png'))
-
-    //-   .row
-    //-     .col.s12.m8.offset-m2
-    //-       p Bangkok Urban Hack Day ดำเนินการโดยโครงการสร้างชุมชนผู้ใช้ข้อมูล : Data Community Engagement ภายใต้สำนักงาน สำนักงานรัฐบาลอิเล็กทรอนิกส์ (องค์การมหาชน) ร่วมกับ
-    //-       ul.list
-    //-         li โครงการพัฒนาแห่งสหประชาชาติ (UNDP)
-    //-         li ศูนย์สร้างสรรค์งานออกแบบ (TCDC)
-    //-         li บุญมีแล็ป
-    //-         li เครือข่ายพลเมืองเน็ต
-    //-         li ห้องสมุด Reading Room
-    //-         li Social Technology Institute
-    //-         li เครือข่ายภาคเอกชน และภาคประชาสังคม อีกหลายหน่วยงาน
-
-
-append app_script
-  script.
-
-    $.ajax({
-      url: util.site_url('/searchnearby', app.get('service.api.url')),
-      data: _.assign({
-        $center: '[13.7649224,100.5382705]',
-        $radius: 100,
-        $sort: '-created_time'
-      }, self.query, {
-        $limit: 50
-      })
-    })
-    .done(function(data) {
-      // TODO: remove this temporary fix for #84
-      const pins = _.map(data.data || [], pin => {
-        pin.location.coordinates = [
-          pin.location.coordinates[1],
-          pin.location.coordinates[0]
-        ];
-        return pin;
-      });
-      updateMap(pins);
-    });
-
-    function updateMap(pins) {
-      riot.mount('map-box', { pins: pins, center: [13.7649224,100.5382705] });
-    }
