@@ -3,7 +3,7 @@
   "port": 7100,
   "site": {
     "protocol": "http",
-    "hostname": "mafueng-dev.youpin.city"
+    "hostname": "icare-dev.youpin.city"
   },
   "debug": true
 }

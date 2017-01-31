@@ -1,7 +1,7 @@
 {
   "apps": [
     {
-      "name": "mafueng-web-dev",
+      "name": "icare-web-dev",
       "script": "index.js",
       "args": [],
       "no-daemon": true,

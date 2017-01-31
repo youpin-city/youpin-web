@@ -1,7 +1,7 @@
 {
   "apps": [
     {
-      "name": "mafueng-web",
+      "name": "icare-web",
       "script": "index.js",
       "args": [],
       "no-daemon": false,
@@ -37,18 +37,18 @@
     "development" : {
       "user" : "root",
       "host" : ["128.199.87.142"],
-      "ref"  : "origin/mafueng-development",
+      "ref"  : "origin/icare-development",
       "repo" : "git@github.com:youpin-city/youpin-web.git",
-      "path" : "/opt/mafueng-web.development",
+      "path" : "/opt/icare-web.development",
       "post-deploy" : "cp ../shared/.env . && npm install --production && pm2 startOrRestart ecosystem.development.json --env development",
       "pre-deploy-local" : "echo '[development] deploy completed.'"
     },
     "production" : {
       "user" : "root",
       "host" : ["128.199.87.142"],
-      "ref"  : "origin/mafueng",
+      "ref"  : "origin/icare",
       "repo" : "git@github.com:youpin-city/youpin-web.git",
-      "path" : "/opt/mafueng-web.production",
+      "path" : "/opt/icare-web.production",
       "post-deploy" : "cp ../shared/.env . && ln -fs `pwd`/config/production.json config/current.json && npm install && npm run build && pm2 startOrRestart ecosystem.json --env production",
       "pre-deploy-local" : "echo '[production] deploy completed.'"
     }

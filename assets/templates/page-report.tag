@@ -682,7 +682,7 @@ page-report
       form_data.created_time = Date.now();
       form_data.updated_time = form_data.created_time;
 
-      // mafueng
+      // icare
       form_data.organization = app.get('organization.id');
 
       $.ajax({
