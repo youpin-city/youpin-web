@@ -2,7 +2,7 @@
   "env": "local",
   "site": {
     "protocol": "http",
-    "hostname": ""
+    "hostname": "localhost:7000"
   },
   "debug": true
 }

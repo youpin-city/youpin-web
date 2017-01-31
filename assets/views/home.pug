@@ -215,8 +215,8 @@ append app_script
       // TODO: remove this temporary fix for #84
       const pins = _.map(data.data || [], pin => {
         pin.location.coordinates = [
-          pin.location.coordinates[1],
-          pin.location.coordinates[0]
+          pin.location.coordinates[0],
+          pin.location.coordinates[1]
         ];
         return pin;
       });

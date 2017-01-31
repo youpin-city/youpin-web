@@ -676,6 +676,7 @@ page-report
       form_data.tags = form_data.tags.concat(form_data.categories);
       form_data.created_time = Date.now();
       form_data.updated_time = form_data.created_time;
+      form_data.organization = '583ddb7a3db23914407f9b50';
 
       $.ajax({
         url: util.site_url('/pins', app.get('service.api.url')),
@@ -698,6 +699,7 @@ page-report
       .fail(error => {
         console.error('error:', error);
         Materialize.toast('ไม่สามารถพินปัญหาได้ (' + error + ')', 5000, 'dialog-error');
+        $('#report-saving-modal').closeModal();
       });
     }
 
