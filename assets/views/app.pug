@@ -71,7 +71,7 @@ append app_script
       $('.tab-bar-view').hide();
       $('#search').show();
 
-      app.open('page-map', '#search', { title: 'ค้นหาพินรอบๆ', pins: [] });
+      app.open('page-map', '#search', { title: 'ค้นหาพินรอบๆ', options: app.get('page_map_options') });
     });
 
     // Route: #pins/:id

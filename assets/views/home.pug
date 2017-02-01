@@ -204,8 +204,8 @@ append app_script
     $.ajax({
       url: util.site_url('/searchnearby', app.get('service.api.url')),
       data: _.assign({
-        $center: '[13.7649224,100.5382705]',
-        $radius: 100,
+        $center: JSON.stringify(app.get('location.default')),
+        $radius: 1000,
         $sort: '-created_time'
       }, self.query, {
         $limit: 50
@@ -224,5 +224,5 @@ append app_script
     });
 
     function updateMap(pins) {
-      riot.mount('map-box', { pins: pins, center: [13.7649224,100.5382705] });
+      riot.mount('map-box', { pins: pins, center: app.get('location.default') });
     }

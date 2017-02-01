@@ -21,11 +21,16 @@ page-map
      * DEFAULT
      ***************/
     self.title = opts.title;
-    self.pins = opts.pins || [];
-    self.has_more = false;
-    self.skip = 0;
-    self.limit = 50;
-    self.query = opts.query || {};
+    self.map = null;
+    self.mapbox = null;
+    self.is_loading = false;
+    self.options = _.assign({
+      pins: [],
+      has_more: true,
+      skip: 0,
+      limit: 50,
+      query: {}
+    }, opts.options || {});
 
     /***************
      * CHANGE
@@ -37,6 +42,7 @@ page-map
      ***************/
     self.on('mount', () => {
       // console.log('mount:', self.opts);
+      updateMap();
       loadNext();
     });
 
@@ -64,24 +70,29 @@ page-map
     };
 
     function loadNext() {
+      function check() {
+        return self.options.has_more && self.options.pins.length < 500;
+      }
+      if (!check()) return;
       app.busy();
       self.is_loading = true;
       $.ajax({
         url: util.site_url('/pins', app.get('service.api.url')),
         data: _.assign({
           $sort: '-created_time'
-        }, self.query, {
-          $skip: self.skip,
-          $limit: self.limit
+        }, self.options.query, {
+          $skip: self.options.skip,
+          $limit: self.options.limit
         })
       })
       .done(function(data) {
         var new_pins = data.data || [];
-        self.skip += Math.min(new_pins.length, self.limit);
-        self.has_more = new_pins.length >= self.limit;
-        self.pins = self.pins.concat(new_pins);
+        self.options.skip += Math.min(new_pins.length, self.options.limit);
+        self.options.has_more = new_pins.length >= self.options.limit;
+        self.options.pins = self.options.pins.concat(new_pins);
+        app.set('page_map_options', self.options);
 
-        if (self.has_more && self.pins.length < 500) {
+        if (check()) {
           updateMap();
           loadNext();
         } else {
@@ -95,7 +106,7 @@ page-map
     }
 
     function updateMap() {
-      riot.mount('#map-' + self.id, { pins: self.pins });
+      riot.mount('#map-' + self.id, { pins: self.options.pins });
       self.mapbox = _.get(self['map-' + self.id], '_tag');
       self.map = _.get(self.mapbox, 'map');
     }
@@ -125,16 +136,16 @@ page-map
       }
 
       if (self.mapbox) self.mapbox.clearMarker();
-      self.pins = [];
-      self.skip = 0;
-      self.has_more = false;
+      self.options.pins = [];
+      self.options.skip = 0;
+      self.options.has_more = false;
       if (keyword) {
-        self.query = {
+        self.options.query = {
           // tags: keyword,
           categories: keyword
         };
       } else {
-        self.query = {};
+        self.options.query = {};
       }
       loadNext();
     };

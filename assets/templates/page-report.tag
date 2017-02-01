@@ -61,7 +61,7 @@ page-report
                       button.location-input.btn.btn-block.btn-native(type='button', onclick='{ clickMapLocation }') { location_text }
 
                 #input-location-complete(if='{ location }')
-                  map-box#preview-location(pin-clickable='false', options-dragging='false', options-zoom='17', options-zoom-control='false', options-scroll-wheel-zoom='false', options-double-click-zoom='false', options-touch-zoom='false', options-tap='false', options-keyboard='false')
+                  map-box#preview-location(pin-clickable='false', options-dragging='false', options-zoom='{ default_zoom }', options-zoom-control='false', options-scroll-wheel-zoom='false', options-double-click-zoom='false', options-touch-zoom='false', options-tap='false', options-keyboard='false')
                   button#edit-location-btn.btn-floating.btn-large.waves-effect.waves-light.white(type='button', onclick='{ clickMapLocation }')
                     i.icon.material-icons.large.light-blue-text edit
 
@@ -169,7 +169,8 @@ page-report
     self.map = null;
     self.map_id = 'edit-location-map';
     self.location = null;
-    self.default_status = 'verified';
+    self.default_zoom = 16;
+    self.default_status = 'unverified';
     self.status = self.default_status;
     self.neighborhood = '';
     self.owner = app.get('app_user._id');
@@ -640,6 +641,10 @@ page-report
         return el._tag;
       }).toArray()), tag => {
         if (tag.map) {
+          tag.map.setView(self.location);
+          setTimeout(function() {
+            tag.map.setZoom(self.default_zoom); // options.zoom);
+          }, 300);
           tag.map.invalidateSize();
         }
       });
