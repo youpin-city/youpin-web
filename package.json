@@ -1,6 +1,6 @@
 {
   "name": "youpin-web",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "YouPin on the web",
   "main": "index.js",
   "scripts": {
