@@ -18,7 +18,6 @@ riot.tag2('map-box', '<div class="map-box-container {pin_clickable ? &quot;&quot
     }
   });
 
-  self.center = opts.center || app.get('location.default');
   self.markers = [];
   self.fit_bounds = opts.fitBounds || true;
   self.pin_clickable = opts.pinClickable !== 'false';
@@ -42,11 +41,18 @@ riot.tag2('map-box', '<div class="map-box-container {pin_clickable ? &quot;&quot
   self.on('update', function () {});
   self.on('updated', function () {});
 
+  self.center = function () {
+    if (self.pins.length === 0) return app.get('location.default');
+    return L.latLngBounds(_.map(self.pins, function (pin) {
+      return _.get(pin, 'location.coordinates');
+    })).getCenter();
+  };
+
   function createMap() {
     if (self.map) destroyMap();
 
     self.map = L.map(self.id, self.map_options);
-    self.map.setView(self.center);
+    self.map.setView(self.center());
     self.map.setZoom(self.map_options.zoom === 'auto' ? 15 : +self.map_options.zoom);
 
     var HERE_normalDay = L.tileLayer('https://{s}.{base}.maps.cit.api.here.com/maptile/2.1/{type}/{mapID}/{scheme}/{z}/{x}/{y}/{size}/{format}?app_id={app_id}&app_code={app_code}&lg={language}&style={style}&ppi={ppi}', {
@@ -91,7 +97,7 @@ riot.tag2('map-box', '<div class="map-box-container {pin_clickable ? &quot;&quot
       return marker;
     });
 
-    if (self.fit_boudns && self.markers.length > 0) {
+    if (self.fit_bounds && self.markers.length > 0) {
       var bounds = new L.LatLngBounds(_.map(self.pins, function (pin) {
         return _.get(pin, 'location.coordinates');
       }));

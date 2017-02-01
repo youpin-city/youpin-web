@@ -56,7 +56,6 @@ map-box
       }
     });
 
-    self.center = opts.center || app.get('location.default');
     self.markers = [];
     self.fit_bounds = opts.fitBounds || true;
     self.pin_clickable = opts.pinClickable !== 'false';
@@ -71,6 +70,7 @@ map-box
       iconAnchor: [16, 51],
       popupAnchor: [0, -51]
     });
+
     /***************
      * CHANGE
      ***************/
@@ -89,11 +89,16 @@ map-box
     /***************
      * ACTION
      ***************/
+    self.center = function() {
+      if (self.pins.length === 0) return app.get('location.default');
+      return L.latLngBounds(_.map(self.pins, pin => _.get(pin, 'location.coordinates'))).getCenter();
+    }
+
     function createMap() {
       if (self.map) destroyMap();
 
       self.map = L.map(self.id, self.map_options);
-      self.map.setView(self.center);
+      self.map.setView(self.center());
       self.map.setZoom(self.map_options.zoom === 'auto' ? 15 : +self.map_options.zoom);
 
       // // Add google maps
@@ -260,7 +265,7 @@ map-box
         return marker;
       });
 
-      if (self.fit_boudns && self.markers.length > 0) {
+      if (self.fit_bounds && self.markers.length > 0) {
         const bounds = new L.LatLngBounds(_.map(self.pins, pin => _.get(pin, 'location.coordinates')));
         // // offset bounds to show pin card on right half
         // const ne = bounds.getNorthEast();
