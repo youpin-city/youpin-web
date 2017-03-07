@@ -1,9 +1,0 @@
-{
-  "env": "local",
-  "port": 7100,
-  "site": {
-    "protocol": "http",
-    "hostname": "localhost:7100"
-  },
-  "debug": true
-}

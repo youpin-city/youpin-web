@@ -3,4 +3,4 @@ env: production
 port: 7200
 site:
   protocol: https
-  hostname: mafueng.youpin.city
+  hostname: icare.eng.chula.ac.th
