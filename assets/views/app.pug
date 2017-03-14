@@ -61,7 +61,7 @@ append app_script
       $('.tab-bar-view').hide();
       $('#feed').show();
 
-      app.open('page-feed', '#feed', { title: 'พินของคุณ', pins: [] });
+      app.open('page-feed', '#feed', { title: 'รายงานของฉัน, pins: [] });
     });
 
     // Route: #search
@@ -69,7 +69,7 @@ append app_script
       $('.tab-bar-view').hide();
       $('#search').show();
 
-      app.open('page-map', '#search', { title: 'ค้นหาพินรอบๆ', pins: [] });
+      app.open('page-map', '#search', { title: 'ค้นหารายงานรอบๆ', pins: [] });
     });
 
     // Route: #pins/:id
@@ -88,7 +88,7 @@ append app_script
         app.busy(false);
       })
       .fail(function(err_text) {
-        app.open('page-error', { icon: 'place', title: 'ป้าหาพินที่ต้องการไม่เจอ', message: 'ลองช่วยปักพินใหม่มั้ยจ๊ะ?' });
+        app.open('page-error', { icon: 'place', title: 'ไม่พบรายงาน', message: 'ลองรายงานใหม่มั้ย?' });
         app.busy(false);
       });
     });

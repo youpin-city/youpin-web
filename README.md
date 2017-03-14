@@ -1,4 +1,4 @@
-![YouPin (ยุพิน)](https://raw.githubusercontent.com/youpin-city/youpin-web/master/public/image/logo.png)
+![iCare by YouPin](https://raw.githubusercontent.com/youpin-city/youpin-web/master/public/image/logo.png)
 ================
 
 This is web frontend for YouPin open reporting platform.

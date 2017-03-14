@@ -11,7 +11,7 @@ page-report
               | ปิด
         .center
           a.brand-logo(href='#')
-          .modal-title ใส่ข้อมูลพิน
+          .modal-title ใส่ข้อมูล
         ul.right
           li
             span.profile-name { user.name }
@@ -76,7 +76,7 @@ page-report
       .container.no-padding-s
         .row
           .col.s12.m6.offset-m3.l4.offset-l4
-            button#submit-pin-btn.btn.btn-large.btn-block(type='button', onclick='{ clickSubmitReport }', class='{ is_pin_complete ? "" : "disabled" }', disabled='{ !is_pin_complete }') โพสต์พิน
+            button#submit-pin-btn.btn.btn-large.btn-block(type='button', onclick='{ clickSubmitReport }', class='{ is_pin_complete ? "" : "disabled" }', disabled='{ !is_pin_complete }') รายงาน
 
   #report-photo-modal.modal.bottom-sheet.full-sheet
     .modal-header
@@ -119,7 +119,7 @@ page-report
               | กลับ
         .center
           a.brand-logo(href='#')
-          .modal-title ตำแหน่งพิน
+          .modal-title เลือกตำแหน่ง
         ul.right
           li
             a(href='#!', onclick='{ clickLocateMe }')
@@ -139,7 +139,7 @@ page-report
     .modal-content
       .progress
         .indeterminate
-      h4.center กำลังพิน
+      h4.center กำลังรายงาน
 
   style(type='scss', scoped).
     :scope {
@@ -500,7 +500,8 @@ page-report
 
     function checkReportComplete() {
       self.is_pin_complete = true;
-      if (!self.location) self.is_pin_complete = false;
+      // TODO: location is optional
+      //- if (!self.location) self.is_pin_complete = false;
       if (!self.detail) self.is_pin_complete = false;
       if (!self.categories) self.is_pin_complete = false;
       if (self.photos.length === 0) self.is_pin_complete = false;
@@ -705,7 +706,7 @@ page-report
       })
       .fail(error => {
         console.error('error:', error);
-        Materialize.toast('ไม่สามารถพินปัญหาได้ (' + error + ')', 5000, 'dialog-error');
+        Materialize.toast('ไม่สามารถรายงานปัญหาได้ (' + error + ')', 5000, 'dialog-error');
         $('#report-saving-modal').closeModal();
       });
     }
