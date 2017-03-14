@@ -54,8 +54,13 @@
     #hero-slogan {
       color: $cl-primary;
       font-size: $fs-lg;
-      font-weight: $fw-light;
+      // font-weight: $fw-light;
       margin-bottom: 2rem;
+    }
+
+    #hero-text {
+      font-size: $fs-lg;
+      margin-top: 1rem;
     }
   }
 
@@ -116,10 +121,8 @@
 
   #whatis {
     .title {
-      padding: 0 4rem;
-      img {
-
-      }
+      // padding: 0 6rem;
+      max-width: 240px;
     }
   }
 

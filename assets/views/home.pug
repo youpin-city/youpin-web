@@ -13,15 +13,17 @@ append content
           #hero-subtitle พินปัญหา พินความเห็น พินตำแหน่ง พินที่ "iCare"
           #hero-slogan Transforming Passive to Active Student
 
+          #hero-text เสนอแนะและรายงานปัญหา
+          .spacing-small
           .row
             .col.s12.m6.offset-m3.l6.offset-l3
-              a.btn.btn-large.btn-block.waves-effect.waves-light(href=site_url('/login')) รายงานปัญหากับ iCare
+              a.btn.btn-large.btn-block.waves-effect.waves-light(href=site_url('/login')) รายงานผ่านเว็บ
               .spacing-small
-              a.btn.btn-large.btn-block.waves-effect.waves-light(href=app_config.service.chatbot, target='_blank') คุยกับ iCare
-              .spacing-small
-              a.btn.btn-large.btn-block.waves-effect.waves-light.white.blue-text(href=app_config.service.fb, target='_blank') Follow Us on Facebook
+              a.btn.btn-large.btn-block.waves-effect.waves-light.messenger(href=app_config.service.chatbot, target='_blank') คุยกับ Chatbot
 
     #trending-pin.section
+      .center
+        span แก้ไขแล้วล่าสุด
       .clearfix
         trending-pins
       .spacing
@@ -33,9 +35,9 @@ append content
             .title
               img.responsive-img(src=site_url('/public/image/logo-land@2x.png'))
             p iCare คือ เครื่องมือสำหรับการพินข้อร้องเรียน หรือพินความคิดเห็น สำหรับนักศึกษา บุคลากร และบุคคลที่มีส่วนเกี่ยวข้องกับคณะวิศวกรรมศาสตร์ ผ่านช่องทาง
-              | <a href=app_config.service.fb>Facebook Messenger</a>
+              | <a href='#{app_config.service.fb}'> Facebook Messenger </a>
               | และ
-              | <a href=app_config.baseurl>Web App</a>
+              | <a href='#{app_config.baseurl}'> Web App </a>
             p โดยผู้ใช้สามารถส่งรูปภาพ คำอธิบาย แฮชแท็ค และตำแหน่ง ของปัญหาหรือความคิดเห็นเข้าสู่ iCare ข้อมูลทั้งหมดที่ถูกรายงานผ่านระบบ จะส่งตรงไปสู่เจ้าหน้าที่ผู้รับผิดชอบ เพื่อดำเนินการต่อในทันที โดยมีการแจ้งเตือนสถานะการแก้ไขตลอดทั้งกระบวนการจนปัญหาถูกแก้ไขเสร็จสิ้น ทั้งนี้ ผู้ใช้สามารถใช้ iCare ในการเสนอความคิดเห็นและคำชมได้เช่นเดียวกัน
             p พินบน iCare เพื่อคณะของเราได้ตั้งแต่วันนี้ ทั้ง 2 ช่องทาง
 
@@ -50,9 +52,9 @@ append content
 
         .row
           .col.m6.offset-m3
-            .spacing
+            .spacing-large
             .center
-              strong สร้างสรรค์โดย
+              span สร้างสรรค์โดย
             ul.partner-list.clearfix
               li
                 a(href='#')
