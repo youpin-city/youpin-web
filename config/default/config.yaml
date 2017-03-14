@@ -57,8 +57,12 @@ service:
   map:
     initial_location: [13.7365673, 100.5326298]
   ga:
-    id:
+    id: UA-80422053-2
   facebook:
     app_id: '333703643674377'
     page: https://www.facebook.com/icare.chula.engineering
     chatbot: https://m.me/281055212289797
+  contact:
+    email: icare@eng.chula.ac.th
+  github:
+    url: https://github.com/youpin-city

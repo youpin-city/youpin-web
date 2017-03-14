@@ -2,12 +2,12 @@
 footer.page-footer
   .container
     .colophon
-      .item &copy; 2017 iCare. Faculty of Engineering, Chulalongkorn University.
+      .item &copy; 2017 iCare by Faculty of Engineering, Chulalongkorn University.
+      //- .item
+      //-   a(href=site_url('/privacy')) Privacy
       .item
-        a(href=site_url('/privacy')) Privacy
+        a(href='mailto:' + app_config.service.email) Contact
       .item
-        a(href='mailto:icare@eng.chula.ac.th') Contact
+        a(href=app_config.service.fb, target='_blank') Facebook
       .item
-        a(href='https://www.facebook.com/icare.chula.engineering', target='_blank') Facebook
-      .item
-        a(href='https://github.com/youpin-city', target='_blank') GitHub
+        a(href=app_config.service.github, target='_blank') GitHub

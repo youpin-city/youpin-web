@@ -61,6 +61,10 @@
       .card-author {
         display: inline-block;
         margin-right: 0.3rem;
+        strong {
+          font-weight: normal;
+          color: $cl-black;
+        }
       }
       .card-text {
         display: inline;
@@ -72,8 +76,9 @@
         // white-space: nowrap;
         .tag-item {
           display: inline-block;
+          font-weight: $fw-bold;
           white-space: nowrap;
-          @include text-hover($cl-lightblue, lighten($cl-lightblue, 15%));
+          @include text-hover($cl-link, $cl-link-active);
         }
       }
       .card-area {
@@ -96,29 +101,26 @@
       .meta-status {
         position: relative;
         text-transform: uppercase;
-        &:after {
-          content: '';
-          display: block;
-          position: absolute;
-          left: 0;
-          right: 0;
-          border-bottom: 2px solid $cl-primary;
-        }
-        &[data-status="pending"]:after {
-          border-color: $cl-gray;
-        }
-        &[data-status="accepted"]:after {
-          border-color: $cl-blue;
-        }
-        &[data-status="fixed"]:after {
-          border-color: $cl-green;
-        }
-        &[data-status="wontfix"]:after {
-          border-color: $cl-pink;
-        }
-      }
-      .meta-time {
-        color: $cl-white;
+        // &:after {
+        //   content: '';
+        //   display: block;
+        //   position: absolute;
+        //   left: 0;
+        //   right: 0;
+        //   border-bottom: 2px solid $cl-primary;
+        // }
+        // &[data-status="pending"]:after {
+        //   border-color: $cl-gray;
+        // }
+        // &[data-status="accepted"]:after {
+        //   border-color: $cl-blue;
+        // }
+        // &[data-status="fixed"]:after {
+        //   border-color: $cl-green;
+        // }
+        // &[data-status="wontfix"]:after {
+        //   border-color: $cl-pink;
+        // }
       }
     }
   }
@@ -154,6 +156,9 @@
         // background: rgba(0,0,0,0.7);
         // transform: translate(0, 100%);
         opacity: 0;
+        .meta-time {
+          color: $cl-white;
+        }
       }
       &:hover {
         .card-image {

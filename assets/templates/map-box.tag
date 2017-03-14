@@ -66,8 +66,8 @@ map-box
     });
     // Define
     self.YPIcon = L.icon({
-      iconUrl: util.site_url('/public/image/marker-m-3d.png'),
-      iconSize: [36, 54],
+      iconUrl: util.site_url('/public/image/marker-m-3d@2x.png'),
+      iconSize: [56, 56],
       iconAnchor: [16, 51],
       popupAnchor: [0, -51]
     });

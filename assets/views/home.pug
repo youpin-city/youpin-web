@@ -6,41 +6,58 @@ append content
     #floating-logo
       .logo
 
-    .container
-      #hero
-        #hero-logo
-        #hero-subtitle พินปัญหา พินความเห็น พินตำแหน่ง พินที่ "iCare"
-        #hero-slogan Transforming Passive to Active Student
+    #calltoaction.section
+      .container
+        #hero
+          #hero-logo
+          #hero-subtitle พินปัญหา พินความเห็น พินตำแหน่ง พินที่ "iCare"
+          #hero-slogan Transforming Passive to Active Student
+
+          .row
+            .col.s12.m6.offset-m3.l6.offset-l3
+              a.btn.btn-large.btn-block.waves-effect.waves-light(href=site_url('/login')) รายงานปัญหากับ iCare
+              .spacing-small
+              a.btn.btn-large.btn-block.waves-effect.waves-light(href=app_config.service.chatbot, target='_blank') คุยกับ iCare
+              .spacing-small
+              a.btn.btn-large.btn-block.waves-effect.waves-light.white.blue-text(href=app_config.service.fb, target='_blank') Follow Us on Facebook
+
+    #trending-pin.section
+      .clearfix
+        trending-pins
+      .spacing
+
+    #whatis.section
+      .container
+        .row
+          .col.m6
+            .title
+              img.responsive-img(src=site_url('/public/image/logo-land@2x.png'))
+            p iCare คือ เครื่องมือสำหรับการพินข้อร้องเรียน หรือพินความคิดเห็น สำหรับนักศึกษา บุคลากร และบุคคลที่มีส่วนเกี่ยวข้องกับคณะวิศวกรรมศาสตร์ ผ่านช่องทาง
+              | <a href=app_config.service.fb>Facebook Messenger</a>
+              | และ
+              | <a href=app_config.baseurl>Web App</a>
+            p โดยผู้ใช้สามารถส่งรูปภาพ คำอธิบาย แฮชแท็ค และตำแหน่ง ของปัญหาหรือความคิดเห็นเข้าสู่ iCare ข้อมูลทั้งหมดที่ถูกรายงานผ่านระบบ จะส่งตรงไปสู่เจ้าหน้าที่ผู้รับผิดชอบ เพื่อดำเนินการต่อในทันที โดยมีการแจ้งเตือนสถานะการแก้ไขตลอดทั้งกระบวนการจนปัญหาถูกแก้ไขเสร็จสิ้น ทั้งนี้ ผู้ใช้สามารถใช้ iCare ในการเสนอความคิดเห็นและคำชมได้เช่นเดียวกัน
+            p พินบน iCare เพื่อคณะของเราได้ตั้งแต่วันนี้ ทั้ง 2 ช่องทาง
+
+            ul
+              li
+                a(href=app_config.service.fb) Facebook Messenger
+              li
+                a(href=app_config.baseurl) Web App
+
+          .col.m6
+            .fb-page(data-href=app_config.service.fb, data-tabs='timeline', data-small-header='true', data-adapt-container-width='true', data-hide-cover='false', data-show-facepile='true')
 
         .row
-          .col.s12.m6.offset-m3.l6.offset-l3
-            a.btn.btn-large.btn-block.waves-effect.waves-light(href=site_url('/login')) รายงานปัญหากับ iCare
-            .spacing-small
-            a.btn.btn-large.btn-block.waves-effect.waves-light(href=app_config.service.chatbot, target='_blank') คุยกับ iCare
-            .spacing-small
-            a.btn.btn-large.btn-block.waves-effect.waves-light.white.blue-text(href='https://www.facebook.com/ChulaEngineering', target='_blank') Follow Us on Facebook
+          .col.m6.offset-m3
+            .spacing
+            .center
+              strong สร้างสรรค์โดย
+            ul.partner-list.clearfix
+              li
+                a(href='#')
+                  img.responsive-img(src='/public/image/partner/chulaeng@2x.png')
 
-        .row
-          .col.s12
-            .fb-page(data-href='https://www.facebook.com/icare.chula.engineering', data-tabs='timeline', data-height='280', data-small-header='true', data-adapt-container-width='true', data-hide-cover='false', data-show-facepile='true')
-
-    #trending-pin.clearfix
-      .card-carousel
-        for pin in trending_pins
-          .card.disabled
-            .card-image(style='background-image: url(' + pin.photo[0] + ');')
-            .card-content
-              .card-description
-                .card-author
-                  a(href='#!user/' + pin.author) @#{pin.author}
-                .card-text #{pin.name}
-                if pin.tag && pin.tag.length > 0
-                  for tag in pin.tag
-                    a.tag-item(href=('#!tag/' + tag)) #{tag}
-
-              .card-stat
-                .meta.meta-like.left เห็นด้วย #{pin.like_count} คน
-              .card-meta
-                .meta.meta-time.right= moment(pin.created_at).fromNow()
-                .meta.meta-status.left(data-status=pin.status)= pin.status
-
+append app_script
+  script.
+    riot.mount('trending-pins');

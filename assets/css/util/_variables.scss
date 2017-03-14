@@ -49,6 +49,7 @@ $cl-tertiary-active: darken($cl-tertiary, 15%);
 $cl-default: $cl-darkgray;
 $cl-header: #666;
 $cl-link: $cl-primary;
+$cl-link-active: $cl-primary-active;
 $cl-error: $cl-red;
 $cl-border: $cl-verylightgray;
 $cl-darkborder: $cl-gray;
@@ -97,23 +98,27 @@ $br-large: 0.8rem;
 $br-small: 0.2rem;
 
 // font size
-$fs-xxxl: 4.0rem;
-$fs-xxl: 3.2rem;
-$fs-xl: 2.8rem;
-$fs-lg: 2.0rem;
-$fs-md: 1.7rem;
-$fs-sm: 1.5rem;
-$fs-xs: 1.2rem;
-$fs-xxs: 1.0rem;
+$fs-1: 3.4rem !default; // 3.5rem !default;
+$fs-2: 2.8rem !default; // 2.75rem !default;
+$fs-3: 2.2rem !default; // 2rem !default;
+$fs-4: 1.8rem !default; // 1.5rem !default;
+$fs-5: 1.6rem !default; // 1.25rem !default;
+$fs-6: 1.4rem !default; // 14px !default;
+$fs-7: 1.2rem !default; // 0.75rem !default;
+$fs-8: 1.1rem !default;
+$fs-9: 1.0rem !default;
 
-// font size
-$fs-h1: $fs-xxxl;
-$fs-h2: $fs-xxl;
-$fs-h3: $fs-xl;
-$fs-h4: $fs-lg;
-$fs-h5: $fs-md;
-$fs-h6: $fs-sm;
-$fs-p : $fs-sm;
+$fs-xxxxl: $fs-1;
+$fs-xxxl: $fs-2;
+$fs-xxl: $fs-3;
+$fs-xl: $fs-4;
+$fs-lg: $fs-5;
+$fs-md: $fs-6;
+$fs-sm: $fs-7;
+$fs-xs: $fs-8;
+$fs-xxs: $fs-9;
+
+$fs-p : $fs-md;
 
 // icon = Ionicons
 $fs-icon-h1: 5.6rem;

@@ -97,7 +97,7 @@
   }
   #award-name {
     font-family: $ff-header;
-    font-size: $fs-h1;
+    font-size: $fs-1;
     color: $cl-primary;
     text-transform: uppercase;
     text-align: center;
@@ -105,7 +105,7 @@
   }
   #award-subtitle {
     font-family: $ff-header;
-    font-size: $fs-h4;
+    font-size: $fs-4;
     color: $cl-darkgray;
     font-weight: $fw-bold;
     text-align: center;
@@ -114,11 +114,20 @@
     text-align: center;
   }
 
+  #whatis {
+    .title {
+      padding: 0 4rem;
+      img {
+
+      }
+    }
+  }
 
   ul.partner-list {
     > li {
       display: inline-block;
-      width: 20%;
+      // width: 20%;
+      width: 100%;
       float: left;
       a {
         display: inline-block;
@@ -128,7 +137,8 @@
 
     @media #{$small-and-down} {
       > li {
-        width: 50%;
+        // width: 50%;
+        width: 100%;
       }
     }
   }
