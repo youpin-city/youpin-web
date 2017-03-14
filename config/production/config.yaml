@@ -4,3 +4,6 @@ port: 7200
 site:
   protocol: https
   hostname: icare.eng.chula.ac.th
+service:
+  api:
+    url: https://api.icare.eng.chula.ac.th
