@@ -30,8 +30,10 @@ trending-pins
 
     self.on('updated', () => {
       // interpolate html
-      const $text = $(this.root).find('.card-text');
-      $text.html($text.attr('html'));
+      $(this.root).find('.card-text').each(function() {
+        const $text = $(this);
+        $text.html($text.attr('html'));
+      });
     });
 
 
