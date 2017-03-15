@@ -15,11 +15,16 @@ append content
 
           #hero-text เสนอแนะและรายงานปัญหา
           .spacing-small
-          .row
+          #hero-menu.row
             .col.s12.m6.offset-m3.l6.offset-l3
-              a.btn.btn-large.btn-block.waves-effect.waves-light(href=site_url('/login')) รายงานผ่านเว็บ
+              a.btn.btn-large.btn-block.waves-effect.waves-light(href=site_url('/login'))
+                i.icon.material-icons.large location_on
+                | รายงานผ่านเว็บ
               .spacing-small
-              a.btn.btn-large.btn-block.waves-effect.waves-light.messenger(href=app_config.service.chatbot, target='_blank') คุยกับ Chatbot
+              a.btn.btn-large.btn-block.waves-effect.waves-light.messenger(href=app_config.service.chatbot, target='_blank')
+                i.icon
+                  img(src='/public/image/icon-messenger@2x.png')
+                | คุยกับ Chatbot
 
     #trending-pin.section
       .center

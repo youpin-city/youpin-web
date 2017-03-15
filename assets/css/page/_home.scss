@@ -62,6 +62,19 @@
       font-size: $fs-lg;
       margin-top: 1rem;
     }
+
+    #hero-menu {
+      i.icon {
+        font-size: 3.2rem;
+        display: inline-block;
+        width: 32px;
+        height: 32px;
+        margin: 0 0.5rem;
+        img {
+          width: 100%;
+        }
+      }
+    }
   }
 
   .card-carousel {
