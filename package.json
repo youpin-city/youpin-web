@@ -20,16 +20,9 @@
     "deploy:production": "pm2 deploy ecosystem.json production --force",
     "test": "eslint ."
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/youpin-city/youpin-web.git"
-  },
+  "repository": "youpin-city/youpin-web",
   "author": "YouPin <youpin.city@gmail.com>",
   "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/youpin-city/youpin-web/issues"
-  },
-  "homepage": "https://github.com/youpin-city/youpin-web#readme",
   "dependencies": {
     "aws-sdk": "^2.4.2",
     "bluebird": "^3.4.0",
