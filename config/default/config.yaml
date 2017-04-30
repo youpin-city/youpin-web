@@ -35,7 +35,7 @@ issue:
       text: ห้องเรียน
       selected: false
     - value: safety
-      text: ปลอดภัย
+      text: ความปลอดภัย
       selected: false
     - value: sanitary
       text: ความสะอาด
