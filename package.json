@@ -4,9 +4,9 @@
   "description": "YouPin on the web",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
-    "dev": "node bin/start.js && npm run build && parallelshell 'pm2 logs' 'npm run watch'",
-    "dev:stop": "node bin/stop.js && pm2 ls",
+    "start": "node bin/start.js && npm run build && parallelshell 'pm2 logs' 'npm run watch'",
+    "stop": "node bin/stop.js && pm2 ls",
+    "start:production": "node index.js",
     "build:css": "echo '=> build:css' && node-sass --source-map true --output-style compressed -o public/css/ assets/css/",
     "watch:css": "node-sass --source-map true --output-style expanded --watch --recursive -o public/css/ assets/css/",
     "prebuild:js": "mkdir -p public/js",
