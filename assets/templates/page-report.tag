@@ -24,9 +24,6 @@ page-report
         .row
           .col.s12.m6.offset-m3.l4.offset-l4
             form#report-form
-              input(type='hidden', name='location[coordinates][]:number', value='{ location.lat }')
-              input(type='hidden', name='location[coordinates][]:number', value='{ location.lng }')
-              input(type='hidden', name='location[type][]:string', value='Point')
               input(each='{ photo in photos }', type='hidden', name='photos[]', value='{ photo.url }')
               input(type='hidden', name='status', value='{ status }')
               input(type='hidden', name='owner', value='{ owner }')
@@ -69,7 +66,10 @@ page-report
                       button.location-input.btn.btn-block.btn-native(type='button', onclick='{ clickMapLocation }') { location_text }
 
                 #input-location-complete(if='{ location }')
-                  map-box#preview-location(pin-clickable='false', options-dragging='false', options-zoom='17', options-zoom-control='false', options-scroll-wheel-zoom='false', options-double-click-zoom='false', options-touch-zoom='false', options-tap='false', options-keyboard='false')
+                  .card-content.clearfix
+                    .right
+                      a(href='#', onclick='{ clickClearMapLocation }') ลบตำแหน่ง
+                  map-box#preview-location(pin-clickable='false', options-dragging='false', options-zoom='18', options-zoom-control='false', options-scroll-wheel-zoom='false', options-double-click-zoom='false', options-touch-zoom='false', options-tap='false', options-keyboard='false')
                   button#edit-location-btn.btn-floating.btn-large.waves-effect.waves-light.white(type='button', onclick='{ clickMapLocation }')
                     i.icon.material-icons.large.light-blue-text edit
 
@@ -127,7 +127,7 @@ page-report
 
     .modal-content.no-padding-s
       #edit-location-map.input-location-map
-      a#submit-location-btn.btn.btn-large.btn-block.modal-close(onclick='{ clickCloseMap }') ใช้ตำแหน่งนี้
+      a#submit-location-btn.btn.btn-large.btn-block.modal-close(onclick='{ clickConfirmMapLocation }') ใช้ตำแหน่งนี้
 
   #report-uploading-modal.modal
     .modal-content
@@ -178,6 +178,7 @@ page-report
     self.map_id = 'edit-location-map';
     self.location_name = '';
     self.location = null; // app.get('location.default');
+    self.edit_location = app.get('location.default');
     self.default_status = 'pending';
     self.status = self.default_status;
     self.neighborhood = '';
@@ -539,39 +540,66 @@ page-report
       }
     }
 
+    function updateMaxBounds() {
+      if (!self.map) return;
+      const currentZoomBounds = self.map.getBounds();
+      const w = Math.abs(currentZoomBounds.getEast() - currentZoomBounds.getWest());
+      const h = Math.abs(currentZoomBounds.getNorth() - currentZoomBounds.getSouth());
+      const viewBounds = L.latLngBounds(app.get('location.max_bounds'));
+      const sw = viewBounds.getSouthWest();
+      const ne = viewBounds.getNorthEast();
+      viewBounds.extend([
+        [sw.lat - h/2, sw.lng - w/2],
+        [ne.lat + h/2, ne.lng + w/2]
+      ]);
+      self.map.setMaxBounds(viewBounds);
+    }
+
     function initMap() {
       if (self.map) return;
-      if (!self.location) return;
+      if (!self.edit_location) return;
 
       self.map = L.map(self.map_id);
 
       // // Add google maps
       // var googleLayer = new L.Google('ROADMAP');
       // self.map.addLayer(googleLayer);
-      //
-      // HERE Maps
-      // @see https://developer.here.com/rest-apis/documentation/enterprise-map-tile/topics/resource-base-maptile.html
-      // https: also suppported.
-      var HERE_normalDay = L.tileLayer('https://{s}.{base}.maps.cit.api.here.com/maptile/2.1/{type}/{mapID}/{scheme}/{z}/{x}/{y}/{size}/{format}?app_id={app_id}&app_code={app_code}&lg={language}&style={style}', {
-        attribution: 'Map &copy; 1987-2014 <a href="https://developer.here.com">HERE</a>',
-        subdomains: '1234',
-        mapID: 'newest',
-        app_id: app.get('service.here.app_id'),
-        app_code: app.get('service.here.app_code'),
-        base: 'base',
-        maxZoom: 20,
-        type: 'maptile',
-        scheme: 'ontouchstart' in window ? 'normal.day.mobile' : 'normal.day',
-        language: 'tha',// 'eng',
-        style: 'default',
-        format: 'png8',
-        size: '256'
+
+      //- // HERE Maps
+      //- // @see https://developer.here.com/rest-apis/documentation/enterprise-map-tile/topics/resource-base-maptile.html
+      //- // https: also suppported.
+      //- var HERE_normalDay = L.tileLayer('https://{s}.{base}.maps.cit.api.here.com/maptile/2.1/{type}/{mapID}/{scheme}/{z}/{x}/{y}/{size}/{format}?app_id={app_id}&app_code={app_code}&lg={language}&style={style}', {
+      //-   attribution: 'Map &copy; 1987-2014 <a href="https://developer.here.com">HERE</a>',
+      //-   subdomains: '1234',
+      //-   mapID: 'newest',
+      //-   app_id: app.get('service.here.app_id'),
+      //-   app_code: app.get('service.here.app_code'),
+      //-   base: 'base',
+      //-   maxZoom: 20,
+      //-   type: 'maptile',
+      //-   scheme: 'ontouchstart' in window ? 'normal.day.mobile' : 'normal.day',
+      //-   language: 'tha',// 'eng',
+      //-   style: 'default',
+      //-   format: 'png8',
+      //-   size: '256'
+      //- });
+      //- self.map.addLayer(HERE_normalDay);
+
+      // OpenStreetMap Maps
+      const OpenStreetMap_Mapnik = L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+        maxZoom: 19
       });
-      self.map.addLayer(HERE_normalDay);
+      self.map.addLayer(OpenStreetMap_Mapnik);
+
+      // set map center
+      self.map.setView(app.get('location.default'), 19);
+      // add pin marker
       self.map_marker = L.marker(app.get('location.default'), { icon: self.YPIcon })
         .addTo(self.map);
 
-      updateMarkerLocation(self.location, { zoom: 16 });
+      updateMarkerLocation(self.edit_location);
+      updateMaxBounds();
 
       // self.map.on('drag', _.throttle(() => {
       //   updateMarkerLocation(self.map.getCenter());
@@ -584,6 +612,10 @@ page-report
       }, 100));
       self.map.on('moveend zoomend resize', e => {
         updateMarkerLocation(self.map.getCenter());
+      });
+
+      self.map.on('zoomend', e => {
+        updateMaxBounds();
       });
     }
 
@@ -598,7 +630,7 @@ page-report
       if (!self.map) return false;
       self.map.locate({
         setView: true,
-        maxZoom: 16,
+        maxZoom: 18,
         enableHighAccuracy: true
       });
 
@@ -614,14 +646,25 @@ page-report
     }
 
     function setLocation(latlng) {
-      updateMarkerLocation(latlng, { zoom: 17 });
+      updateMarkerLocation(latlng, { zoom: 18 });
       self.location = L.latLng(latlng);
       self.update();
 
-      riot.mount('#preview-location', { pins: [{ location: {
-        coordinates: self.location,
-        type: 'Point'
-      }}] });
+      riot.mount('#preview-location', {
+        center: self.location,
+        pins: [{
+          location: {
+            coordinates: self.location,
+            type: 'Point'
+            }
+          }
+        ]
+      });
+    }
+
+    function clearLocation() {
+      self.location = null;
+      self.update();
     }
 
     function updateMarkerLocation(latlng, options = {}) {
@@ -647,6 +690,7 @@ page-report
       }).toArray()), tag => {
         if (tag.map) {
           tag.map.invalidateSize();
+          updateMaxBounds();
         }
       });
     }
@@ -672,6 +716,12 @@ page-report
       });
 
       const form_data = $('#report-form').serializeJSON();
+      // TODO: do not set empty location when API allow optional location
+      // Currently, API force to default location when no location data is given
+      form_data.location = {
+        coordinates: self.location ? [self.location.lat, self.location.lng] : [0, 0],
+        type: ['Point']
+      };
       form_data.categories = _.map(
         form_data.categories && typeof form_data.categories === 'string' ? form_data.categories.split(',') : [],
         cat => _.trim(cat)
@@ -734,6 +784,12 @@ page-report
       openMapLocation();
     };
 
+    self.clickClearMapLocation = function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      clearLocation();
+    }
+
     function openMapLocation() {
       $('#report-input-modal').addClass('inactive');
       $('#report-map-modal').openModal({
@@ -742,7 +798,9 @@ page-report
             updateMap();
           } else {
             if (!self.location) {
-              self.location = app.get('location.default');
+              self.edit_location = app.get('location.default');
+            } else {
+              self.edit_location = _.clone(self.location);
             }
             self.update();
           }
@@ -772,6 +830,10 @@ page-report
     }
 
     self.clickCloseMap = function(e) {
+      $('#report-input-modal').removeClass('inactive');
+    }
+
+    self.clickConfirmMapLocation = function(e) {
       setLocation(self.map.getCenter());
       $('#report-input-modal').removeClass('inactive');
     }

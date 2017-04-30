@@ -56,6 +56,9 @@ service:
     url: 'http://localhost:9100'
   map:
     initial_location: [13.7365673, 100.5326298]
+    max_bounds:
+      - [13.734595, 100.531715]
+      - [13.737940, 100.534456]
   ga:
     id: UA-80422053-2
   facebook:

@@ -190,27 +190,32 @@ map-box
       // var BingMaps = new L.BingLayer(BING_API_KEY, { type: 'Road' });  //The type can also be 'Aerial' or 'AerialWithLabels'
       // self.map.addLayer(BingMaps);
 
-      // HERE Maps
-      // @see https://developer.here.com/rest-apis/documentation/enterprise-map-tile/topics/resource-base-maptile.html
-      // https: also suppported.
-      var HERE_normalDay = L.tileLayer('https://{s}.{base}.maps.cit.api.here.com/maptile/2.1/{type}/{mapID}/{scheme}/{z}/{x}/{y}/{size}/{format}?app_id={app_id}&app_code={app_code}&lg={language}&style={style}&ppi={ppi}', {
-        attribution: 'Map &copy; 1987-2014 <a href="https://developer.here.com">HERE</a>',
-        subdomains: '1234',
-        mapID: 'newest',
-        app_id: app.get('service.here.app_id'),
-        app_code: app.get('service.here.app_code'),
-        base: 'base',
-        maxZoom: 20,
-        type: 'maptile',
-        scheme: 'ontouchstart' in window ? 'normal.day.mobile' : 'normal.day',
-        language: 'tha',// 'eng',
-        style: 'default',
-        format: 'png8',
-        size: '256',
-        ppi: 'devicePixelRatio' in window && window.devicePixelRatio >= 2 ? '250' : '72'
-      });
-      self.map.addLayer(HERE_normalDay);
+      //- // HERE Maps
+      //- // @see https://developer.here.com/rest-apis/documentation/enterprise-map-tile/topics/resource-base-maptile.html
+      //- // https: also suppported.
+      //- var HERE_normalDay = L.tileLayer('https://{s}.{base}.maps.cit.api.here.com/maptile/2.1/{type}/{mapID}/{scheme}/{z}/{x}/{y}/{size}/{format}?app_id={app_id}&app_code={app_code}&lg={language}&style={style}&ppi={ppi}', {
+      //-   attribution: 'Map &copy; 1987-2014 <a href="https://developer.here.com">HERE</a>',
+      //-   subdomains: '1234',
+      //-   mapID: 'newest',
+      //-   app_id: app.get('service.here.app_id'),
+      //-   app_code: app.get('service.here.app_code'),
+      //-   base: 'base',
+      //-   maxZoom: 20,
+      //-   type: 'maptile',
+      //-   scheme: 'ontouchstart' in window ? 'normal.day.mobile' : 'normal.day',
+      //-   language: 'tha',// 'eng',
+      //-   style: 'default',
+      //-   format: 'png8',
+      //-   size: '256',
+      //-   ppi: 'devicePixelRatio' in window && window.devicePixelRatio >= 2 ? '250' : '72'
+      //- });
+      //- self.map.addLayer(HERE_normalDay);
 
+      // OpenStreetMap Maps
+      const OpenStreetMap_Mapnik = L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+      });
+      self.map.addLayer(OpenStreetMap_Mapnik);
 
       // // Facebook Maps
       // // @example https://external.fbkk2-1.fna.fbcdn.net/map_tile.php?v=25&x=29161&y=12892&z=15&language=en_GB&theme=undefined
