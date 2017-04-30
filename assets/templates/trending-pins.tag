@@ -39,7 +39,7 @@ trending-pins
 
     self.loadTrendingPins = () => {
       $.ajax({
-        url: util.site_url('/pins?status=resolved&$limit=4&$sort=-resolved_time', app.get('service.api.url')),
+        url: util.site_url('/pins?is_featured=true&$limit=4&$sort=-resolved_time', app.get('service.api.url')),
         dataType: 'json'
       })
       .done(data => {
