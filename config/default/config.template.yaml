@@ -55,16 +55,16 @@ service:
   api:
     url: 'http://localhost:9100'
   map:
-    initial_location: [13.7365673, 100.5326298]
+    initial_location: [13.735516, 100.531409]
     max_bounds:
-      - [13.734595, 100.531715]
-      - [13.737940, 100.534456]
+      - [13.72717, 100.516963]
+      - [13.753683, 100.54503]
   ga:
     id: UA-80422053-2
   facebook:
     app_id: '333703643674377'
-    page: https://www.facebook.com/icare.chula.engineering
-    chatbot: https://m.me/281055212289797
+    page: https://www.facebook.com/CUSolvingCenter
+    chatbot: https://m.me/CUSolvingCenter
   contact:
     email: icare@eng.chula.ac.th
   github:
