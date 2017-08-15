@@ -1,9 +1,9 @@
 ---
 env: production
-port: 7200
+port: 7300
 site:
   protocol: https
-  hostname: icare.eng.chula.ac.th
+  hostname: chula.youpin.city
 service:
   api:
-    url: https://api.icare.eng.chula.ac.th
+    url: https://api.chula.youpin.city

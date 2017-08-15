@@ -3,5 +3,5 @@ env: development
 port: 7100
 site:
   protocol: http
-  hostname: icare.youpin.city
+  hostname: dev.chula.youpin.city
 debug: true

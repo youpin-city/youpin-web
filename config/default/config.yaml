@@ -66,6 +66,6 @@ service:
     page: https://www.facebook.com/CUSolvingCenter
     chatbot: https://m.me/CUSolvingCenter
   contact:
-    email: icare@eng.chula.ac.th
+    email: chula@youpin.city
   github:
     url: https://github.com/youpin-city
