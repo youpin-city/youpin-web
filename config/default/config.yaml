@@ -16,37 +16,18 @@ feature:
   enabled_email: true
   enabled_sms: false
 organization:
-  id: '583ddb7a3db23914407f9b58'
+  id: '599e4c473bdb57013db8d77d'
 issue:
   categories:
-    - value: repair
-      text: แจ้งซ่อม
+    - id: physical
+      name: กายภาพ
       selected: false
-    - value: service
-      text: บริการ
+    - id: security
+      name: ความปลอดภัย
       selected: false
-    - value: it
-      text: IT
+    - id: facility
+      name: ระบบอำนวยความสะดวก
       selected: false
-    - value: suggestion
-      text: เสนอแนะ
-      selected: false
-    - value: classroom
-      text: ห้องเรียน
-      selected: false
-    - value: safety
-      text: ความปลอดภัย
-      selected: false
-    - value: sanitary
-      text: ความสะอาด
-      selected: false
-    - value: traffic
-      text: จราจร
-      selected: false
-    - value: others
-      text: อื่น ๆ
-      selected: false
-
 
 service:
   cookie:
@@ -66,6 +47,6 @@ service:
     page: https://www.facebook.com/CUSolvingCenter
     chatbot: https://m.me/CUSolvingCenter
   contact:
-    email: chula@youpin.city
+    email: rd.sgcu6+web@gmail.com
   github:
     url: https://github.com/youpin-city

@@ -24,7 +24,7 @@ page-pin
                     //- a(href='#user/{ pin.owner }') @{ pin.owner }
                   .card-text(html='{ util.parse_tags(pin.detail) }')
                   .tag-list(if='{ util.remove_duplicate_tags( pin.categories, pin.details ).length > 0 }')
-                    a.tag-item(each='{ cat in categories }', href=('#tags/{ cat }')) {cat}
+                    a.tag-item(each='{ cat in pin.categories }', href=('#tags/{ cat }')) {cat}
                   //- .card-area(if='{ pin.neighborhood }') ย่าน{ pin.neighborhood }
 
                 //- .card-stat

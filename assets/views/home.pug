@@ -10,7 +10,7 @@ append content
       .container
         #hero
           #hero-logo
-          #hero-subtitle พินปัญหา พินความเห็น พินตำแหน่ง พินที่ "iCare"
+          #hero-subtitle พินปัญหา พินความเห็น พินตำแหน่ง
           #hero-slogan Transforming Passive to Active Student
 
           #hero-text เสนอแนะและรายงานปัญหา
@@ -38,32 +38,43 @@ append content
         .row
           .col.m6
             .title
-              img.responsive-img(src=site_url('/public/image/logo-land@2x.png'))
-            p iCare คือ เครื่องมือสำหรับการรายนงานข้อร้องเรียน หรือความคิดเห็น สำหรับนักศึกษา บุคลากร และบุคคลที่มีส่วนเกี่ยวข้องกับคณะวิศวกรรมศาสตร์ ผ่านช่องทาง
-              | <a href='#{app_config.service.fb}'> Facebook Messenger </a>
-              | และ
-              | <a href='#{app_config.baseurl}'> Web App </a>
-            p โดยผู้ใช้สามารถส่งรูปภาพ คำอธิบาย แฮชแท็ค และตำแหน่ง ของปัญหาหรือความคิดเห็นเข้าสู่ iCare ข้อมูลทั้งหมดที่ถูกรายงานผ่านระบบ จะส่งตรงไปสู่เจ้าหน้าที่ผู้รับผิดชอบ เพื่อดำเนินการต่อในทันที โดยมีการแจ้งเตือนสถานะการแก้ไขตลอดทั้งกระบวนการจนปัญหาถูกแก้ไขเสร็จสิ้น ทั้งนี้ ผู้ใช้สามารถใช้ iCare ในการเสนอความคิดเห็นและคำชมได้เช่นเดียวกัน
-            p รายงานบน iCare เพื่อคณะของเราได้ตั้งแต่วันนี้ ทั้ง 2 ช่องทาง
+              img.responsive-img(src=site_url('/public/image/logo-land@2x.png'), style='width: 100px;')
+            p เพจที่ทำหน้าที่เป็นศูนย์ประสานงานและแก้ไขปัญหาต่างๆ ของนิสิตภายใต้ขอบเขตที่มีอยู่ ทั้งปัญหาเบื้องต้นและปัญหาที่เกี่ยวข้องกับหน่วยงานอื่นๆ ภายในจุฬาฯ
+            //- p iCare คือ เครื่องมือสำหรับการรายนงานข้อร้องเรียน หรือความคิดเห็น สำหรับนักศึกษา บุคลากร และบุคคลที่มีส่วนเกี่ยวข้องกับคณะวิศวกรรมศาสตร์ ผ่านช่องทาง
+            //-   | <a href='#{app_config.service.fb}'> Facebook Messenger </a>
+            //-   | และ
+            //-   | <a href='#{app_config.baseurl}'> Web App </a>
+            //- p โดยผู้ใช้สามารถส่งรูปภาพ คำอธิบาย แฮชแท็ค และตำแหน่ง ของปัญหาหรือความคิดเห็นเข้าสู่ iCare ข้อมูลทั้งหมดที่ถูกรายงานผ่านระบบ จะส่งตรงไปสู่เจ้าหน้าที่ผู้รับผิดชอบ เพื่อดำเนินการต่อในทันที โดยมีการแจ้งเตือนสถานะการแก้ไขตลอดทั้งกระบวนการจนปัญหาถูกแก้ไขเสร็จสิ้น ทั้งนี้ ผู้ใช้สามารถใช้ iCare ในการเสนอความคิดเห็นและคำชมได้เช่นเดียวกัน
+            //- p รายงานบน iCare เพื่อคณะของเราได้ตั้งแต่วันนี้ ทั้ง 2 ช่องทาง
 
             ul
               li
                 a(href=app_config.service.fb) Facebook Messenger
               li
-                a(href=app_config.baseurl) Web App
+                a(href=site_url('/login')) Web App
 
           .col.m6
             .fb-page(data-href=app_config.service.fb, data-tabs='timeline', data-small-header='true', data-adapt-container-width='true', data-hide-cover='false', data-show-facepile='true')
+
+        //- .row
+        //-   .col.m6.offset-m3
+        //-     .spacing-large
+        //-     .center
+        //-       span สร้างสรรค์โดย
+        //-     ul.partner-list.clearfix
+        //-       li
+        //-         a(href='#')
+        //-           img.responsive-img(src='/public/image/partner/chulaeng@2x.png')
 
         .row
           .col.m6.offset-m3
             .spacing-large
             .center
-              span สร้างสรรค์โดย
+              span สนับสนุนโดย
             ul.partner-list.clearfix
               li
-                a(href='#')
-                  img.responsive-img(src='/public/image/partner/chulaeng@2x.png')
+                a(href='https://www.facebook.com/youpin.city/' target='_blank')
+                  img.responsive-img(src='/public/image/youpin-logo-l@2x.png', style='max-width: 100px; margin: 0 auto; display: block;')
 
 append app_script
   script.
