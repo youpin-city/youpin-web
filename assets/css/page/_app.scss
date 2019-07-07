@@ -1,5 +1,4 @@
-#app[data-route='app'] {
-
+#app[data-route="app"] {
   .brand-logo {
     preloader {
       display: none;
@@ -10,8 +9,12 @@
   }
   &.loading {
     .brand-logo {
-      img { display: none; }
-      preloader { display: inline-block; }
+      img {
+        display: none;
+      }
+      preloader {
+        display: inline-block;
+      }
     }
   }
 
@@ -37,12 +40,10 @@
       }
     }
   }
-
 }
 
-
 // Page: report
-#app[data-view='report'] {
+#app[data-view="report"] {
   #header,
   .tab-bar-view,
   .tab-bar,
@@ -56,6 +57,17 @@
 
 #page-app {
   page-report {
+    #input-tree-name::before,
+    #input-location::before {
+      content: "*";
+      display: inline-block;
+      position: absolute;
+      top: 10px;
+      right: 0;
+      color: red;
+      font-size: 40px;
+      line-height: 20px;
+    }
     .modal.full-sheet {
       &.open {
         position: relative;
@@ -186,9 +198,7 @@
       z-index: 2;
     }
   }
-
 }
-
 
 #page-map {
   position: relative;
@@ -201,7 +211,7 @@
     padding: 1rem;
     background: $cl-white;
     border-radius: 10rem;
-    box-shadow: 0 1px 1px rgba(0,0,0,.2);
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
     opacity: 0.8;
   }
 
@@ -255,7 +265,6 @@
   }
 }
 
-
 #page-pin {
   @media #{$medium-and-up} {
     map-box {
@@ -288,7 +297,6 @@
     }
   }
 }
-
 
 #page-error {
   .title-icon {

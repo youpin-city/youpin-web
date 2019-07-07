@@ -43,11 +43,31 @@ page-report
                           .image(style='background-image: url("{ util.site_url(photo.url) }");')
                   a#add-image-btn.btn-floating.btn-large.waves-effect.waves-light(href='#report', onclick='{ clickPhoto }')
                     i.icon.material-icons add
-                #input-detail.input-field
-                  //- i.icon.material-icons.prefix chat_bubble_outline
-                  textarea.validate.materialize-textarea(name='detail', placeholder='ใส่คำอธิบายปัญหาหรือข้อเสนอแนะ', oninput='{ changeDetail }') { detail }
+                //- #input-detail.input-field
+                //-   //- i.icon.material-icons.prefix chat_bubble_outline
+                //-   textarea.validate.materialize-textarea(name='detail', placeholder='ใส่คำอธิบายปัญหาหรือข้อเสนอแนะ', oninput='{ changeDetail }') { detail }
 
                 .card-content
+                  #input-tree-name.input-field
+                    i.icon.material-icons.prefix local_florist
+                    .input(style='margin-left: 30px;')
+                      input(name='tree_name', placeholder='ชื่อพันธุ์ไม้', oninput='{ changeTreeName }')
+
+                  #input-tree-height.input-field
+                    i.icon.material-icons.prefix swap_vert
+                    .input(style='margin-left: 30px;')
+                      input(type='number', step='0.1', name='tree_height', placeholder='ความสูง (m)', oninput='{ changeTreeHeight }')
+
+                  #input-tree-canopy-radius.input-field
+                    i.icon.material-icons.prefix swap_horiz
+                    .input(style='margin-left: 30px;')
+                      input(type='number', step='0.1', name='tree_canopy_radius', placeholder='รัศมีทรงพุ่ม (m)', oninput='{ changeTreeCanopyRadius }')
+
+                  #input-tree-circumference.input-field
+                    i.icon.material-icons.prefix refresh
+                    .input(style='margin-left: 30px;')
+                      input(type='number', step='1', name='tree_circumference', placeholder='เส้นรอบวง (cm)', oninput='{ changeTreeCircumference }')
+
                   #input-categories.input-field
                     i.icon.material-icons.prefix local_offer
                     .input
@@ -59,6 +79,10 @@ page-report
                     i.icon.material-icons.prefix(class='{ location.lat ? "active" : "" }') place
                     .input
                       button.location-input.btn.btn-block.btn-native(type='button', onclick='{ clickMapLocation }') { location_text }
+
+                #input-detail.input-field
+                  //- i.icon.material-icons.prefix chat_bubble_outline
+                  textarea.validate.materialize-textarea(name='detail', placeholder='ใส่คำอธิบายปัญหาหรือข้อเสนอแนะ', oninput='{ changeDetail }') { detail }
 
                 #input-location-complete(if='{ location }')
                   map-box#preview-location(pin-clickable='false', options-dragging='false', options-zoom='{ default_zoom }', options-zoom-control='false', options-scroll-wheel-zoom='false', options-double-click-zoom='false', options-touch-zoom='false', options-tap='false', options-keyboard='false')
@@ -184,6 +208,7 @@ page-report
     });
 
     self.choice_categories = [
+      { value: 'bigtree', text: 'Big Tree', selected: true },
       { value: 'footpath', text: 'ทางเท้า', selected: false },
       { value: 'pollution', text: 'มลภาวะ', selected: false },
       { value: 'roads', text: 'ถนน', selected: false },
@@ -298,7 +323,7 @@ page-report
           method: 'POST',
           acceptedFiles: 'image/*',
           paramName: 'image',
-          maxFilesize: 5, // MB
+          maxFilesize: 25, // MB
           previewsContainer: '.drop-image-preview',
           previewTemplate: '<div class="dz-preview-template" style="display: none;"></div>',
           dictDefaultMessage: '',
@@ -489,6 +514,26 @@ page-report
       self.update();
     };
 
+    self.changeTreeName = function (e) {
+      self.tree_name = e.currentTarget.value;
+      self.update();
+    };
+
+    self.changeTreeHeight = function (e) {
+      self.tree_height = e.currentTarget.value ? +e.currentTarget.value : undefined;
+      self.update();
+    };
+
+    self.changeTreeCanopyRadius = function (e) {
+      self.tree_canopy_radius = e.currentTarget.value ? +e.currentTarget.value : undefined;
+      self.update();
+    };
+
+    self.changeTreeCircumference = function (e) {
+      self.tree_circumference = e.currentTarget.value ? +e.currentTarget.value : undefined;
+      self.update();
+    };
+
     self.changeCategories = function (e) {
       self.categories = e.currentTarget.value;
       self.update();
@@ -497,8 +542,9 @@ page-report
     function checkReportComplete() {
       self.is_pin_complete = true;
       if (!self.location) self.is_pin_complete = false;
-      if (!self.detail) self.is_pin_complete = false;
-      if (!self.categories) self.is_pin_complete = false;
+      if (!self.tree_name) self.is_pin_complete = false;
+      //- if (!self.detail) self.is_pin_complete = false;
+      //- if (!self.categories) self.is_pin_complete = false;
       if (self.photos.length === 0) self.is_pin_complete = false;
     }
 

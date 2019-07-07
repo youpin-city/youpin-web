@@ -26,6 +26,10 @@ page-pin
                   .tag-list(if='{ categories && categories.length > 0 }')
                     a.tag-item(each='{ cat in categories }', href=('#tags/{ cat }')) {cat}
                   //- .card-area(if='{ pin.neighborhood }') ย่าน{ pin.neighborhood }
+                  span.card-tree-name(if='{ pin.tree_name }') / {pin.tree_name}
+                  span.card-tree-height(if='{ pin.tree_height }') / สูง {pin.tree_height} m
+                  span.card-tree-canopy(if='{ pin.tree_canopy_radius }') / รัศมี {pin.tree_canopy_radius} m
+                  span.card-tree-circum(if='{ pin.tree_circumference }') / รอบวง {pin.tree_circumference} cm
 
                 //- .card-stat
                   .meta.meta-like.left
