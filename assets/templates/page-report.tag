@@ -51,28 +51,28 @@ page-report
                   #input-tree-name.input-field
                     i.icon.material-icons.prefix local_florist
                     .input(style='margin-left: 30px;')
-                      input(name='tree_name', placeholder='ชื่อพันธุ์ไม้', oninput='{ changeTreeName }')
+                      input(name='tree_name', placeholder='ชื่อพันธุ์ไม้ / Tree Species', oninput='{ changeTreeName }')
 
                   #input-tree-height.input-field
                     i.icon.material-icons.prefix swap_vert
                     .input(style='margin-left: 30px;')
-                      input(type='number', step='0.1', name='tree_height', placeholder='ความสูง (m)', oninput='{ changeTreeHeight }')
+                      input(type='number', step='0.1', name='tree_height', placeholder='ความสูง (m) / Height (m)', oninput='{ changeTreeHeight }')
 
                   #input-tree-canopy-radius.input-field
                     i.icon.material-icons.prefix swap_horiz
                     .input(style='margin-left: 30px;')
-                      input(type='number', step='0.1', name='tree_canopy_radius', placeholder='รัศมีทรงพุ่ม (m)', oninput='{ changeTreeCanopyRadius }')
+                      input(type='number', step='0.1', name='tree_canopy_radius', placeholder='ขนาดทรงพุ่ม (m) / Bush Size (m)', oninput='{ changeTreeCanopyRadius }')
 
                   #input-tree-circumference.input-field
                     i.icon.material-icons.prefix refresh
                     .input(style='margin-left: 30px;')
-                      input(type='number', step='1', name='tree_circumference', placeholder='เส้นรอบวง (cm)', oninput='{ changeTreeCircumference }')
+                      input(type='number', step='1', name='tree_circumference', placeholder='เส้นรอบวง (cm) / Circumference (m)', oninput='{ changeTreeCircumference }')
 
                   #input-categories.input-field
                     i.icon.material-icons.prefix local_offer
                     .input
                       select#select-categories.browser-default(name='categories', onchange='{ changeCategories }')
-                        option(value='') เลือกหมวดหมู่
+                        option(value='') เลือกหมวดหมู่ / Choose Category
                         option(each='{ cat in choice_categories }', value='{ cat.value }', selected='{ cat.selected }') { cat.text }
 
                   #input-location.input-field(if='{ !location }')
@@ -82,7 +82,7 @@ page-report
 
                 #input-detail.input-field
                   //- i.icon.material-icons.prefix chat_bubble_outline
-                  textarea.validate.materialize-textarea(name='detail', placeholder='ใส่คำอธิบายปัญหาหรือข้อเสนอแนะ', oninput='{ changeDetail }') { detail }
+                  textarea.validate.materialize-textarea(name='detail', placeholder='ข้อมูลเพิ่มเติม / Description', oninput='{ changeDetail }') { detail }
 
                 #input-location-complete(if='{ location }')
                   map-box#preview-location(pin-clickable='false', options-dragging='false', options-zoom='{ default_zoom }', options-zoom-control='false', options-scroll-wheel-zoom='false', options-double-click-zoom='false', options-touch-zoom='false', options-tap='false', options-keyboard='false')
@@ -92,7 +92,7 @@ page-report
       .container.no-padding-s
         .row
           .col.s12.m6.offset-m3.l4.offset-l4
-            button#submit-pin-btn.btn.btn-large.btn-block(type='button', onclick='{ clickSubmitReport }', class='{ is_pin_complete ? "" : "disabled" }', disabled='{ !is_pin_complete }') โพสต์พิน
+            button#submit-pin-btn.btn.btn-large.btn-block(type='button', onclick='{ clickSubmitReport }', class='{ is_pin_complete ? "" : "disabled" }', disabled='{ !is_pin_complete }') โพสต์พิน / Submit
 
   #report-photo-modal.modal.bottom-sheet.full-sheet
     .modal-header
@@ -135,7 +135,7 @@ page-report
               | กลับ
         .center
           a.brand-logo(href='#')
-          .modal-title ตำแหน่งพิน
+          .modal-title Pin Location
         ul.right
           li
             a(href='#!', onclick='{ clickLocateMe }')
@@ -143,7 +143,7 @@ page-report
 
     .modal-content.no-padding-s
       #edit-location-map.input-location-map
-      a#submit-location-btn.btn.btn-large.btn-block.modal-close(onclick='{ clickCloseMap }') ใช้ตำแหน่งนี้
+      a#submit-location-btn.btn.btn-large.btn-block.modal-close(onclick='{ clickCloseMap }') ใช้ตำแหน่งนี้ / Pin Here
 
   #report-uploading-modal.modal
     .modal-content
@@ -249,8 +249,8 @@ page-report
      ***************/
     self.on('update', () => {
       self.location_text = self.location && typeof self.location.lat === 'number'
-        ? 'ปักตำแหน่งแล้ว'
-        : 'ใส่ตำแหน่ง';
+        ? 'ปักตำแหน่งแล้ว / Pinned'
+        : 'ใส่ตำแหน่ง / Pin Location';
       checkReportComplete();
     });
     self.on('mount', () => {
