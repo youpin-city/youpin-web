@@ -829,3 +829,4 @@ page-report
       // $('#feed-tab-btn').click();
       app.goto(self.redirect);
     }
+

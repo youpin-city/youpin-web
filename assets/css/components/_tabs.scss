@@ -9,8 +9,13 @@
   border-top: 1px solid $cl-lightgray;
 
   .tabs {
+    display: flex;
     .tab {
       min-width: 60px;
+      -webkit-box-flex: 1;
+      -webkit-flex-grow: 1;
+      -ms-flex-positive: 1;
+      flex-grow: 1;
       a {
         color: $cl-gray;
         .icon {

@@ -108,3 +108,4 @@ page-feed
     self.clickLoadMore = function(e) {
       loadNext();
     }
+

@@ -127,3 +127,4 @@ page-pin
         self.slider = false;
       }
     }
+

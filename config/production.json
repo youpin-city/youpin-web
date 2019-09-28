@@ -3,6 +3,6 @@
   "port": 7000,
   "site": {
     "protocol": "https",
-    "hostname": "youpin.city"
+    "hostname": "beta.youpin.city"
   }
 }
