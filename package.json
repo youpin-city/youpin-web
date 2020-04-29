@@ -68,7 +68,7 @@
     "eslint-plugin-react": "^5.2.2",
     "exif-js": "^2.1.1",
     "exorcist": "^0.4.0",
-    "jquery": "^2.2.1",
+    "jquery": "^3.5.0",
     "jquery-serializejson": "^2.6.2",
     "leaflet": "^0.7.7",
     "materialize-css": "^0.97.6",
