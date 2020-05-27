@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 /* global app: true */
 const urllib = require('url');
 const pathlib = require('path');
@@ -7,16 +7,12 @@ const saw = require('string-saw');
 const _ = require('lodash');
 
 const hasOwnProperty = Object.prototype.hasOwnProperty;
-function extend(dest, src) {
+function extend(dest, ...args) {
   const to = dest;
   let from;
-  for (let s = 1; s < arguments.length; s++) {
-    from = Object(arguments[s]);
-    for (const key in from) {
-      if (hasOwnProperty.call(from, key)) {
-        to[key] = from[key];
-      }
-    }
+  for (let s = 0; s < args.length; s++) {
+    from = Object(args[s]);
+    Object.assign(to, from);
   }
   return to;
 }
@@ -94,19 +90,12 @@ function make_querystring(query) {
  */
 function format_querystring(query) {
   const qs = [];
-  for (const k in query) {
-    if (hasOwnProperty.call(query, k)) {
-      qs.push(k + '=' + query[k]);
-    }
-  }
+  Object.keys(query).forEach((k) => {
+    qs.push(k + '=' + query[k]);
+  });
+
   return qs.join('&');
 }
-
-// function format_querystring(params) {
-//   return Object.keys(params)
-//     .map(k => k + '=' + params[k])
-//     .join('&');
-// }
 
 function client_size() {
   const w = window;
@@ -145,12 +134,12 @@ function build_image_size(url, breakpoints, dppi, screenWidth, screenBreakpoints
 }
 
 function parse_image_url(url) {
-  var data = {};
-  var split = url ? url.split('#') : [];
-  var breakpoints = [];
-  var bp = [];
-  var i;
-  var pt;
+  const data = {};
+  const split = url ? url.split('#') : [];
+  const breakpoints = [];
+  let bp = [];
+  let i;
+  let pt;
   data.url = split[0] || '';
   if (split[1]) {
     bp = (split[1] || '').split('|');
@@ -181,8 +170,8 @@ function site_url(url, basepath, query, hash) {
 
 function is_touch_device() {
   return (('ontouchstart' in window)
-  || (navigator.MaxTouchPoints > 0)
-  || (navigator.msMaxTouchPoints > 0));
+    || (navigator.MaxTouchPoints > 0)
+    || (navigator.msMaxTouchPoints > 0));
 }
 
 function device_pixel_ratio() {
@@ -190,14 +179,14 @@ function device_pixel_ratio() {
 }
 
 function cssSizeInPixel(size) {
-  var rootFontSize;
-  var baseFontSize;
-  var m;
-  var sign;
-  var num;
-  var unit;
-  var cssSizeRegex = /^(-?)([0-9.]*[0-9])([a-z]+)$/i;
-  var matches = cssSizeRegex.exec(size.toString());
+  let rootFontSize;
+  let baseFontSize;
+  let m;
+  let sign;
+  let num;
+  let unit;
+  const cssSizeRegex = /^(-?)([0-9.]*[0-9])([a-z]+)$/i;
+  const matches = cssSizeRegex.exec(size.toString());
   if (matches) {
     // get root font size in pixel
     rootFontSize = window.getComputedStyle($('html')[0])['font-size'];
@@ -229,11 +218,10 @@ function parse_tags(str) {
   return str.replace(hash_regex, '<a href="#tags/$1">#$1</a>');
 }
 
-function remove_duplicate_tags( catagories, content ) {
-  const tagsInContent = saw(content).match(/#\w+/g).map(function(h){
-    return h.replace(/#/, '');
-  }).toArray();
-  return _.difference( catagories, tagsInContent );
+function remove_duplicate_tags(catagories, content) {
+  const tagsInContent = saw(content).match(/#\w+/g).map((h) => h.replace(/#/, ''))
+    .toArray();
+  return _.difference(catagories, tagsInContent);
 }
 
 extend(utility, {

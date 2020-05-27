@@ -1,6 +1,10 @@
 extends: airbnb/base
 env:
-  node: true
+  node: true,
+  amd: true,
+  mocha: true
+globals:
+  google: true
 rules:
   camelcase: 0
   comma-dangle: 0
